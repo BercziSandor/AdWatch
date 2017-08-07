@@ -22,10 +22,10 @@ use Email::Simple::Creator;
 # debug options for the developer;
 $Data::Dumper::Sortkeys = 1;
 my $offline       = 0;
-my $saveHtmlFiles = 1;
+my $saveHtmlFiles = 0;
 
-my $G_ITEMS_TO_PROCESS_MAX             = 10;
-my $G_WAIT_BETWEEN_FULL_PROCESS_IN_SEC = 3 * 60;
+my $G_ITEMS_TO_PROCESS_MAX             = 0;
+my $G_WAIT_BETWEEN_FULL_PROCESS_IN_SEC = 10 * 60;
 my $G_WAIT_BETWEEN_GETS_IN_SEC         = 5;
 
 # GLOBAL variables
@@ -401,42 +401,15 @@ sub getMailText
     my $count_new     = 0;
     my $count_changed = 0;
 
-    # <table style="width:100%">
-    #   <tr>
-    #     <th>Firstname</th>
-    #     <th>Lastname</th>
-    #     <th>Age</th>
-    #   </tr>
-    #   <tr>
-    #     <td>Jill</td>
-    #     <td>Smith</td>
-    #     <td>50</td>
-    #   </tr>
-    #   <tr>
-    #     <td>Eve</td>
-    #     <td>Jackson</td>
-    #     <td>94</td>
-    #   </tr>
-    # </table>
-
-    $mailTextHtml = "<table style=\"width:100%\">";
-    $mailTextHtml .= " <tr>";
-    $mailTextHtml .= "  <th>Új?</th>";
-    $mailTextHtml .= "  <th>Cím</th>";
-    $mailTextHtml .= "  <th>Ár</th>";
-    $mailTextHtml .= "  <th>Egyéb</th>";
-    $mailTextHtml .= " </tr>";
-
     foreach my $id ( keys %$G_DATA ) {
         if ( $G_DATA->{$id}->{status} eq $STATUS_NEW ) {
             $count_new++;
 
-            $mailTextHtml .= "<tr>";
-            $mailTextHtml .= "  <td>I</td>";
-            $mailTextHtml .= "  <td><a href=\"" . $G_DATA->{$id}->{link} . "\">" . $G_DATA->{$id}->{title} . "</a></td>";
-            $mailTextHtml .= "  <td>" . $G_DATA->{$id}->{priceStr} . "</td>";
-            $mailTextHtml .= "  <td>" . str_replace( "^, ", "", join( ', ', @{ $G_DATA->{$id}->{info} } ) ) . "</td>";
-            $mailTextHtml .= "</tr>";
+            $mailTextHtml .= "+ ";
+            $mailTextHtml .= "<a href=\"" . $G_DATA->{$id}->{link} . "\">" . $G_DATA->{$id}->{title} . "</a><br/>";
+            $mailTextHtml .= " - " . $G_DATA->{$id}->{priceStr} . "<br/>";
+            $mailTextHtml .= " - " . str_replace( "^, ", "", join( ', ', @{ $G_DATA->{$id}->{info} } ) ) . "<br/>";
+            $mailTextHtml .= "<br/>";
 
             $text_new .= "\n+ ["
               . $G_DATA->{$id}->{title} . "]"
@@ -450,12 +423,12 @@ sub getMailText
         } elsif ( $G_DATA->{$id}->{status} eq $STATUS_CHANGED ) {
             $count_changed++;
 
-            $mailTextHtml .= "<tr>";
-            $mailTextHtml .= "  <td>N</td>";
-            $mailTextHtml .= "  <td><a href=\"" . $G_DATA->{$id}->{link} . "\">" . $G_DATA->{$id}->{title} . "</a></td>";
-            $mailTextHtml .= "  <td>" . $G_DATA->{$id}->{priceStr} . "</td>";
-            $mailTextHtml .= "  <td>" . str_replace( "^, ", "", join( ', ', @{ $G_DATA->{$id}->{info} } ) ) . "</td>";
-            $mailTextHtml .= "</tr>";
+            $mailTextHtml .= "* ";
+            $mailTextHtml .= "<a href=\"" . $G_DATA->{$id}->{link} . "\">" . $G_DATA->{$id}->{title} . "</a><br/>";
+            $mailTextHtml .= " - " . $G_DATA->{$id}->{priceStr} . "<br/>";
+            $mailTextHtml .= " - " . str_replace( "^, ", "", join( ', ', @{ $G_DATA->{$id}->{info} } ) ) . "<br/>";
+            $mailTextHtml .= " - " . $G_DATA->{$id}->{comment} . "<br/>";
+            $mailTextHtml .= "<br/>";
 
             $text_changed .=
                 "\n* ["
@@ -469,6 +442,7 @@ sub getMailText
               . "\n - Egyéb:    "
               . str_replace( "^, ", "", join( ', ', @{ $G_DATA->{$id}->{info} } ) ) . "\n";
         } ### elsif ( $G_DATA->{$id}->{...})
+
     } ### foreach my $id ( keys %$G_DATA)
     $mailTextHtml .= "</table>";
 
@@ -516,7 +490,7 @@ sub collectData
     $log->info( "$collectionDate\n" );
 
     $G_ITEMS_PROCESSED = 0;
-    foreach my $urlId ( keys %$urls ) {
+    foreach my $urlId ( sort keys %$urls ) {
         my $url = $urls->{$urlId};
         $log->info( "$urlId\n" );
         if ( $G_ITEMS_TO_PROCESS_MAX > 0 and $G_ITEMS_PROCESSED >= $G_ITEMS_TO_PROCESS_MAX ) {
@@ -537,7 +511,7 @@ sub collectData
             $html = getHtml( $url, $i );
             parseItems( \$html );
         } ### for ( my $i = 1 ; $i <=...)
-    } ### foreach my $urlId ( keys %$urls)
+    } ### foreach my $urlId ( sort keys...)
 } ### sub collectData
 
 sub process
@@ -561,8 +535,9 @@ sub main
         my $timeToWait = ( $time + $G_WAIT_BETWEEN_FULL_PROCESS_IN_SEC ) - time;
         if ( $timeToWait < 0 ) {
             $log->warn(
-"Warning: Túl alacsony a G_WAIT_BETWEEN_FULL_PROCESS_IN_SEC változó értéke: folyamatosan fut a feldolgozás. Növeld meg az értéket ${timeToWait}-el.\n"
-            );
+"Warning: Túl alacsony a G_WAIT_BETWEEN_FULL_PROCESS_IN_SEC változó értéke: folyamatosan fut a feldolgozás. \nA mostani futás hossza "
+                  . ( time - $time )
+                  . " másodperc volt, a változó értéke pedig $G_WAIT_BETWEEN_FULL_PROCESS_IN_SEC.\n" );
         } else {
             $log->info( sprintf( "Várakozás a következő feldolgozásig: %d másodperc...\n", $timeToWait ) );
             sleep( $timeToWait );
@@ -578,20 +553,36 @@ sub sendMail
 
     # http://www.revsys.com/writings/perl/sending-email-with-perl.html
     my ( $bodyText ) = @_;
-    my $email = Email::Simple->create(
-        header => [
-            To             => '"Sanyi" <berczi.sandor@gmail.com>',
-            From           => '"Sanyi" <berczi.sandor@gmail.com>',
-            Subject        => "Hasznaltauto.hu frissítés",
-            'Content-Type' => 'text/html',
-        ],
 
-        # body => "<p>This message is short, <br/>but <b>at least</b+++> it's cheap.</p>",
-        body => $bodyText,
-    );
-    $log->info( "Levél küldése...($bodyText)" );
+    $log->info( "Levél küldése...\n" );
+    my @recipients = ( '"Sanyi" <berczi.sandor@gmail.com>', '"Tillatilla66" <tillatilla66@freemail.hu>' );
 
+    foreach ( @recipients ) {
+        my $email = Email::Simple->create(
+            header => [
+                To             => $_,
+                From           => '"Sanyi" <berczi.sandor@gmail.com>',
+                Subject        => "Hasznaltauto.hu frissítés",
+                'Content-Type' => 'text/html',
+            ],
+            body => $bodyText,
+        );
+        sendmail( $email );
+    } ### foreach ( @recipients )
+
+    # my $email = Email::Simple->create(
+    #     header => [
+    #         To             => '"Sanyi" <berczi.sandor@gmail.com>',
+    #         From           => '"Sanyi" <berczi.sandor@gmail.com>',
+    #         Subject        => "Hasznaltauto.hu frissítés",
+    #         'Content-Type' => 'text/html',
+    #     ],
+
+    #     # body => "<p>This message is short, <br/>but <b>at least</b+++> it's cheap.</p>",
+    #     body => $bodyText,
+    # );
     # sendmail( $email );
+
 } ### sub sendMail
 
 sub stopWatch_Pause
