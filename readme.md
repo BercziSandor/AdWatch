@@ -1,3 +1,10 @@
+Goal of the script: alerting about new ads via email
+
+ToDO:
+ - solving 429
+
+
+
 * Cloud services
 Needed layer: Infrastructure as a Service (IAAS)
 

@@ -13,32 +13,40 @@ use Log::Log4perl;
 use Time::HiRes qw( time );
 use POSIX qw(strftime);
 
+use Email::Sender::Simple qw(sendmail);
+use Email::Simple;
+use Email::Simple::Creator;
+
 # Do not change this settings above this line.
 
 # debug options for the developer;
 $Data::Dumper::Sortkeys = 1;
-my $offline           = 0;
-my $maxPagesToProcess = 0;      # 0: off
-my $talalatperOldal   = 100;    # default:10 max:100
-my $saveHtmlFiles     = 0;
+my $offline       = 0;
+my $saveHtmlFiles = 1;
+
+my $G_ITEMS_TO_PROCESS_MAX             = 10;
+my $G_WAIT_BETWEEN_FULL_PROCESS_IN_SEC = 3 * 60;
+my $G_WAIT_BETWEEN_GETS_IN_SEC         = 5;
 
 # GLOBAL variables
-my $url;
+# my $url;
 my $G_TREE;
 my $g_stopWatch;
 my $G_DATA;
-my $G_ITEMS_PROCESSED   = 0;
-my $G_PROCESS_EVERY_SEC = 60;
+my $G_ITEMS_PROCESSED = 0;
+my $G_ITEMS_PER_PAGE  = 100;    # default:10 max:100
+my $G_LAST_GET_TIME   = 0;
 my $log;
 my $httpTiny;
 my $cookieJar;
+my $collectionDate;
 
 # CONSTANTS
 my $STATUS_EMPTY   = 'undef';
 my $STATUS_CHANGED = 'changed';
 my $STATUS_NEW     = 'new';
 
-my %urls;
+my $urls;
 my $logConf;
 
 my $XPATH_TALALATI_LISTA = '//*[@id="main_nagyoldal_felcserelve"]//div[contains(concat(" ", @class, " "), " talalati_lista ")]';
@@ -50,6 +58,10 @@ my $XPATH_DESC =
   'div[@class="talalati_lista_bal"]/div[@class="talalati_lista_tartalom"]/div[@class="talalati_lista_szoveg"]/p[@class="leiras-nyomtatas"]';
 my $XPATH_FEATURES =
   'div[@class="talalati_lista_bal"]/div[@class="talalati_lista_tartalom"]/div[@class="talalati_lista_szoveg"]/p[@class="felszereltseg-nyomtatas"]';
+my $XPATH_KEP =
+  'div[@class="talalati_lista_bal"]/div[@class="talalati_lista_tartalom"]/div[@class="talalati_lista_kep"]/a/img[@id="talalati_2"]/@src';
+
+# //*[@id="talalati_2"]
 
 sub msg
 {
@@ -75,7 +87,7 @@ sub getHtml
 
         $log->debug( "fileName: $fileName" );
     } else {
-        $log->logdie( "xxlz" );
+        $log->logdie( "Mi ez az url?? [$url]" );
     }
 
     if ( $offline and -e "$fileName" ) {
@@ -91,6 +103,13 @@ sub getHtml
     } else {
         $log->debug( " reading remote" );
         stopWatch_Continue( "Letoltés" );
+        my $wtime = int( ( $G_LAST_GET_TIME + $G_WAIT_BETWEEN_GETS_IN_SEC ) - time );
+        if ( $wtime > 0 ) {
+            $log->debug(
+                "$wtime másodperc várakozás (két lekérés közötti minimális várakozási idő: $G_WAIT_BETWEEN_GETS_IN_SEC másodperc)\n" );
+            sleep( $wtime );
+        }
+        $G_LAST_GET_TIME = time;
         my $response = $httpTiny->get( $url );
         stopWatch_Pause( "Letoltés" );
         if ( $response->{success} ) {
@@ -155,7 +174,7 @@ sub parseItems
 {
     my ( $html ) = @_;
 
-    $log->debug( "parseItems()" );
+    $log->debug( "parseItems(" . \$html . ")" );
     stopWatch_Continue( "Feldolgozás" );
 
     my @items;
@@ -166,6 +185,10 @@ sub parseItems
     my %items;
     for my $item ( @items ) {
         $G_ITEMS_PROCESSED++;
+        if ( ( $G_ITEMS_TO_PROCESS_MAX > 0 ) and ( $G_ITEMS_PROCESSED > $G_ITEMS_TO_PROCESS_MAX ) ) {
+            print "x";
+            next;
+        }
         my $G_DATA_item = ();
         my $title       = encode_utf8( $item->findvalue( $XPATH_TITLE ) );
         my $link        = $item->findvalue( $XPATH_LINK );
@@ -180,6 +203,8 @@ sub parseItems
         $features = str_replace( "Felszereltség: ", "",  $features );
         $features = str_replace( " – ",           "#", $features );
         my @fs = split( '#', $features );
+
+        my $keplink = $item->findvalue( $XPATH_KEP );
 
         my $info = $item->findvalue( $XPATH_INFO );
         $info = encode_entities( $info );
@@ -206,13 +231,13 @@ sub parseItems
 
             # already defined. Is it changed?
             if ( $G_DATA->{$id}->{title} ne $title ) {
-                $G_DATA->{$id}->{comment} .= "Cím: [" . $G_DATA->{$id}->{title} . "] -> [$title]";
+                $G_DATA->{$id}->{comment} .= strftime( "%Y.%m.%d %H:%M:%S:", localtime ) . "Cím: [" . $G_DATA->{$id}->{title} . "] -> [$title]; ";
                 $G_DATA->{$id}->{title}  = $title;
                 $G_DATA->{$id}->{status} = $STATUS_CHANGED;
 
             } ### if ( $G_DATA->{$id}->{...})
             if ( ( $G_DATA->{$id}->{priceNr} ? $G_DATA->{$id}->{priceNr} : 0 ) != $priceNr ) {
-                $G_DATA->{$id}->{comment} .= "Ár: " . $G_DATA->{$id}->{priceStr} . " -> $priceStr; ";
+                $G_DATA->{$id}->{comment} .= strftime( "%Y.%m.%d %H:%M:%S:", localtime ) . " Ár: " . $G_DATA->{$id}->{priceStr} . " -> $priceStr; ";
                 $G_DATA->{$id}->{priceNr}  = $priceNr;
                 $G_DATA->{$id}->{priceStr} = $priceStr;
                 $G_DATA->{$id}->{status}   = $STATUS_CHANGED;
@@ -221,15 +246,16 @@ sub parseItems
         } else {
 
             # add
-            $G_DATA->{$id}->{title}    = $title;
-            $G_DATA->{$id}->{link}     = $link;
-            $G_DATA->{$id}->{features} = \@fs;
-            $G_DATA->{$id}->{category} = $category;
-            $G_DATA->{$id}->{info}     = \@infos;
-            $G_DATA->{$id}->{desc}     = $desc;
-            $G_DATA->{$id}->{priceStr} = $priceStr;
-            $G_DATA->{$id}->{priceNr}  = $priceNr;
-            $G_DATA->{$id}->{status}   = $STATUS_NEW;
+            $G_DATA->{$id}->{firstSeen} = strftime( "%Y.%m.%d %H:%M:%S:", localtime );
+            $G_DATA->{$id}->{title}     = $title;
+            $G_DATA->{$id}->{link}      = $link;
+            $G_DATA->{$id}->{features}  = \@fs;
+            $G_DATA->{$id}->{category}  = $category;
+            $G_DATA->{$id}->{info}      = \@infos;
+            $G_DATA->{$id}->{desc}      = $desc;
+            $G_DATA->{$id}->{priceStr}  = $priceStr;
+            $G_DATA->{$id}->{priceNr}   = $priceNr;
+            $G_DATA->{$id}->{status}    = $STATUS_NEW;
         } ### else [ if ( defined $G_DATA->...)]
 
         my $sign;
@@ -243,6 +269,7 @@ sub parseItems
         print "$sign";
         $log->debug( " $sign $id: [$title]" );
     } ### for my $item ( @items )
+    print "\n";
     $log->debug( "parseItems done - " . scalar( @items ) . " items parsed." );
     stopWatch_Pause( "Feldolgozás" );
 } ### sub parseItems
@@ -250,18 +277,23 @@ sub parseItems
 sub parsePageCount
 {
     my $count = undef;
-    logDie( "Error." ) unless $G_TREE;
+    $log->logDie( "Error." ) unless $G_TREE;
+    $log->info( "Feldolgozandó oldalak számának lekérése..." );
     my @values = $G_TREE->findvalues( '//a[@class="oldalszam"]' ) or return 1;    #  @title="Utolsó oldal"
 
     use List::Util qw( max );
     my $max = max( @values ) or $log->logdie( "$!" );
-    if ( $maxPagesToProcess > 0 ) {
+
+    if ( $G_ITEMS_TO_PROCESS_MAX > 0 ) {
+        use POSIX;
+        my $maxPagesToProcess = ceil( $G_ITEMS_TO_PROCESS_MAX / $G_ITEMS_PER_PAGE );
+
         if ( $maxPagesToProcess < $max ) {
-            $log->info( "Figyelem: a beállítások miatt a $max oldal helyett csak $maxPagesToProcess kerül feldolgozásra.\n" );
+            $log->info( " Figyelem: a beállítások miatt a $max oldal helyett csak $maxPagesToProcess kerül feldolgozásra.\n" );
         }
         $max = $maxPagesToProcess;
-    } ### if ( $maxPagesToProcess...)
-    $log->info( "$max oldal elemeit dolgozom fel, oldalanként maximum $talalatperOldal elemmel.\n" );
+    } ### if ( $G_ITEMS_TO_PROCESS_MAX...)
+    $log->info( " $max oldal elemeit dolgozom fel, oldalanként maximum $G_ITEMS_PER_PAGE elemmel.\n" );
 
     return $max;
 } ### sub parsePageCount
@@ -281,20 +313,39 @@ sub ini
 
     # ************************************************
     # INI start
-    $Data::Dumper::Sortkeys = 1;
-    $offline                = 0;
-    $maxPagesToProcess      = 0;      # 0: off
-    $talalatperOldal        = 100;    # default:10 max:100
-    $saveHtmlFiles          = 0;
 
-    $G_PROCESS_EVERY_SEC = 60;
+    # Típusok:
+    #	- Audi 2002 től
+    #	- Citroen 2006 tól
+    #	- Fiat 2006 tól
+    #	- Ford 2006 tól.
+    #	- Honda 2005 től
 
-    %urls = (
-        default =>
-"https://www.hasznaltauto.hu/talalatilista/auto/QLCS1E1TTFYOULSU8S95PUE9O1TC04GYPAFYH9LDU3D5H99S5WUSR596L97PMP3PT4JUAT1FTHK2U6G9TACKTZKSSH9T048A18ZQA3OUES75KZ8SDW01JGY208A27TTCK5IZR8YS780KTIY4KJ84WFDE2RKPQGA4CDI6225A38E69WA21HSGHQ1CYY9G9C5EUHUUI4LLU/page×page×",
-        alpha =>
-"https://www.hasznaltauto.hu/talalatilista/auto/0P5EDP3MFTF1GPWWMCUFESO5IMJPSPQW7GT5KK27JSUQY07DEM38C7WJ1C63ZWSF9RY268R527C4WM5ETSRKWSW5IM6KGI8484OWJ5PUPEF5SSDRSJGYSUAU0REYP2TMQU3HHYT2EZOPHL9SJ7DSQPUIAIZUC4REIYCZR96L24CRSUEIF4DTPMA2G1ULG4EWG/page×page×"
-    );
+    #	- Opel 2006 tól
+    #	- Peugeot 2006 tól.
+    #	- Renault 2006 tól
+    #	- Seat  2006 tól
+    #	- Skoda 2006 tól
+
+    #	- Suzuki tipusok, 2006 tól.
+    #	- Toyota 2006
+    #	- Volkswagen  2002 től
+
+    # - 2 m Ft-ig
+    # - Dunántúli megyékben
+
+    $urls = {
+
+        dunantuli_2m_2006_audi_honda =>
+"https://www.hasznaltauto.hu/talalatilista/auto/2G4ZLMFQ4LHPDGMZKJH00HADOQOOO6I164FMT47PL79M11C6MT71K400GI1Q2ZAHZFIKISZH2WL3JRYZ8ZJ87GT03S8C1AZRLUKKM3FT8GHHPFYQMRM175HW1YGIHMEUGMZ28MKYJ99JGRMG1AOFW5410IOQDAPO1KKQRMMLJST3K0KYSK6U42Q04ORSZ57FWWWYHL9QJWTAZR5SWAMSM5HR3WRT7427GUM3A9FU01A1J4KWI6CHI245M4Q6KFI8C7MYYZPSIU98C2FC2K2MRDEKTJ1694T18W9MYGEY6A8UACERT2U6H6WFID7ZM6AA6699ELQ9AS782CFRPQQEUOKS6JYKLEMYYY8O4923OMPOIG67IT1QROW9TC8T6UDTQDF9O9OG59FI7HRCH6LDP608G38MS3ADHC2FMSJH2JS68SWSCLCQ2LD1PJ6DD/page×page×",
+
+        dunantuli_2m_2006_opel_skoda =>
+"https://www.hasznaltauto.hu/talalatilista/auto/DOSR5EWSS5PGQEEI31POCFKQD2IG1EW5APLPGJJE86ATQFIZEKD6F682EEA208WK606DAF0OR179H56HGTA1I5MEE0EHL3839HF85E47EGJAWCEZGA6TPUYYOHWYUFPSKPHYFZJZY2EYJQY4SGYP8P250KIWLF5Z1QAHOJDII1Z13RA5DSMJH22006DC4R2EUFO06M1QO4D64154T6ERW59TU8CR9ZO5EW4TR8R5G13UPJ7TZJ2SO882WU32AZFKCDKLZ4AYPKH4MG1R73ZCM4UJPK4J6OKKRS6AUQ1JL1PKM8M0PEDDJZTKF5PUKI3RW66LTIDIMM7Y74CGJL0R9GG1J32MDS3R20GIOLI5SDEGIAYGJ7HQDCMT7I5ZQYPQELCELQ07P6ZQY4H36HT674T3CYTM9QHYK8FYM8KO1G6DCDZJ3KA8JFK8ETQ/page×page×",
+
+        dunantuli_2m_2006_toyota_wv =>
+"https://www.hasznaltauto.hu/talalatilista/auto/QLCS1AYWZFTOUAAS97TJJORP42IMYY7AY4JH11U4IGIU3AYMS6HPJ9C3D7AMGZIU63SR652051Z37727OOYH1QT3GKKSCIF9QG5RW1QAF43TUDOIPROT2IEJTOLI4OJSM42CPE7F0HL0A00QL2WOHH8T02OAAYCAT17R2PLZ71K9I77SG2QWE8M86E60M40AOEE2T1DW75W929MQW0YYEEAR1W96GLG2TZYJCOYA7EGL056Q3DRS79KPDOOJ0AM1DIHK6CH0C6DIE9PO76P3KLJZJ2W9J55USTPE6ZGMQ0OW4GGC67TMJMIFIKD4492W9FSTQQJAUUZJALPKU8RY6L51D5QI9LGHJORWG2GZGFKAH9931YAU1F9RPPYRDF8D2FGYTQOS63I2DFO5OU74S812WLOCDLLDPHC7CP7CGMA8EYD6158WSO72ELLUU/page×page×",
+
+    };
 
     $logConf = q(
         log4perl.rootLogger = DEBUG, Logfile, Screen
@@ -323,8 +374,9 @@ sub ini
 
         # 3128:Tapolca
         $cookieJar->add( "http://hasznaltauto.hu",
-            "telepules_saved=1; telepules_id_user=3148; visitor_telepules=3148; talalatokszama=${talalatperOldal}; Path=/; Domain=.hasznaltauto.hu" );
-        $cookieJar->add( "http://hasznaltauto.hu", "talalatokszama=${talalatperOldal}; Path=/; Domain=.hasznaltauto.hu" );
+            "telepules_saved=1; telepules_id_user=3148; visitor_telepules=3148; talalatokszama=${G_ITEMS_PER_PAGE}; Path=/; Domain=.hasznaltauto.hu"
+        );
+        $cookieJar->add( "http://hasznaltauto.hu", "talalatokszama=${G_ITEMS_PER_PAGE}; Path=/; Domain=.hasznaltauto.hu" );
     } else {
         $cookieJar = undef;
     }
@@ -334,23 +386,58 @@ sub ini
 
     # add cookie received from a request
 
-    $url    = $urls{'alpha'};
+    # $url    = $urls{'2'};
     $G_TREE = HTML::TreeBuilder::XPath->new;
     dataLoad();
 
 } ### sub ini
 
-sub dataInfo
+sub getMailText
 {
     my $mailText      = "\n";
+    my $mailTextHtml  = "";
     my $text_changed  = "";
     my $text_new      = "";
     my $count_new     = 0;
     my $count_changed = 0;
 
+    # <table style="width:100%">
+    #   <tr>
+    #     <th>Firstname</th>
+    #     <th>Lastname</th>
+    #     <th>Age</th>
+    #   </tr>
+    #   <tr>
+    #     <td>Jill</td>
+    #     <td>Smith</td>
+    #     <td>50</td>
+    #   </tr>
+    #   <tr>
+    #     <td>Eve</td>
+    #     <td>Jackson</td>
+    #     <td>94</td>
+    #   </tr>
+    # </table>
+
+    $mailTextHtml = "<table style=\"width:100%\">";
+    $mailTextHtml .= " <tr>";
+    $mailTextHtml .= "  <th>Új?</th>";
+    $mailTextHtml .= "  <th>Cím</th>";
+    $mailTextHtml .= "  <th>Ár</th>";
+    $mailTextHtml .= "  <th>Egyéb</th>";
+    $mailTextHtml .= " </tr>";
+
     foreach my $id ( keys %$G_DATA ) {
         if ( $G_DATA->{$id}->{status} eq $STATUS_NEW ) {
             $count_new++;
+
+            $mailTextHtml .= "<tr>";
+            $mailTextHtml .= "  <td>I</td>";
+            $mailTextHtml .= "  <td><a href=\"" . $G_DATA->{$id}->{link} . "\">" . $G_DATA->{$id}->{title} . "</a></td>";
+            $mailTextHtml .= "  <td>" . $G_DATA->{$id}->{priceStr} . "</td>";
+            $mailTextHtml .= "  <td>" . str_replace( "^, ", "", join( ', ', @{ $G_DATA->{$id}->{info} } ) ) . "</td>";
+            $mailTextHtml .= "</tr>";
+
             $text_new .= "\n+ ["
               . $G_DATA->{$id}->{title} . "]"
               . "\n - Link:     "
@@ -359,8 +446,17 @@ sub dataInfo
               . $G_DATA->{$id}->{priceStr}
               . "\n - Egyéb:    "
               . str_replace( "^, ", "", join( ', ', @{ $G_DATA->{$id}->{info} } ) ) . "\n";
+
         } elsif ( $G_DATA->{$id}->{status} eq $STATUS_CHANGED ) {
             $count_changed++;
+
+            $mailTextHtml .= "<tr>";
+            $mailTextHtml .= "  <td>N</td>";
+            $mailTextHtml .= "  <td><a href=\"" . $G_DATA->{$id}->{link} . "\">" . $G_DATA->{$id}->{title} . "</a></td>";
+            $mailTextHtml .= "  <td>" . $G_DATA->{$id}->{priceStr} . "</td>";
+            $mailTextHtml .= "  <td>" . str_replace( "^, ", "", join( ', ', @{ $G_DATA->{$id}->{info} } ) ) . "</td>";
+            $mailTextHtml .= "</tr>";
+
             $text_changed .=
                 "\n* ["
               . $G_DATA->{$id}->{title} . "]"
@@ -374,6 +470,7 @@ sub dataInfo
               . str_replace( "^, ", "", join( ', ', @{ $G_DATA->{$id}->{info} } ) ) . "\n";
         } ### elsif ( $G_DATA->{$id}->{...})
     } ### foreach my $id ( keys %$G_DATA)
+    $mailTextHtml .= "</table>";
 
     $mailText = "\n" . $text_changed . $text_new;
     $mailText = $mailText . "\nMegjegyzés:\n +: új elem \n *: változott elem\n .: változatlan elem\n";
@@ -384,11 +481,19 @@ sub dataInfo
     } else {
         $mailText = "${mailText}\n_____________________\n$count_new ÚJ hírdetés\n";
         $mailText = "${mailText}$count_changed MEGVÁLTOZOTT hírdetés\n" if $count_changed;
-    }
+        my $fileName = ${collectionDate};
+        $fileName =~ s/[.:]//g;
+        $fileName =~ s/[ ]/_/g;
+        $fileName = "./mails/${fileName}.txt";
+        $log->debug( "Szöveg mentése $fileName file-ba..." );
+        open( MYFILE, ">$fileName" );
+        print MYFILE $mailText;
+        close( MYFILE );
+    } ### else [ if ( ( $count_new + $count_changed...))]
 
     print "$mailText\n";
-    return $mailText;
-} ### sub dataInfo
+    return $mailTextHtml;
+} ### sub getMailText
 
 sub dataSave
 {
@@ -407,20 +512,32 @@ sub dataLoad
 
 sub collectData
 {
-    my $date = strftime "%Y.%m.%d %H:%M:%S", localtime;
-    $log->info( "$date\n" );
-    my $html = getHtml( $url, 1 );
-    my $pageCount = parsePageCount( \$html );
-    $log->logdie( "PageCount is 0" ) if ( $pageCount == 0 );
+    $collectionDate = strftime "%Y.%m.%d %H:%M:%S", localtime;
+    $log->info( "$collectionDate\n" );
 
     $G_ITEMS_PROCESSED = 0;
-    for ( my $i = 1 ; $i <= $pageCount ; $i++ ) {
-        $log->info( sprintf( "\n%" . length( "" . $pageCount ) . "d ", $i ) );
-        $log->debug( sprintf( "%2.0f%% (%d of %d pages)", ( 0.0 + 100 * ( $i - 1 ) / $pageCount ), ( $i - 1 ), $pageCount ) );
-        $html = getHtml( $url, $i );
-        parseItems( \$html );
-    } ### for ( my $i = 1 ; $i <=...)
+    foreach my $urlId ( keys %$urls ) {
+        my $url = $urls->{$urlId};
+        $log->info( "$urlId\n" );
+        if ( $G_ITEMS_TO_PROCESS_MAX > 0 and $G_ITEMS_PROCESSED >= $G_ITEMS_TO_PROCESS_MAX ) {
+            $log->info( "\nElértük a feldolgozási limitet." );
+            return;
+        }
+        my $html = getHtml( $url, 1 );
+        my $pageCount = parsePageCount( \$html );
+        $log->logdie( "PageCount is 0" ) if ( $pageCount == 0 );
 
+        for ( my $i = 1 ; $i <= $pageCount ; $i++ ) {
+            if ( $G_ITEMS_TO_PROCESS_MAX > 0 and $G_ITEMS_PROCESSED >= $G_ITEMS_TO_PROCESS_MAX ) {
+                $log->info( "\nElértük a feldolgozási limitet." );
+                return;
+            }
+            $log->info( sprintf( "\n%" . length( "" . $pageCount ) . "d ", $i ) );
+            $log->debug( sprintf( "%2.0f%% (%d of %d pages)", ( 0.0 + 100 * ( $i - 1 ) / $pageCount ), ( $i - 1 ), $pageCount ) );
+            $html = getHtml( $url, $i );
+            parseItems( \$html );
+        } ### for ( my $i = 1 ; $i <=...)
+    } ### foreach my $urlId ( keys %$urls)
 } ### sub collectData
 
 sub process
@@ -428,7 +545,7 @@ sub process
     stopWatch_Reset();
     stopWatch_Continue( "Teljes futás" );
     collectData();
-    dataInfo();
+    sendMail( getMailText() );
     dataSave();
 
     # stopWatch_Pause( "Teljes futás" );
@@ -441,11 +558,13 @@ sub main
     for ( ; ; ) {
         my $time = time;
         process();
-        my $timeToWait = ( $time + $G_PROCESS_EVERY_SEC ) - time;
+        my $timeToWait = ( $time + $G_WAIT_BETWEEN_FULL_PROCESS_IN_SEC ) - time;
         if ( $timeToWait < 0 ) {
-            $log->warn( "Warning: There is no wait time between the processings: continous processing.\n" );
+            $log->warn(
+"Warning: Túl alacsony a G_WAIT_BETWEEN_FULL_PROCESS_IN_SEC változó értéke: folyamatosan fut a feldolgozás. Növeld meg az értéket ${timeToWait}-el.\n"
+            );
         } else {
-            $log->info( sprintf( "Waiting %d secs for next processing...\n", $timeToWait ) );
+            $log->info( sprintf( "Várakozás a következő feldolgozásig: %d másodperc...\n", $timeToWait ) );
             sleep( $timeToWait );
         }
 
@@ -453,6 +572,27 @@ sub main
 } ### sub main
 
 main();
+
+sub sendMail
+{
+
+    # http://www.revsys.com/writings/perl/sending-email-with-perl.html
+    my ( $bodyText ) = @_;
+    my $email = Email::Simple->create(
+        header => [
+            To             => '"Sanyi" <berczi.sandor@gmail.com>',
+            From           => '"Sanyi" <berczi.sandor@gmail.com>',
+            Subject        => "Hasznaltauto.hu frissítés",
+            'Content-Type' => 'text/html',
+        ],
+
+        # body => "<p>This message is short, <br/>but <b>at least</b+++> it's cheap.</p>",
+        body => $bodyText,
+    );
+    $log->info( "Levél küldése...($bodyText)" );
+
+    # sendmail( $email );
+} ### sub sendMail
 
 sub stopWatch_Pause
 {
