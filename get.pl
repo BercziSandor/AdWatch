@@ -5,6 +5,7 @@ use strict;
 use Data::Dumper;
 use HTTP::Tiny;
 use HTTP::CookieJar;
+use HTTP::Cookies;
 use HTML::TreeBuilder::XPath;
 use HTML::Entities;
 use Encode;
@@ -408,7 +409,6 @@ sub ini
             # cookie_jar => $cookieJar,
             agent      => 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36'
         ) or $log->logdie( "zzz: $!" );
-
         $cookieJar= HTTP::Cookies->new();
         die $cookieJar->get_cookies( "hasznaltauto.hu" );
 
