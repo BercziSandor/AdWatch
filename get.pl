@@ -13,6 +13,7 @@ use Storable;
 use Log::Log4perl;
 use Time::HiRes qw( time );
 use POSIX qw(strftime);
+use LWP::UserAgent;
 
 use Email::Sender::Simple qw(sendmail);
 use Email::Simple;
@@ -22,8 +23,10 @@ use Email::Simple::Creator;
 
 # debug options for the developer;
 $Data::Dumper::Sortkeys = 1;
-my $offline       = 0;
-my $saveHtmlFiles = 0;
+my $offline          = 0;
+my $saveHtmlFiles    = 0;
+my $g_downloadMethod = 'httpTiny';
+$g_downloadMethod = 'lwp';
 
 my $G_ITEMS_TO_PROCESS_MAX             = 0;
 my $G_WAIT_BETWEEN_FULL_PROCESS_IN_SEC = 10 * 60;
@@ -31,14 +34,14 @@ my $G_WAIT_BETWEEN_GETS_IN_SEC         = 5;
 
 # GLOBAL variables
 # my $url;
-my $G_TREE;
+my $G_HTML_TREE;
 my $g_stopWatch;
 my $G_DATA;
 my $G_ITEMS_PROCESSED = 0;
 my $G_ITEMS_PER_PAGE  = 100;    # default:10 max:100
 my $G_LAST_GET_TIME   = 0;
 my $log;
-my $httpTiny;
+my $httpEngine;
 my $cookieJar;
 my $collectionDate;
 
@@ -76,7 +79,7 @@ sub getHtml
     $page = 1 if not defined $page;
     $url =~ s/×page×/$page/g;
 
-    my $html;
+    my $html = '';
     $log->debug( "getHtml(page $page)" );
 
     my $fileName = $url;
@@ -110,41 +113,53 @@ sub getHtml
             sleep( $wtime );
         }
         $G_LAST_GET_TIME = time;
-        my $response = $httpTiny->get( $url );
-        stopWatch_Pause( "Letoltés" );
-        if ( $response->{success} ) {
-            $html = $response->{content};
 
-            if ( $saveHtmlFiles ) {
-                open( MYFILE, ">$fileName" );
-                print MYFILE $html;
-                close( MYFILE );
+        if ( $g_downloadMethod eq 'httpTiny' ) {
+
+            my $response = $httpEngine->get( $url );
+            if ( $response->{success} ) {
+                $html = $response->{content};
+            } else {
+                $log->logdie( "Error getting url '$url': "
+                      . "Status: "
+                      . ( $response->{status} ? $response->{status} : " ? " ) . ", "
+                      . "Reasons: "
+                      . ( $response->{reasons} ? $response->{reasons} : " ? " )
+                      . "(599: timeout, too big response etc.)" );
+                die();
+            } ### else [ if ( $response->{success...})]
+        } elsif ( $g_downloadMethod eq 'lwp' ) {
+            my $response = $httpEngine->get( $url );
+            # print Dumper($response);
+            if ( $response->is_success ) {
+                $html = $response->content;
+            } else {
+                $log->logdie( $response->status_line );
             }
 
-            # open( MYFILE, "$fileName" );
-            # my $record;
-            # while ( $record = <MYFILE> ) {
-            #     $html .= $record;
-            # }
-            # close( MYFILE );
-
+        } elsif ( $g_downloadMethod eq 'wget' ) {
+        } elsif ( $g_downloadMethod eq 'curl' ) {
         } else {
-            $log->logdie( "Error getting url '$url': "
-                  . "Status: "
-                  . ( $response->{status} ? $response->{status} : " ? " ) . ", "
-                  . "Reasons: "
-                  . ( $response->{reasons} ? $response->{reasons} : " ? " )
-                  . "(599: timeout, too big response etc.)" );
-            die();
-        } ### else [ if ( $response->{success...})]
+            $log->logdie( "The value of variable g_downloadMethod is not ok, aborting" );
+
+        }
+
+        stopWatch_Pause( "Letoltés" );
+        $log->debug( $html );
+        if ( $saveHtmlFiles ) {
+            open( MYFILE, ">$fileName" );
+            print MYFILE $html;
+            close( MYFILE );
+        }
 
         # $html = encode_utf8( $html );
     } ### else [ if ( $offline and -e "$fileName")]
+    $log->logdie( "The content of the received html is emply." ) if ( length( $html ) == 0 );
 
-    # $G_TREE = HTML::TreeBuilder::XPath->new_from_content( $html);
-    $G_TREE->delete();
-    $G_TREE = undef;
-    $G_TREE = HTML::TreeBuilder::XPath->new_from_content( decode_utf8 $html) or logdie( $! );
+    # $G_HTML_TREE = HTML::TreeBuilder::XPath->new_from_content( $html);
+    $G_HTML_TREE->delete();
+    $G_HTML_TREE = undef;
+    $G_HTML_TREE = HTML::TreeBuilder::XPath->new_from_content( decode_utf8 $html) or logdie( $! );
     return $html;
 } ### sub getHtml
 
@@ -178,7 +193,7 @@ sub parseItems
     stopWatch_Continue( "Feldolgozás" );
 
     my @items;
-    @items = $G_TREE->findnodes( $XPATH_TALALATI_LISTA );
+    @items = $G_HTML_TREE->findnodes( $XPATH_TALALATI_LISTA );
 
     $log->debug( " There are " . scalar( @items ) . " 'talalati_lista' items" );
     $log->logdie( "No items" ) unless @items;
@@ -277,9 +292,9 @@ sub parseItems
 sub parsePageCount
 {
     my $count = undef;
-    $log->logDie( "Error." ) unless $G_TREE;
+    $log->logDie( "Error." ) unless $G_HTML_TREE;
     $log->info( "Feldolgozandó oldalak számának lekérése..." );
-    my @values = $G_TREE->findvalues( '//a[@class="oldalszam"]' ) or return 1;    #  @title="Utolsó oldal"
+    my @values = $G_HTML_TREE->findvalues( '//a[@class="oldalszam"]' ) or return 1;    #  @title="Utolsó oldal"
 
     use List::Util qw( max );
     my $max = max( @values ) or $log->logdie( "$!" );
@@ -368,8 +383,8 @@ sub ini
     Log::Log4perl::init( \$logConf );
     $log = Log::Log4perl->get_logger();
 
-    my $enableCookies = 1;
-    if ( $enableCookies ) {
+
+    if ( $g_downloadMethod eq 'httpTiny' ) {
         $cookieJar = HTTP::CookieJar->new;
 
         # 3128:Tapolca
@@ -377,21 +392,41 @@ sub ini
             "telepules_saved=1; telepules_id_user=3148; visitor_telepules=3148; talalatokszama=${G_ITEMS_PER_PAGE}; Path=/; Domain=.hasznaltauto.hu"
         );
         $cookieJar->add( "http://hasznaltauto.hu", "talalatokszama=${G_ITEMS_PER_PAGE}; Path=/; Domain=.hasznaltauto.hu" );
-    } else {
-        $cookieJar = undef;
-    }
 
-    # $httpTiny = HTTP::Tiny->new( cookie_jar => $cookieJar ) or $log->logdie( $! );
-    $httpTiny = HTTP::Tiny->new(
-        timeout    => 15,
-        cookie_jar => $cookieJar,
-        agent      => 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36'
-    ) or $log->logdie( $! );
+        $httpEngine = HTTP::Tiny->new(
+            timeout    => 15,
+            cookie_jar => $cookieJar,
+            agent      => 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36'
+        ) or $log->logdie( $! );
+    } elsif ( $g_downloadMethod eq 'lwp' ) {
+
+
+
+
+        $httpEngine = LWP::UserAgent->new(
+            timeout    => 15,
+            # cookie_jar => $cookieJar,
+            agent      => 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36'
+        ) or $log->logdie( "zzz: $!" );
+
+        $cookieJar= HTTP::Cookies->new();
+        die $cookieJar->get_cookies( "hasznaltauto.hu" );
+
+        die "eeee";
+
+        $httpEngine->cookie_jar($cookieJar);
+
+
+
+
+    } else {
+        $log->logdie( "TODO: Please define this html engine" );
+    }
 
     # add cookie received from a request
 
     # $url    = $urls{'2'};
-    $G_TREE = HTML::TreeBuilder::XPath->new;
+    $G_HTML_TREE = HTML::TreeBuilder::XPath->new;
     dataLoad();
 
 } ### sub ini
