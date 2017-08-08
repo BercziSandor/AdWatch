@@ -84,7 +84,6 @@ sub getHtml
 
     if ( $url =~ m|talalatilista/([^/]+)/(.{10})[^/]+/page(\d+)| ) {
         $fileName = "$1_$2_$3.html";
-
         $log->debug( "fileName: $fileName" );
     } else {
         $log->logdie( "Mi ez az url?? [$url]" );
@@ -315,21 +314,21 @@ sub ini
     # INI start
 
     # Típusok:
-    #	- Audi 2002 től
-    #	- Citroen 2006 tól
-    #	- Fiat 2006 tól
-    #	- Ford 2006 tól.
-    #	- Honda 2005 től
+    #   - Audi 2002 től
+    #   - Citroen 2006 tól
+    #   - Fiat 2006 tól
+    #   - Ford 2006 tól.
+    #   - Honda 2005 től
 
-    #	- Opel 2006 tól
-    #	- Peugeot 2006 tól.
-    #	- Renault 2006 tól
-    #	- Seat  2006 tól
-    #	- Skoda 2006 tól
+    #   - Opel 2006 tól
+    #   - Peugeot 2006 tól.
+    #   - Renault 2006 tól
+    #   - Seat  2006 tól
+    #   - Skoda 2006 tól
 
-    #	- Suzuki tipusok, 2006 tól.
-    #	- Toyota 2006
-    #	- Volkswagen  2002 től
+    #   - Suzuki tipusok, 2006 tól.
+    #   - Toyota 2006
+    #   - Volkswagen  2002 től
 
     # - 2 m Ft-ig
     # - Dunántúli megyékben
@@ -382,7 +381,11 @@ sub ini
     }
 
     # $httpTiny = HTTP::Tiny->new( cookie_jar => $cookieJar ) or $log->logdie( $! );
-    $httpTiny = HTTP::Tiny->new( timeout => 15, cookie_jar => $cookieJar ) or $log->logdie( $! );
+    $httpTiny = HTTP::Tiny->new(
+        timeout    => 15,
+        cookie_jar => $cookieJar,
+        agent      => 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36'
+    ) or $log->logdie( $! );
 
     # add cookie received from a request
 

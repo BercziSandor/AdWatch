@@ -1,8 +1,35 @@
 Goal of the script: alerting about new ads via email
 
-ToDO:
- - solving 429
+** TODO **
+ -
 
+** Prerequisits **
+
+apt-get install gcc make
+
+curl -L https://cpanmin.us | perl - --sudo App::cpanminus
+
+cpanm --sudo install HTTP::CookieJar
+cpanm --sudo install HTTP::Date
+cpanm --sudo install HTML::TreeBuilder
+	Hack if not working:
+	replace this:
+		use lib '.'
+	with this:
+		use File::Spec;
+		use File::Basename;
+		use File::Copy;
+		use lib dirname( File::Spec->rel2abs(__FILE__) );
+	in file Build.PL
+	Install:
+	perl Build.PL
+	./Build
+	./Build test
+	./Build install
+
+cpanm --sudo install HTML::TreeBuilder::XPath
+cpanm --sudo install HTML::Parser
+cpanm --sudo install Log::Log4perl
 
 
 * Cloud services
