@@ -8,6 +8,7 @@ use HTTP::CookieJar;
 use HTTP::Cookies;
 use HTML::TreeBuilder::XPath;
 use HTML::Entities;
+use WWW::Mechanize;
 use Encode;
 use List::Util qw[min max];
 use Storable;
@@ -20,14 +21,21 @@ use Email::Sender::Simple qw(sendmail);
 use Email::Simple;
 use Email::Simple::Creator;
 
+my @g_mailRecipients =
+  ( '"Sanyi" <berczi.sandor@gmail.com>', '"Tillatilla66" <tillatilla66@freemail.hu>', '"Tillatilla1966" <tillatilla.1966@gmail.com>' );
+my $g_sendMail = 1;
+
 # Do not change this settings above this line.
 
 # debug options for the developer;
 $Data::Dumper::Sortkeys = 1;
-my $offline          = 0;
-my $saveHtmlFiles    = 0;
-my $g_downloadMethod = 'httpTiny';
+my $offline       = 0;
+my $saveHtmlFiles = 0;
+my $g_downloadMethod;
+
 $g_downloadMethod = 'lwp';
+$g_downloadMethod = 'wwwMech';
+$g_downloadMethod = 'httpTiny';
 
 my $G_ITEMS_TO_PROCESS_MAX             = 0;
 my $G_WAIT_BETWEEN_FULL_PROCESS_IN_SEC = 10 * 60;
@@ -35,6 +43,7 @@ my $G_WAIT_BETWEEN_GETS_IN_SEC         = 5;
 
 # GLOBAL variables
 # my $url;
+my $G_ITEMS_IN_DB;
 my $G_HTML_TREE;
 my $g_stopWatch;
 my $G_DATA;
@@ -43,7 +52,6 @@ my $G_ITEMS_PER_PAGE  = 100;    # default:10 max:100
 my $G_LAST_GET_TIME   = 0;
 my $log;
 my $httpEngine;
-my $cookieJar;
 my $collectionDate;
 
 # CONSTANTS
@@ -80,7 +88,8 @@ sub getHtml
     $page = 1 if not defined $page;
     $url =~ s/×page×/$page/g;
 
-    my $html = '';
+    my $html    = '';
+    my $content = '';
     $log->debug( "getHtml(page $page)" );
 
     my $fileName = $url;
@@ -114,12 +123,12 @@ sub getHtml
             sleep( $wtime );
         }
         $G_LAST_GET_TIME = time;
-
         if ( $g_downloadMethod eq 'httpTiny' ) {
 
             my $response = $httpEngine->get( $url );
             if ( $response->{success} ) {
-                $html = $response->{content};
+                $html    = $response->{content};
+                $content = decode_utf8( $html );
             } else {
                 $log->logdie( "Error getting url '$url': "
                       . "Status: "
@@ -131,15 +140,29 @@ sub getHtml
             } ### else [ if ( $response->{success...})]
         } elsif ( $g_downloadMethod eq 'lwp' ) {
             my $response = $httpEngine->get( $url );
+
             # print Dumper($response);
             if ( $response->is_success ) {
-                $html = $response->content;
+                $html    = $response->content;
+                $content = decode_utf8( $html );
             } else {
                 $log->logdie( $response->status_line );
             }
 
+        } elsif ( $g_downloadMethod eq 'wwwMech' ) {
+            my $response = $httpEngine->get( $url );
+            if ( $httpEngine->success() ) {
+
+                # $log->debug( Dumper( $httpEngine ) );
+                $html    = $httpEngine->content();
+                $content = $html;
+            } else {
+                $log->logdie( $httpEngine->status() );
+            }
+
         } elsif ( $g_downloadMethod eq 'wget' ) {
         } elsif ( $g_downloadMethod eq 'curl' ) {
+
         } else {
             $log->logdie( "The value of variable g_downloadMethod is not ok, aborting" );
 
@@ -153,14 +176,13 @@ sub getHtml
             close( MYFILE );
         }
 
-        # $html = encode_utf8( $html );
     } ### else [ if ( $offline and -e "$fileName")]
     $log->logdie( "The content of the received html is emply." ) if ( length( $html ) == 0 );
 
     # $G_HTML_TREE = HTML::TreeBuilder::XPath->new_from_content( $html);
     $G_HTML_TREE->delete();
     $G_HTML_TREE = undef;
-    $G_HTML_TREE = HTML::TreeBuilder::XPath->new_from_content( decode_utf8 $html) or logdie( $! );
+    $G_HTML_TREE = HTML::TreeBuilder::XPath->new_from_content( $content ) or logdie( $! );
     return $html;
 } ### sub getHtml
 
@@ -241,51 +263,67 @@ sub parseItems
         $priceNr =~ s/\D//g;
         $priceNr = 0 unless $priceNr;
 
-        if ( defined $G_DATA->{$id} ) {
+        if ( defined $G_DATA->{ads}->{$id} ) {
 
-            $G_DATA->{$id}->{status} = $STATUS_EMPTY;
+            $G_DATA->{ads}->{$id}->{status} = $STATUS_EMPTY;
 
             # already defined. Is it changed?
-            if ( $G_DATA->{$id}->{title} ne $title ) {
-                $G_DATA->{$id}->{comment} .= strftime( "%Y.%m.%d %H:%M:%S:", localtime ) . "Cím: [" . $G_DATA->{$id}->{title} . "] -> [$title]; ";
-                $G_DATA->{$id}->{title}  = $title;
-                $G_DATA->{$id}->{status} = $STATUS_CHANGED;
+            if ( $G_DATA->{ads}->{$id}->{title} ne $title ) {
+                $G_DATA->{ads}->{$id}->{comment} .=
+                  strftime( "%Y.%m.%d %H:%M:%S:", localtime ) . "Cím: [" . $G_DATA->{ads}->{$id}->{title} . "] -> [$title]; ";
+                $G_DATA->{ads}->{$id}->{title}  = $title;
+                $G_DATA->{ads}->{$id}->{status} = $STATUS_CHANGED;
 
-            } ### if ( $G_DATA->{$id}->{...})
-            if ( ( $G_DATA->{$id}->{priceNr} ? $G_DATA->{$id}->{priceNr} : 0 ) != $priceNr ) {
-                $G_DATA->{$id}->{comment} .= strftime( "%Y.%m.%d %H:%M:%S:", localtime ) . " Ár: " . $G_DATA->{$id}->{priceStr} . " -> $priceStr; ";
-                $G_DATA->{$id}->{priceNr}  = $priceNr;
-                $G_DATA->{$id}->{priceStr} = $priceStr;
-                $G_DATA->{$id}->{status}   = $STATUS_CHANGED;
-            } ### if ( ( $G_DATA->{$id}->...))
+            } ### if ( $G_DATA->{ads}->{...})
 
+            if ( ( $G_DATA->{ads}->{$id}->{priceNr} ? $G_DATA->{ads}->{$id}->{priceNr} : 0 ) != $priceNr ) {
+                $G_DATA->{ads}->{$id}->{comment} .=
+                  strftime( "%Y.%m.%d %H:%M:%S:", localtime ) . " Ár: " . $G_DATA->{ads}->{$id}->{priceStr} . " -> $priceStr; ";
+                $G_DATA->{ads}->{$id}->{priceNr}  = $priceNr;
+                $G_DATA->{ads}->{$id}->{priceStr} = $priceStr;
+                $G_DATA->{ads}->{$id}->{status}   = $STATUS_CHANGED;
+            } ### if ( ( $G_DATA->{ads}->...))
+
+            if ( not defined $G_DATA->{ads}->{$id}->{firstSeen} ) {
+                $G_DATA->{ads}->{$id}->{firstSeen} = strftime( "%Y.%m.%d %H:%M:%S", localtime );
+                $G_DATA->{ads}->{$id}->{comment} .=
+                  strftime( "%Y.%m.%d %H:%M:%S:", localtime ) . "Adatbázisba került; ";
+            }
         } else {
 
             # add
-            $G_DATA->{$id}->{firstSeen} = strftime( "%Y.%m.%d %H:%M:%S:", localtime );
-            $G_DATA->{$id}->{title}     = $title;
-            $G_DATA->{$id}->{link}      = $link;
-            $G_DATA->{$id}->{features}  = \@fs;
-            $G_DATA->{$id}->{category}  = $category;
-            $G_DATA->{$id}->{info}      = \@infos;
-            $G_DATA->{$id}->{desc}      = $desc;
-            $G_DATA->{$id}->{priceStr}  = $priceStr;
-            $G_DATA->{$id}->{priceNr}   = $priceNr;
-            $G_DATA->{$id}->{status}    = $STATUS_NEW;
+            $G_DATA->{ads}->{$id}->{comment} =
+              strftime( "%Y.%m.%d %H:%M:%S:", localtime ) . "Adatbázisba került; ";
+            $G_DATA->{ads}->{$id}->{firstSeen} = strftime( "%Y.%m.%d %H:%M:%S", localtime );
+            $G_DATA->{ads}->{$id}->{title}     = $title;
+            $G_DATA->{ads}->{$id}->{link}      = $link;
+            $G_DATA->{ads}->{$id}->{features}  = \@fs;
+            $G_DATA->{ads}->{$id}->{category}  = $category;
+            $G_DATA->{ads}->{$id}->{info}      = \@infos;
+            $G_DATA->{ads}->{$id}->{desc}      = $desc;
+            $G_DATA->{ads}->{$id}->{priceStr}  = $priceStr;
+            $G_DATA->{ads}->{$id}->{priceNr}   = $priceNr;
+            $G_DATA->{ads}->{$id}->{status}    = $STATUS_NEW;
         } ### else [ if ( defined $G_DATA->...)]
+        $G_DATA->{lastChanged} = time;
 
         my $sign;
-        if ( $G_DATA->{$id}->{status} eq $STATUS_NEW ) {
+        if ( $G_DATA->{ads}->{$id}->{status} eq $STATUS_NEW ) {
             $sign = "+";
-        } elsif ( $G_DATA->{$id}->{status} eq $STATUS_CHANGED ) {
+        } elsif ( $G_DATA->{ads}->{$id}->{status} eq $STATUS_CHANGED ) {
             $sign = "*";
         } else {
-            $sign = ".";
+            $sign = " ";
         }
         print "$sign";
         $log->debug( " $sign $id: [$title]" );
     } ### for my $item ( @items )
-    print "\n";
+    if ( $G_ITEMS_IN_DB ) {
+        my $val = ( ( 0.0 + 100 * ( $G_ITEMS_PROCESSED ? $G_ITEMS_PROCESSED : 100 ) ) / $G_ITEMS_IN_DB );
+        $log->info( sprintf( "] %2d%%", $val ) );
+    } else {
+        $log->info( sprintf( "] %4d", $G_ITEMS_PROCESSED ) );
+    }
     $log->debug( "parseItems done - " . scalar( @items ) . " items parsed." );
     stopWatch_Pause( "Feldolgozás" );
 } ### sub parseItems
@@ -294,7 +332,6 @@ sub parsePageCount
 {
     my $count = undef;
     $log->logDie( "Error." ) unless $G_HTML_TREE;
-    $log->info( "Feldolgozandó oldalak számának lekérése..." );
     my @values = $G_HTML_TREE->findvalues( '//a[@class="oldalszam"]' ) or return 1;    #  @title="Utolsó oldal"
 
     use List::Util qw( max );
@@ -309,7 +346,9 @@ sub parsePageCount
         }
         $max = $maxPagesToProcess;
     } ### if ( $G_ITEMS_TO_PROCESS_MAX...)
-    $log->info( " $max oldal elemeit dolgozom fel, oldalanként maximum $G_ITEMS_PER_PAGE elemmel.\n" );
+        # $log->info( " Feldolgozandó oldalak száma: $max" );
+
+    # $log->info( " $max oldal elemeit dolgozom fel, oldalanként maximum $G_ITEMS_PER_PAGE elemmel.\n" );
 
     return $max;
 } ### sub parsePageCount
@@ -326,6 +365,7 @@ sub ini
         die "couldn't do $cnfFile: $!\n" unless defined $return;
         die "couldn't run $cnfFile\n" unless $return;
     } ### unless ( my $return = do $cnfFile)
+    dataLoad();
 
     # ************************************************
     # INI start
@@ -383,51 +423,54 @@ sub ini
 
     Log::Log4perl::init( \$logConf );
     $log = Log::Log4perl->get_logger();
+    my $agent = 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36';
 
+    $log->info( strftime( "%Y.%m.%d %H:%M:%S", localtime ) . "\n" );
 
+    # set_cookie( $version, $key, $val, $path, $domain, $port, $path_spec, $secure, $maxage, $discard, \%rest )
+    my $cookieJar_HttpCookies;
+    $cookieJar_HttpCookies = HTTP::Cookies->new();
+    $cookieJar_HttpCookies->set_cookie( 0, 'talalatokszama', $G_ITEMS_PER_PAGE, '/', 'http://hasznaltauto.hu', 80, 0, 0, 86400, 0 );
+
+    # Working, but only with httpTiny
+    # 3128:Tapolca
+    my $cookieJar_HttpCookieJar = HTTP::CookieJar->new;
+    $cookieJar_HttpCookieJar->add( "http://hasznaltauto.hu",
+        "telepules_saved=1; telepules_id_user=3148; visitor_telepules=3148; talalatokszama=${G_ITEMS_PER_PAGE}; Path=/; Domain=.hasznaltauto.hu" );
+    $cookieJar_HttpCookieJar->add( "http://hasznaltauto.hu", "talalatokszama=${G_ITEMS_PER_PAGE}; Path=/; Domain=.hasznaltauto.hu" );
+
+    $G_ITEMS_IN_DB = ( $G_DATA->{ads} ? scalar( keys %{ $G_DATA->{ads} } ) : 0 );
+    $log->info( "Ini: Eddig beolvasott hirdetések száma: " . $G_ITEMS_IN_DB . "\n" );
+    $log->info( "Ini: Http motor: $g_downloadMethod\n" );
     if ( $g_downloadMethod eq 'httpTiny' ) {
-        $cookieJar = HTTP::CookieJar->new;
-
-        # 3128:Tapolca
-        $cookieJar->add( "http://hasznaltauto.hu",
-            "telepules_saved=1; telepules_id_user=3148; visitor_telepules=3148; talalatokszama=${G_ITEMS_PER_PAGE}; Path=/; Domain=.hasznaltauto.hu"
-        );
-        $cookieJar->add( "http://hasznaltauto.hu", "talalatokszama=${G_ITEMS_PER_PAGE}; Path=/; Domain=.hasznaltauto.hu" );
-
         $httpEngine = HTTP::Tiny->new(
             timeout    => 15,
-            cookie_jar => $cookieJar,
-            agent      => 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36'
+            cookie_jar => $cookieJar_HttpCookieJar,
+            agent      => $agent
         ) or $log->logdie( $! );
     } elsif ( $g_downloadMethod eq 'lwp' ) {
 
-
-
-
         $httpEngine = LWP::UserAgent->new(
-            timeout    => 15,
+            timeout => 15,
+
             # cookie_jar => $cookieJar,
-            agent      => 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36'
+            agent => $agent
         ) or $log->logdie( "zzz: $!" );
-        $cookieJar= HTTP::Cookies->new();
-        die $cookieJar->get_cookies( "hasznaltauto.hu" );
 
-        die "eeee";
+        $httpEngine->cookie_jar( $cookieJar_HttpCookies );
 
-        $httpEngine->cookie_jar($cookieJar);
-
-
-
+        # $httpEngine->cookie_jar( $cookieJar );
+    } elsif ( $g_downloadMethod eq 'wwwMech' ) {
+        $httpEngine = WWW::Mechanize->new(
+            cookie_jar => $cookieJar_HttpCookies,
+            agent      => $agent
+        );
 
     } else {
         $log->logdie( "TODO: Please define this html engine" );
     }
 
-    # add cookie received from a request
-
-    # $url    = $urls{'2'};
     $G_HTML_TREE = HTML::TreeBuilder::XPath->new;
-    dataLoad();
 
 } ### sub ini
 
@@ -440,60 +483,62 @@ sub getMailText
     my $count_new     = 0;
     my $count_changed = 0;
 
-    foreach my $id ( keys %$G_DATA ) {
-        if ( $G_DATA->{$id}->{status} eq $STATUS_NEW ) {
+    foreach my $id ( keys %{ $G_DATA->{ads} } ) {
+        if ( $G_DATA->{ads}->{$id}->{status} eq $STATUS_NEW ) {
             $count_new++;
 
             $mailTextHtml .= "+ ";
-            $mailTextHtml .= "<a href=\"" . $G_DATA->{$id}->{link} . "\">" . $G_DATA->{$id}->{title} . "</a><br/>";
-            $mailTextHtml .= " - " . $G_DATA->{$id}->{priceStr} . "<br/>";
-            $mailTextHtml .= " - " . str_replace( "^, ", "", join( ', ', @{ $G_DATA->{$id}->{info} } ) ) . "<br/>";
+            $mailTextHtml .= "<a href=\"" . $G_DATA->{ads}->{$id}->{link} . "\">" . $G_DATA->{ads}->{$id}->{title} . "</a><br/>";
+            $mailTextHtml .= " - " . $G_DATA->{ads}->{$id}->{priceStr} . "<br/>";
+            $mailTextHtml .= " - " . str_replace( "^, ", "", join( ', ', @{ $G_DATA->{ads}->{$id}->{info} } ) ) . "<br/>";
             $mailTextHtml .= "<br/>";
 
             $text_new .= "\n+ ["
-              . $G_DATA->{$id}->{title} . "]"
+              . $G_DATA->{ads}->{$id}->{title} . "]"
               . "\n - Link:     "
-              . $G_DATA->{$id}->{link}
+              . $G_DATA->{ads}->{$id}->{link}
               . "\n - Ár:       "
-              . $G_DATA->{$id}->{priceStr}
+              . $G_DATA->{ads}->{$id}->{priceStr}
+              . "\n - Megjegyzés: "
+              . $G_DATA->{ads}->{$id}->{comment}
               . "\n - Egyéb:    "
-              . str_replace( "^, ", "", join( ', ', @{ $G_DATA->{$id}->{info} } ) ) . "\n";
+              . str_replace( "^, ", "", join( ', ', @{ $G_DATA->{ads}->{$id}->{info} } ) ) . "\n";
 
-        } elsif ( $G_DATA->{$id}->{status} eq $STATUS_CHANGED ) {
+        } elsif ( $G_DATA->{ads}->{$id}->{status} eq $STATUS_CHANGED ) {
             $count_changed++;
 
             $mailTextHtml .= "* ";
-            $mailTextHtml .= "<a href=\"" . $G_DATA->{$id}->{link} . "\">" . $G_DATA->{$id}->{title} . "</a><br/>";
-            $mailTextHtml .= " - " . $G_DATA->{$id}->{priceStr} . "<br/>";
-            $mailTextHtml .= " - " . str_replace( "^, ", "", join( ', ', @{ $G_DATA->{$id}->{info} } ) ) . "<br/>";
-            $mailTextHtml .= " - " . $G_DATA->{$id}->{comment} . "<br/>";
+            $mailTextHtml .= "<a href=\"" . $G_DATA->{ads}->{$id}->{link} . "\">" . $G_DATA->{ads}->{$id}->{title} . "</a><br/>";
+            $mailTextHtml .= " - " . $G_DATA->{ads}->{$id}->{priceStr} . "<br/>";
+            $mailTextHtml .= " - " . str_replace( "^, ", "", join( ', ', @{ $G_DATA->{ads}->{$id}->{info} } ) ) . "<br/>";
+            $mailTextHtml .= " - " . $G_DATA->{ads}->{$id}->{comment} . "<br/>";
             $mailTextHtml .= "<br/>";
 
             $text_changed .=
                 "\n* ["
-              . $G_DATA->{$id}->{title} . "]"
+              . $G_DATA->{ads}->{$id}->{title} . "]"
               . "\n - Link:     "
-              . $G_DATA->{$id}->{link}
-              . "\n - Változás: "
-              . $G_DATA->{$id}->{comment}
+              . $G_DATA->{ads}->{$id}->{link}
+              . "\n - Megjegyzés: "
+              . $G_DATA->{ads}->{$id}->{comment}
               . "\n - Ár:       "
-              . $G_DATA->{$id}->{priceStr}
+              . $G_DATA->{ads}->{$id}->{priceStr}
               . "\n - Egyéb:    "
-              . str_replace( "^, ", "", join( ', ', @{ $G_DATA->{$id}->{info} } ) ) . "\n";
-        } ### elsif ( $G_DATA->{$id}->{...})
+              . str_replace( "^, ", "", join( ', ', @{ $G_DATA->{ads}->{$id}->{info} } ) ) . "\n";
+        } ### elsif ( $G_DATA->{ads}->{...})
 
-    } ### foreach my $id ( keys %$G_DATA)
+    } ### foreach my $id ( keys %{ $G_DATA...})
     $mailTextHtml .= "</table>";
 
     $mailText = "\n" . $text_changed . $text_new;
     $mailText = $mailText . "\nMegjegyzés:\n +: új elem \n *: változott elem\n .: változatlan elem\n";
-    $mailText = "${mailText}\n$G_ITEMS_PROCESSED feldolgozott hírdetés\n";
+    $mailText = "${mailText}\n$G_ITEMS_PROCESSED feldolgozott hirdetés\n";
 
     if ( ( $count_new + $count_changed ) == 0 ) {
         $mailText = "\nNincs újdonság.\n$mailText";
     } else {
-        $mailText = "${mailText}\n_____________________\n$count_new ÚJ hírdetés\n";
-        $mailText = "${mailText}$count_changed MEGVÁLTOZOTT hírdetés\n" if $count_changed;
+        $mailText = "${mailText}\n_____________________\n$count_new ÚJ hirdetés\n";
+        $mailText = "${mailText}$count_changed MEGVÁLTOZOTT hirdetés\n" if $count_changed;
         my $fileName = ${collectionDate};
         $fileName =~ s/[.:]//g;
         $fileName =~ s/[ ]/_/g;
@@ -517,21 +562,21 @@ sub dataLoad
 {
     return if ( not -e 'data.dat' );
     $G_DATA = retrieve( 'data.dat' );
-    foreach my $id ( keys %$G_DATA ) {
-        $log->debug( "Loaded: $G_DATA->{$id}->{title}" );
-        $G_DATA->{$id}->{status} = $STATUS_EMPTY;
+    foreach my $id ( keys %{ $G_DATA->{ads} } ) {
+
+        # $log->debug( "Loaded: $G_DATA->{ads}->{$id}->{title}" );
+        $G_DATA->{ads}->{$id}->{status} = $STATUS_EMPTY;
     }
 } ### sub dataLoad
 
 sub collectData
 {
     $collectionDate = strftime "%Y.%m.%d %H:%M:%S", localtime;
-    $log->info( "$collectionDate\n" );
 
     $G_ITEMS_PROCESSED = 0;
     foreach my $urlId ( sort keys %$urls ) {
         my $url = $urls->{$urlId};
-        $log->info( "$urlId\n" );
+        $log->info( "\n** $urlId **\n" );
         if ( $G_ITEMS_TO_PROCESS_MAX > 0 and $G_ITEMS_PROCESSED >= $G_ITEMS_TO_PROCESS_MAX ) {
             $log->info( "\nElértük a feldolgozási limitet." );
             return;
@@ -545,7 +590,7 @@ sub collectData
                 $log->info( "\nElértük a feldolgozási limitet." );
                 return;
             }
-            $log->info( sprintf( "\n%" . length( "" . $pageCount ) . "d ", $i ) );
+            $log->info( sprintf( "\n%" . length( "" . $pageCount ) . "d/%d [", $i, $pageCount ) );
             $log->debug( sprintf( "%2.0f%% (%d of %d pages)", ( 0.0 + 100 * ( $i - 1 ) / $pageCount ), ( $i - 1 ), $pageCount ) );
             $html = getHtml( $url, $i );
             parseItems( \$html );
@@ -593,10 +638,11 @@ sub sendMail
     # http://www.revsys.com/writings/perl/sending-email-with-perl.html
     my ( $bodyText ) = @_;
 
-    $log->info( "Levél küldése...\n" );
-    my @recipients = ( '"Sanyi" <berczi.sandor@gmail.com>', '"Tillatilla66" <tillatilla66@freemail.hu>' );
+    return if ( not $g_sendMail );
 
-    foreach ( @recipients ) {
+    $log->info( "Levél küldése...\n" );
+
+    foreach ( @g_mailRecipients ) {
         my $email = Email::Simple->create(
             header => [
                 To             => $_,
@@ -606,8 +652,9 @@ sub sendMail
             ],
             body => $bodyText,
         );
+        $log->info( " $_ ...\n" );
         sendmail( $email );
-    } ### foreach ( @recipients )
+    } ### foreach ( @g_mailRecipients)
 
     # my $email = Email::Simple->create(
     #     header => [
