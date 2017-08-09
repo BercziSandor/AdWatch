@@ -3,22 +3,28 @@
 use warnings;
 use strict;
 use Data::Dumper;
+use Log::Log4perl;
+
+# Http engines
 use HTTP::Tiny;
-use HTTP::CookieJar;
+use WWW::Mechanize;
+use LWP::UserAgent;
+
+# Cookie stuff
 use HTTP::Cookies;
+use HTTP::CookieJar;
+use HTTP::CookieJar::LWP;
+
 use HTML::TreeBuilder::XPath;
 use HTML::Entities;
-use WWW::Mechanize;
 use Encode;
 use List::Util qw[min max];
 use Storable;
-use Log::Log4perl;
 use Time::HiRes qw( time );
 use POSIX qw(strftime);
-use LWP::UserAgent;
 
 use Email::Sender::Simple qw(sendmail);
-use Email::Simple;
+# use Email::Simple;
 use Email::Simple::Creator;
 
 my @g_mailRecipients =
@@ -33,9 +39,9 @@ my $offline       = 0;
 my $saveHtmlFiles = 0;
 my $g_downloadMethod;
 
+$g_downloadMethod = 'httpTiny';
 $g_downloadMethod = 'lwp';
 $g_downloadMethod = 'wwwMech';
-$g_downloadMethod = 'httpTiny';
 
 my $G_ITEMS_TO_PROCESS_MAX             = 0;
 my $G_WAIT_BETWEEN_FULL_PROCESS_IN_SEC = 8 * 60;
@@ -152,12 +158,12 @@ sub getHtml
         } elsif ( $g_downloadMethod eq 'wwwMech' ) {
             my $response = $httpEngine->get( $url );
             if ( $httpEngine->success() ) {
-
-                # $log->debug( Dumper( $httpEngine ) );
                 $html    = $httpEngine->content();
                 $content = $html;
+                Encode::_utf8_off( $content );
+                $content = decode_utf8( $content );
             } else {
-                $log->logdie( $httpEngine->status() );
+                $log->logdie( "ajjjj\n" );    #$httpEngine->status()
             }
 
         } elsif ( $g_downloadMethod eq 'wget' ) {
@@ -169,7 +175,8 @@ sub getHtml
         }
 
         stopWatch_Pause( "Letoltés" );
-        $log->debug( $html );
+
+        # $log->debug( $content );
         if ( $saveHtmlFiles ) {
             open( MYFILE, ">$fileName" );
             print MYFILE $html;
@@ -366,6 +373,7 @@ sub ini
         die "couldn't run $cnfFile\n" unless $return;
     } ### unless ( my $return = do $cnfFile)
     dataLoad();
+    $G_HTML_TREE = HTML::TreeBuilder::XPath->new;
 
     # ************************************************
     # INI start
@@ -430,14 +438,25 @@ sub ini
     # set_cookie( $version, $key, $val, $path, $domain, $port, $path_spec, $secure, $maxage, $discard, \%rest )
     my $cookieJar_HttpCookies;
     $cookieJar_HttpCookies = HTTP::Cookies->new();
-    $cookieJar_HttpCookies->set_cookie( 0, 'talalatokszama', $G_ITEMS_PER_PAGE, '/', 'http://hasznaltauto.hu', 80, 0, 0, 86400, 0 );
+    $cookieJar_HttpCookies->set_cookie( 0, 'talalatokszama', $G_ITEMS_PER_PAGE, '/', 'http://hasznaltauto.hu', 80,  0, 0, 86400, 0 ) or die "$!";
+    $cookieJar_HttpCookies->set_cookie( 1, 'talalatokszama', $G_ITEMS_PER_PAGE, '/', 'http://hasznaltauto.hu', 443, 0, 0, 86400, 0 ) or die "$!";
 
     # Working, but only with httpTiny
     # 3128:Tapolca
     my $cookieJar_HttpCookieJar = HTTP::CookieJar->new;
-    $cookieJar_HttpCookieJar->add( "http://hasznaltauto.hu",
-        "telepules_saved=1; telepules_id_user=3148; visitor_telepules=3148; talalatokszama=${G_ITEMS_PER_PAGE}; Path=/; Domain=.hasznaltauto.hu" );
-    $cookieJar_HttpCookieJar->add( "http://hasznaltauto.hu", "talalatokszama=${G_ITEMS_PER_PAGE}; Path=/; Domain=.hasznaltauto.hu" );
+
+# $cookieJar_HttpCookieJar->add( "http://hasznaltauto.hu", "telepules_saved=1; telepules_id_user=3148; visitor_telepules=3148; talalatokszama=${G_ITEMS_PER_PAGE}; Path=/; Domain=.hasznaltauto.hu" ) or die "$!";
+    $cookieJar_HttpCookieJar->add( "http://hasznaltauto.hu", "talalatokszama=${G_ITEMS_PER_PAGE}; Path=/; Domain=.hasznaltauto.hu" ) or die "$!";
+    $cookieJar_HttpCookieJar->add( "http://hasznaltauto.hu", "telepules_saved=1; Path=/; Domain=.hasznaltauto.hu" )                  or die "$!";
+    $cookieJar_HttpCookieJar->add( "http://hasznaltauto.hu", "telepules_id_user=3148; Path=/; Domain=.hasznaltauto.hu" )             or die "$!";
+    $cookieJar_HttpCookieJar->add( "http://hasznaltauto.hu", "visitor_telepules=3148 Path=/; Domain=.hasznaltauto.hu" )              or die "$!";
+
+    my $cookieJar_HttpCookieJarLWP = HTTP::CookieJar::LWP->new;
+    $cookieJar_HttpCookieJarLWP->add( "http://hasznaltauto.hu", "talalatokszama=${G_ITEMS_PER_PAGE}; Path=/; Domain=.hasznaltauto.hu" ) or die "$!";
+    $cookieJar_HttpCookieJarLWP->add( "http://hasznaltauto.hu", "talalatokszama=${G_ITEMS_PER_PAGE}; Path=/; Domain=.hasznaltauto.hu" ) or die "$!";
+    $cookieJar_HttpCookieJarLWP->add( "http://hasznaltauto.hu", "telepules_saved=1; Path=/; Domain=.hasznaltauto.hu" )                  or die "$!";
+    $cookieJar_HttpCookieJarLWP->add( "http://hasznaltauto.hu", "telepules_id_user=3148; Path=/; Domain=.hasznaltauto.hu" )             or die "$!";
+    $cookieJar_HttpCookieJarLWP->add( "http://hasznaltauto.hu", "visitor_telepules=3148 Path=/; Domain=.hasznaltauto.hu" )              or die "$!";
 
     $G_ITEMS_IN_DB = ( $G_DATA->{ads} ? scalar( keys %{ $G_DATA->{ads} } ) : 0 );
     $log->info( "Ini: Eddig beolvasott hirdetések száma: " . $G_ITEMS_IN_DB . "\n" );
@@ -451,26 +470,23 @@ sub ini
     } elsif ( $g_downloadMethod eq 'lwp' ) {
 
         $httpEngine = LWP::UserAgent->new(
-            timeout => 15,
-
-            # cookie_jar => $cookieJar,
-            agent => $agent
+            timeout    => 15,
+            cookie_jar => $cookieJar_HttpCookieJarLWP,
+            agent      => $agent
         ) or $log->logdie( "zzz: $!" );
 
-        $httpEngine->cookie_jar( $cookieJar_HttpCookies );
+        # $httpEngine->cookie_jar( $cookieJar_HttpCookieJarLWP );
 
         # $httpEngine->cookie_jar( $cookieJar );
     } elsif ( $g_downloadMethod eq 'wwwMech' ) {
         $httpEngine = WWW::Mechanize->new(
-            cookie_jar => $cookieJar_HttpCookies,
+            timeout    => 15,
+            cookie_jar => $cookieJar_HttpCookieJarLWP,
             agent      => $agent
         );
-
     } else {
-        $log->logdie( "TODO: Please define this html engine" );
+        $log->logdie( "TODO: Please implement this html engine" );
     }
-
-    $G_HTML_TREE = HTML::TreeBuilder::XPath->new;
 
 } ### sub ini
 
