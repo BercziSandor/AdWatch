@@ -38,7 +38,7 @@ $g_downloadMethod = 'wwwMech';
 $g_downloadMethod = 'httpTiny';
 
 my $G_ITEMS_TO_PROCESS_MAX             = 0;
-my $G_WAIT_BETWEEN_FULL_PROCESS_IN_SEC = 10 * 60;
+my $G_WAIT_BETWEEN_FULL_PROCESS_IN_SEC = 8 * 60;
 my $G_WAIT_BETWEEN_GETS_IN_SEC         = 5;
 
 # GLOBAL variables
@@ -270,7 +270,7 @@ sub parseItems
             # already defined. Is it changed?
             if ( $G_DATA->{ads}->{$id}->{title} ne $title ) {
                 $G_DATA->{ads}->{$id}->{comment} .=
-                  strftime( "%Y.%m.%d %H:%M:%S:", localtime ) . "Cím: [" . $G_DATA->{ads}->{$id}->{title} . "] -> [$title]; ";
+                  strftime( "%Y.%m.%d %H:%M:%S: ", localtime ) . "Cím: [" . $G_DATA->{ads}->{$id}->{title} . "] -> [$title]; ";
                 $G_DATA->{ads}->{$id}->{title}  = $title;
                 $G_DATA->{ads}->{$id}->{status} = $STATUS_CHANGED;
 
@@ -278,7 +278,7 @@ sub parseItems
 
             if ( ( $G_DATA->{ads}->{$id}->{priceNr} ? $G_DATA->{ads}->{$id}->{priceNr} : 0 ) != $priceNr ) {
                 $G_DATA->{ads}->{$id}->{comment} .=
-                  strftime( "%Y.%m.%d %H:%M:%S:", localtime ) . " Ár: " . $G_DATA->{ads}->{$id}->{priceStr} . " -> $priceStr; ";
+                  strftime( "%Y.%m.%d %H:%M:%S: ", localtime ) . " Ár: " . $G_DATA->{ads}->{$id}->{priceStr} . " -> $priceStr; ";
                 $G_DATA->{ads}->{$id}->{priceNr}  = $priceNr;
                 $G_DATA->{ads}->{$id}->{priceStr} = $priceStr;
                 $G_DATA->{ads}->{$id}->{status}   = $STATUS_CHANGED;
@@ -287,13 +287,13 @@ sub parseItems
             if ( not defined $G_DATA->{ads}->{$id}->{firstSeen} ) {
                 $G_DATA->{ads}->{$id}->{firstSeen} = strftime( "%Y.%m.%d %H:%M:%S", localtime );
                 $G_DATA->{ads}->{$id}->{comment} .=
-                  strftime( "%Y.%m.%d %H:%M:%S:", localtime ) . "Adatbázisba került; ";
+                  strftime( "%Y.%m.%d %H:%M:%S: ", localtime ) . "Adatbázisba került; ";
             }
         } else {
 
             # add
             $G_DATA->{ads}->{$id}->{comment} =
-              strftime( "%Y.%m.%d %H:%M:%S:", localtime ) . "Adatbázisba került; ";
+              strftime( "%Y.%m.%d %H:%M:%S: ", localtime ) . "Adatbázisba került; ";
             $G_DATA->{ads}->{$id}->{firstSeen} = strftime( "%Y.%m.%d %H:%M:%S", localtime );
             $G_DATA->{ads}->{$id}->{title}     = $title;
             $G_DATA->{ads}->{$id}->{link}      = $link;
@@ -392,13 +392,13 @@ sub ini
 
     $urls = {
 
-        dunantuli_2m_2006_audi_honda =>
+        dunantuli_2m_2006_audi_citroen_fiat_ford_honda =>
 "https://www.hasznaltauto.hu/talalatilista/auto/2G4ZLMFQ4LHPDGMZKJH00HADOQOOO6I164FMT47PL79M11C6MT71K400GI1Q2ZAHZFIKISZH2WL3JRYZ8ZJ87GT03S8C1AZRLUKKM3FT8GHHPFYQMRM175HW1YGIHMEUGMZ28MKYJ99JGRMG1AOFW5410IOQDAPO1KKQRMMLJST3K0KYSK6U42Q04ORSZ57FWWWYHL9QJWTAZR5SWAMSM5HR3WRT7427GUM3A9FU01A1J4KWI6CHI245M4Q6KFI8C7MYYZPSIU98C2FC2K2MRDEKTJ1694T18W9MYGEY6A8UACERT2U6H6WFID7ZM6AA6699ELQ9AS782CFRPQQEUOKS6JYKLEMYYY8O4923OMPOIG67IT1QROW9TC8T6UDTQDF9O9OG59FI7HRCH6LDP608G38MS3ADHC2FMSJH2JS68SWSCLCQ2LD1PJ6DD/page×page×",
 
-        dunantuli_2m_2006_opel_skoda =>
+        dunantuli_2m_2006_opel_peugeot_renault_seat_skoda =>
 "https://www.hasznaltauto.hu/talalatilista/auto/DOSR5EWSS5PGQEEI31POCFKQD2IG1EW5APLPGJJE86ATQFIZEKD6F682EEA208WK606DAF0OR179H56HGTA1I5MEE0EHL3839HF85E47EGJAWCEZGA6TPUYYOHWYUFPSKPHYFZJZY2EYJQY4SGYP8P250KIWLF5Z1QAHOJDII1Z13RA5DSMJH22006DC4R2EUFO06M1QO4D64154T6ERW59TU8CR9ZO5EW4TR8R5G13UPJ7TZJ2SO882WU32AZFKCDKLZ4AYPKH4MG1R73ZCM4UJPK4J6OKKRS6AUQ1JL1PKM8M0PEDDJZTKF5PUKI3RW66LTIDIMM7Y74CGJL0R9GG1J32MDS3R20GIOLI5SDEGIAYGJ7HQDCMT7I5ZQYPQELCELQ07P6ZQY4H36HT674T3CYTM9QHYK8FYM8KO1G6DCDZJ3KA8JFK8ETQ/page×page×",
 
-        dunantuli_2m_2006_toyota_wv =>
+        dunantuli_2m_2006_suzuki_toyota_wv =>
 "https://www.hasznaltauto.hu/talalatilista/auto/QLCS1AYWZFTOUAAS97TJJORP42IMYY7AY4JH11U4IGIU3AYMS6HPJ9C3D7AMGZIU63SR652051Z37727OOYH1QT3GKKSCIF9QG5RW1QAF43TUDOIPROT2IEJTOLI4OJSM42CPE7F0HL0A00QL2WOHH8T02OAAYCAT17R2PLZ71K9I77SG2QWE8M86E60M40AOEE2T1DW75W929MQW0YYEEAR1W96GLG2TZYJCOYA7EGL056Q3DRS79KPDOOJ0AM1DIHK6CH0C6DIE9PO76P3KLJZJ2W9J55USTPE6ZGMQ0OW4GGC67TMJMIFIKD4492W9FSTQQJAUUZJALPKU8RY6L51D5QI9LGHJORWG2GZGFKAH9931YAU1F9RPPYRDF8D2FGYTQOS63I2DFO5OU74S812WLOCDLLDPHC7CP7CGMA8EYD6158WSO72ELLUU/page×page×",
 
     };
@@ -491,6 +491,7 @@ sub getMailText
             $mailTextHtml .= "<a href=\"" . $G_DATA->{ads}->{$id}->{link} . "\">" . $G_DATA->{ads}->{$id}->{title} . "</a><br/>";
             $mailTextHtml .= " - " . $G_DATA->{ads}->{$id}->{priceStr} . "<br/>";
             $mailTextHtml .= " - " . str_replace( "^, ", "", join( ', ', @{ $G_DATA->{ads}->{$id}->{info} } ) ) . "<br/>";
+            $mailTextHtml .= " - " . $G_DATA->{ads}->{$id}->{comment} . "<br/>" if $G_DATA->{ads}->{$id}->{comment};
             $mailTextHtml .= "<br/>";
 
             $text_new .= "\n+ ["
@@ -511,7 +512,7 @@ sub getMailText
             $mailTextHtml .= "<a href=\"" . $G_DATA->{ads}->{$id}->{link} . "\">" . $G_DATA->{ads}->{$id}->{title} . "</a><br/>";
             $mailTextHtml .= " - " . $G_DATA->{ads}->{$id}->{priceStr} . "<br/>";
             $mailTextHtml .= " - " . str_replace( "^, ", "", join( ', ', @{ $G_DATA->{ads}->{$id}->{info} } ) ) . "<br/>";
-            $mailTextHtml .= " - " . $G_DATA->{ads}->{$id}->{comment} . "<br/>";
+            $mailTextHtml .= " - " . $G_DATA->{ads}->{$id}->{comment} . "<br/>" if $G_DATA->{ads}->{$id}->{comment};
             $mailTextHtml .= "<br/>";
 
             $text_changed .=
@@ -535,7 +536,8 @@ sub getMailText
     $mailText = "${mailText}\n$G_ITEMS_PROCESSED feldolgozott hirdetés\n";
 
     if ( ( $count_new + $count_changed ) == 0 ) {
-        $mailText = "\nNincs újdonság.\n$mailText";
+        $mailText     = "\nNincs újdonság.\n$mailText";
+        $mailTextHtml = "";
     } else {
         $mailText = "${mailText}\n_____________________\n$count_new ÚJ hirdetés\n";
         $mailText = "${mailText}$count_changed MEGVÁLTOZOTT hirdetés\n" if $count_changed;
@@ -606,8 +608,8 @@ sub process
     sendMail( getMailText() );
     dataSave();
 
-    # stopWatch_Pause( "Teljes futás" );
-    # stopWatch_Info();
+    stopWatch_Pause( "Teljes futás" );
+    stopWatch_Info();
 } ### sub process
 
 sub main
@@ -639,8 +641,11 @@ sub sendMail
     my ( $bodyText ) = @_;
 
     return if ( not $g_sendMail );
-
     $log->info( "Levél küldése...\n" );
+    if ( not $bodyText ) {
+        $log->info( " Kihagyva: nincs változás, nem spamelünk. ;)\n" );
+        return;
+    }
 
     foreach ( @g_mailRecipients ) {
         my $email = Email::Simple->create(
