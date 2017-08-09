@@ -24,6 +24,7 @@ use Time::HiRes qw( time );
 use POSIX qw(strftime);
 
 use Email::Sender::Simple qw(sendmail);
+
 # use Email::Simple;
 use Email::Simple::Creator;
 
@@ -631,6 +632,9 @@ sub process
 sub main
 {
     ini();
+
+    sendMail( "teszt" );
+exit(1);
     for ( ; ; ) {
         my $time = time;
         process();
@@ -663,6 +667,23 @@ sub sendMail
         return;
     }
 
+    # account gmail
+    # tls on
+    # tls_certcheck off
+    # auth on
+    # from berczi.sandor@gmail.com
+
+    my $transport = Email::Sender::Transport::SMTP->new(
+        {
+            host          => "smtp.gmail.com",
+            port          => 587,
+            ssl           => 1,
+            ssl_options   => "tls on; tls_certcheck off",
+            sasl_username => 'berczi.sandor@gmail.com',
+            sasl_password => "qgyaeavmlzljezuw",
+        }
+    );
+
     foreach ( @g_mailRecipients ) {
         my $email = Email::Simple->create(
             header => [
@@ -674,7 +695,13 @@ sub sendMail
             body => $bodyText,
         );
         $log->info( " $_ ...\n" );
-        sendmail( $email );
+        if ( $transport ) {
+            sendmail( $email, { transport => $transport } );
+        } else {
+            sendmail( $email );
+
+        }
+
     } ### foreach ( @g_mailRecipients)
 
     # my $email = Email::Simple->create(

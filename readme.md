@@ -5,7 +5,7 @@ Goal of the script: alerting about new ads via email
 
 ** Prerequisits **
 
-apt-get install gcc make
+apt-get install gcc make perl-openssl-defaults libssl-dev
 
 curl -L https://cpanmin.us | perl - --sudo App::cpanminus
 
@@ -31,6 +31,7 @@ cpanm --sudo install HTML::TreeBuilder::XPath
 cpanm --sudo install HTML::Parser
 cpanm --sudo install Log::Log4perl
 cpanm --sudo install LWP::UserAgent
+cpanm --sudo install LWP::Protocol::https
 cpanm --sudo install WWW::Mechanize
 
 
