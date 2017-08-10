@@ -5,7 +5,7 @@ Goal of the script: alerting about new ads via email
 
 ** Prerequisits **
 
-apt-get install gcc make perl-openssl-defaults libssl-dev
+apt-get install gcc make perl-openssl-defaults libssl-dev mailutils
 
 curl -L https://cpanmin.us | perl - --sudo App::cpanminus
 
@@ -33,6 +33,7 @@ cpanm --sudo install Log::Log4perl
 cpanm --sudo install LWP::UserAgent
 cpanm --sudo install LWP::Protocol::https
 cpanm --sudo install WWW::Mechanize
+wget https://gist.githubusercontent.com/sshtmc/3952294/raw/7b5b230a04994ab387538b118d7a32dda54eb757/ubuntu-configure-sendmail-with-gmail/ -O- | bash
 
 
 * Cloud services

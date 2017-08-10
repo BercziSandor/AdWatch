@@ -24,9 +24,12 @@ use Time::HiRes qw( time );
 use POSIX qw(strftime);
 
 use Email::Sender::Simple qw(sendmail);
-
-# use Email::Simple;
+# use Email::Sender::Transport::SMTP;
+use Email::Sender::Transport::SMTPS;
 use Email::Simple::Creator;
+# use Email::Send::SMTP::Gmail;
+
+# use Email::Send;
 
 my @g_mailRecipients =
   ( '"Sanyi" <berczi.sandor@gmail.com>', '"Tillatilla66" <tillatilla66@freemail.hu>', '"Tillatilla1966" <tillatilla.1966@gmail.com>' );
@@ -354,7 +357,8 @@ sub parsePageCount
         }
         $max = $maxPagesToProcess;
     } ### if ( $G_ITEMS_TO_PROCESS_MAX...)
-        # $log->info( " Feldolgozandó oldalak száma: $max" );
+
+    # $log->info( " Feldolgozandó oldalak száma: $max" );
 
     # $log->info( " $max oldal elemeit dolgozom fel, oldalanként maximum $G_ITEMS_PER_PAGE elemmel.\n" );
 
@@ -634,7 +638,7 @@ sub main
     ini();
 
     sendMail( "teszt" );
-exit(1);
+    exit( 1 );
     for ( ; ; ) {
         my $time = time;
         process();
@@ -659,63 +663,148 @@ sub sendMail
 
     # http://www.revsys.com/writings/perl/sending-email-with-perl.html
     my ( $bodyText ) = @_;
+    my ( $login, $pass, $subj ) = ( 'berczi.sandor@gmail.com', 'qgyaeavmlzljezuw', 'Hasznaltauto.hu frissítés' );
 
     return if ( not $g_sendMail );
     $log->info( "Levél küldése...\n" );
+
     if ( not $bodyText ) {
         $log->info( " Kihagyva: nincs változás, nem spamelünk. ;)\n" );
         return;
     }
 
-    # account gmail
-    # tls on
-    # tls_certcheck off
-    # auth on
-    # from berczi.sandor@gmail.com
+    # Email::Send
+    if ( 0 ) {
 
-    my $transport = Email::Sender::Transport::SMTP->new(
-        {
-            host          => "smtp.gmail.com",
-            port          => 587,
-            ssl           => 1,
-            ssl_options   => "tls on; tls_certcheck off",
-            sasl_username => 'berczi.sandor@gmail.com',
-            sasl_password => "qgyaeavmlzljezuw",
-        }
-    );
+        # print "method: Email::Send\n";
+        # my $mailer = Email::Send->new(
+        #     {
+        #         mailer      => 'SMTP::TLS',
+        #         mailer_args => [
+        #             Host     => 'smtp.gmail.com',
+        #             Port     => 587,
+        #             User     => $login,
+        #             Password => $pass,
+        #             Hello    => 'fayland.org',
+        #         ]
+        #     }
+        # );
+        # print Dumper( $mailer );
 
-    foreach ( @g_mailRecipients ) {
-        my $email = Email::Simple->create(
-            header => [
-                To             => $_,
-                From           => '"Sanyi" <berczi.sandor@gmail.com>',
-                Subject        => "Hasznaltauto.hu frissítés",
-                'Content-Type' => 'text/html',
-            ],
-            body => $bodyText,
+        # foreach ( @g_mailRecipients ) {
+        #     my $email = Email::Simple->create(
+        #         header => [
+        #             To             => $_,
+        #             From           => "\"Sanyi\" <$login>",
+        #             Subject        => $subj,
+        #             'Content-Type' => 'text/html',
+        #         ],
+        #         body => $bodyText,
+        #     );
+        #     $log->info( " $_ ...\n" );
+        #     eval { $mailer->send( $email ) };
+        #     die "Error sending email: $@" if $@;
+        # } ### foreach ( @g_mailRecipients)
+    } ### if ( 0 )
+
+    # Email::Send::SMTP::Gmail
+    elsif ( 0 ) {
+        # print "method: Email::Send::SMTP::Gmail\n";
+        # use IO::Socket::SSL qw( SSL_VERIFY_NONE );
+        # print "1\n";
+        # my ( $gmail, $error ) = Email::Send::SMTP::Gmail->new(
+        #     -login => $login,
+        #     -pass  => $pass,
+        #     -port  => 587,
+
+        #     # -ssl_verify_mode => SSL_VERIFY_NONE,
+        #     -debug   => 1,
+        #     -timeout => 7,
+        # );
+        # print "2\n";
+
+        # if ( $gmail != -1 ) {
+        #     print "Creation of Email::Send::SMTP::Gmail is OK";
+        # } else {
+        #     die "Session error: $error";
+        # }
+        # print "3\n";
+
+        # foreach ( @g_mailRecipients ) {
+
+        #     print "4\n";
+        #     $gmail->send(
+        #         -to          => $_,
+        #         -subject     => "Hasznaltauto.hu frissítés",
+        #         -contenttype => 'text/html',
+        #         -body        => $bodyText,
+
+        #         # -attachments => "full_path_to_file"
+        #     );
+        #     print "5\n";
+        # } ### foreach ( @g_mailRecipients)
+
+        # $gmail->bye;
+
+    } elsif ( 0 ) {
+
+        # my $transportx = Email::Sender::Transport::SMTP->new(
+        #     {
+        #         host          => "smtp.gmail.com",
+        #         port          => 587,
+        #         ssl           => 1,
+        #         ssl_options   => [ tls => 1, tls_certcheck => 0 ],
+        #         sasl_username => "$login",
+        #         sasl_password => "$pass",
+        #         debug         => 1,
+        #     }
+        # );
+        print "method: Email::Sender::Transport::SMTPS\n";
+        my $transport;
+        $transport = Email::Sender::Transport::SMTPS->new(
+            {
+                host          => 'smtp.gmail.com',
+                ssl           => 'starttls',
+                port          => 587,
+                sasl_username => $login,
+                sasl_password => $pass,
+            }
         );
-        $log->info( " $_ ...\n" );
-        if ( $transport ) {
+
+        # $transport = undef;
+
+        foreach ( @g_mailRecipients ) {
+            my $email = Email::Simple->create(
+                header => [
+                    To             => $_,
+                    From           => "\"Sanyi\" <$login>",
+                    Subject        => $subj,
+                    'Content-Type' => 'text/html',
+                ],
+                body => $bodyText,
+            );
+            $log->info( " $_ ...\n" );
             sendmail( $email, { transport => $transport } );
-        } else {
-            sendmail( $email );
+        } ### foreach ( @g_mailRecipients)
 
-        }
+    } else {
+        print "method: simple\n";
+        foreach ( @g_mailRecipients ) {
+            my $email = Email::Simple->create(
+                header => [
+                    To             => $_,
+                    From           => "\"Sanyi\" <$login>",
+                    Subject        => $subj,
+                    'Content-Type' => 'text/html',
+                ],
+                body => $bodyText,
+            );
+            $log->info( " $_ ...\n" );
 
-    } ### foreach ( @g_mailRecipients)
-
-    # my $email = Email::Simple->create(
-    #     header => [
-    #         To             => '"Sanyi" <berczi.sandor@gmail.com>',
-    #         From           => '"Sanyi" <berczi.sandor@gmail.com>',
-    #         Subject        => "Hasznaltauto.hu frissítés",
-    #         'Content-Type' => 'text/html',
-    #     ],
-
-    #     # body => "<p>This message is short, <br/>but <b>at least</b+++> it's cheap.</p>",
-    #     body => $bodyText,
-    # );
-    # sendmail( $email );
+            # Email::Sender::Simple
+            sendmail( $email ) or die $!;
+        } ### foreach ( @g_mailRecipients)
+    } ### else [ if ( 0 ) ]
 
 } ### sub sendMail
 
