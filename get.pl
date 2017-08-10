@@ -637,8 +637,6 @@ sub main
 {
     ini();
 
-    sendMail( "teszt" );
-    exit( 1 );
     for ( ; ; ) {
         my $time = time;
         process();
