@@ -538,7 +538,7 @@ sub getMailText
     my $count_new     = 0;
     my $count_changed = 0;
 
-    $mailTextHtml="Utolsó állapot: $dataFileDate\n\n"
+    $mailTextHtml="Utolsó állapot: $dataFileDate\n\n";
     foreach my $id ( keys %{ $G_DATA->{ads} } ) {
         my $item = $G_DATA->{ads}->{$id};
         if ( $item->{status} eq $STATUS_NEW ) {
