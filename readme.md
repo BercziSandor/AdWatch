@@ -6,6 +6,9 @@ Goal of the script: alerting about new ads via email
 ## Prerequisits
 
 ### System config
+
+
+
 # Timezone change
 ~~~~bash
 sudo dpkg-reconfigure tzdata
@@ -41,7 +44,8 @@ cpanm --sudo install LWP::Protocol::https
 cpanm --sudo install WWW::Mechanize
 wget https://gist.githubusercontent.com/sshtmc/3952294/raw/7b5b230a04994ab387538b118d7a32dda54eb757/ubuntu-configure-sendmail-with-gmail/ -O- | bash
 ~~~~
-s
+Swap: https://www.digitalocean.com/community/tutorials/how-to-add-swap-on-ubuntu-14-04
+
 ~~~~bash
 #!/bin/bash
 # wget https://gist.githubusercontent.com/sshtmc/3952294/raw/7b5b230a04994ab387538b118d7a32dda54eb757/ubuntu-configure-sendmail-with-gmail/ -O- | bash

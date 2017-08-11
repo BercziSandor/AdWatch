@@ -24,15 +24,15 @@ use Time::HiRes qw( time );
 use POSIX qw(strftime);
 
 use Email::Sender::Simple qw(sendmail);
-# use Email::Sender::Transport::SMTP;
-use Email::Sender::Transport::SMTPS;
 use Email::Simple::Creator;
-# use Email::Send::SMTP::Gmail;
 
+# use Email::Sender::Transport::SMTP;
+# use Email::Sender::Transport::SMTPS;
+# use Email::Send::SMTP::Gmail;
 # use Email::Send;
 
-my @g_mailRecipients =
-  ( '"Sanyi" <berczi.sandor@gmail.com>', '"Tillatilla66" <tillatilla66@freemail.hu>', '"Tillatilla1966" <tillatilla.1966@gmail.com>' );
+my @g_mailRecipients = ( '"Sanyi" <berczi.sandor@gmail.com>', '"Tillatilla1966" <tillatilla.1966@gmail.com>' );
+@g_mailRecipients = ( '"Sanyi" <berczi.sandor@gmail.com>' );
 my $g_sendMail = 1;
 
 # Do not change this settings above this line.
@@ -233,15 +233,18 @@ sub parseItems
     $log->logdie( "No items" ) unless @items;
     my %items;
     for my $item ( @items ) {
-        $G_ITEMS_PROCESSED++;
         if ( ( $G_ITEMS_TO_PROCESS_MAX > 0 ) and ( $G_ITEMS_PROCESSED > $G_ITEMS_TO_PROCESS_MAX ) ) {
             print "x";
             next;
         }
+        $G_ITEMS_PROCESSED++;
         my $G_DATA_item = ();
-        my $title       = encode_utf8( $item->findvalue( $XPATH_TITLE ) );
-        my $link        = $item->findvalue( $XPATH_LINK );
-        my $id          = $link;
+
+        ######################################################################################################
+        # Parsing data
+        my $title = encode_utf8( $item->findvalue( $XPATH_TITLE ) );
+        my $link  = $item->findvalue( $XPATH_LINK );
+        my $id    = $link;
         $id =~ s/^.*-(\d+)$/$1/g;    # s-11707757
 
         # https://www.hasznaltauto.hu/auto/dodge/grand_caravan/dodge_grand_caravan_3.6_benzin_gaz-11659098
@@ -273,50 +276,49 @@ sub parseItems
         # $priceNr =~ s/[Ft .]//g;    # 15.890.000 Ft
         $priceNr =~ s/\D//g;
         $priceNr = 0 unless $priceNr;
+        ######################################################################################################
+        ######################################################################################################
 
+        ######################################################################################################
+        # Storing data
+        my $t = time;
         if ( defined $G_DATA->{ads}->{$id} ) {
 
             $G_DATA->{ads}->{$id}->{status} = $STATUS_EMPTY;
 
+            if ( not defined $G_DATA->{ads}->{$id}->{history} ) {
+                $G_DATA->{ads}->{$id}->{history}->{$t} .= "Adatbázisba került; ";
+            }
+
             # already defined. Is it changed?
             if ( $G_DATA->{ads}->{$id}->{title} ne $title ) {
-                $G_DATA->{ads}->{$id}->{comment} .=
-                  strftime( "%Y.%m.%d %H:%M:%S: ", localtime ) . "Cím: [" . $G_DATA->{ads}->{$id}->{title} . "] -> [$title]; ";
+                $G_DATA->{ads}->{$id}->{history}->{$t} .= "Cím: [" . $G_DATA->{ads}->{$id}->{title} . "] -> [$title]; ";
                 $G_DATA->{ads}->{$id}->{title}  = $title;
                 $G_DATA->{ads}->{$id}->{status} = $STATUS_CHANGED;
-
-            } ### if ( $G_DATA->{ads}->{...})
+            }
 
             if ( ( $G_DATA->{ads}->{$id}->{priceNr} ? $G_DATA->{ads}->{$id}->{priceNr} : 0 ) != $priceNr ) {
-                $G_DATA->{ads}->{$id}->{comment} .=
-                  strftime( "%Y.%m.%d %H:%M:%S: ", localtime ) . " Ár: " . $G_DATA->{ads}->{$id}->{priceStr} . " -> $priceStr; ";
+                $G_DATA->{ads}->{$id}->{history}->{$t} .= " Ár: " . $G_DATA->{ads}->{$id}->{priceStr} . " -> $priceStr; ";
                 $G_DATA->{ads}->{$id}->{priceNr}  = $priceNr;
                 $G_DATA->{ads}->{$id}->{priceStr} = $priceStr;
                 $G_DATA->{ads}->{$id}->{status}   = $STATUS_CHANGED;
             } ### if ( ( $G_DATA->{ads}->...))
 
-            if ( not defined $G_DATA->{ads}->{$id}->{firstSeen} ) {
-                $G_DATA->{ads}->{$id}->{firstSeen} = strftime( "%Y.%m.%d %H:%M:%S", localtime );
-                $G_DATA->{ads}->{$id}->{comment} .=
-                  strftime( "%Y.%m.%d %H:%M:%S: ", localtime ) . "Adatbázisba került; ";
-            }
         } else {
 
             # add
-            $G_DATA->{ads}->{$id}->{comment} =
-              strftime( "%Y.%m.%d %H:%M:%S: ", localtime ) . "Adatbázisba került; ";
-            $G_DATA->{ads}->{$id}->{firstSeen} = strftime( "%Y.%m.%d %H:%M:%S", localtime );
-            $G_DATA->{ads}->{$id}->{title}     = $title;
-            $G_DATA->{ads}->{$id}->{link}      = $link;
-            $G_DATA->{ads}->{$id}->{features}  = \@fs;
-            $G_DATA->{ads}->{$id}->{category}  = $category;
-            $G_DATA->{ads}->{$id}->{info}      = \@infos;
-            $G_DATA->{ads}->{$id}->{desc}      = $desc;
-            $G_DATA->{ads}->{$id}->{priceStr}  = $priceStr;
-            $G_DATA->{ads}->{$id}->{priceNr}   = $priceNr;
-            $G_DATA->{ads}->{$id}->{status}    = $STATUS_NEW;
+            $G_DATA->{ads}->{$id}->{history}->{$t} = " Adatbázisba került; ";
+            $G_DATA->{ads}->{$id}->{title}         = $title;
+            $G_DATA->{ads}->{$id}->{link}          = $link;
+            $G_DATA->{ads}->{$id}->{features}      = \@fs;
+            $G_DATA->{ads}->{$id}->{category}      = $category;
+            $G_DATA->{ads}->{$id}->{info}          = \@infos;
+            $G_DATA->{ads}->{$id}->{desc}          = $desc;
+            $G_DATA->{ads}->{$id}->{priceStr}      = $priceStr;
+            $G_DATA->{ads}->{$id}->{priceNr}       = $priceNr;
+            $G_DATA->{ads}->{$id}->{status}        = $STATUS_NEW;
         } ### else [ if ( defined $G_DATA->...)]
-        $G_DATA->{lastChanged} = time;
+        $G_DATA->{lastChange} = time;
 
         my $sign;
         if ( $G_DATA->{ads}->{$id}->{status} eq $STATUS_NEW ) {
@@ -326,8 +328,13 @@ sub parseItems
         } else {
             $sign = " ";
         }
+        $log->debug( Dumper( $G_DATA->{ads}->{$id} ) );
+
         print "$sign";
         $log->debug( " $sign $id: [$title]" );
+        ######################################################################################################
+        ######################################################################################################
+
     } ### for my $item ( @items )
     if ( $G_ITEMS_IN_DB ) {
         my $val = ( ( 0.0 + 100 * ( $G_ITEMS_PROCESSED ? $G_ITEMS_PROCESSED : 100 ) ) / $G_ITEMS_IN_DB );
@@ -495,9 +502,31 @@ sub ini
 
 } ### sub ini
 
+sub getMailTextforItem
+{
+    my ( $id, $format ) = @_;
+    my $retval = "";
+    return undef if ( not defined( $G_DATA->{ads}->{$id} ) );
+    my $item = $G_DATA->{ads}->{$id};
+    my $sign = ( $item->{status} eq $STATUS_NEW ? "ÚJ!" : ( $item->{status} eq $STATUS_CHANGED ? "*" : "" ) );
+    return undef if ( not $sign );
+
+    # $retval .= "$sign <a href=\"" . $item->{link} . "\">" . $item->{title} . "</a>\n";
+    $retval .= "$sign [" . $item->{title} . "](" . $item->{link} . ")\n";
+    $retval .= " - " . $item->{priceStr} . "\n";
+    $retval .= " - " . str_replace( "^, ", "", join( ', ', @{ $item->{info} } ) ) . "\n";
+
+    foreach my $dt ( sort reverse keys %{ $item->{history} } ) {
+        $retval .= " - " . strftime( "%Y.%m.%d %H:%M", localtime( $dt ) ) . ": " . $item->{history}->{$dt} . "\n";
+    }
+
+    $retval .= "\n";
+
+    return $retval;
+} ### sub getMailTextforItem
+
 sub getMailText
 {
-    my $mailText      = "\n";
     my $mailTextHtml  = "";
     my $text_changed  = "";
     my $text_new      = "";
@@ -505,81 +534,42 @@ sub getMailText
     my $count_changed = 0;
 
     foreach my $id ( keys %{ $G_DATA->{ads} } ) {
-        if ( $G_DATA->{ads}->{$id}->{status} eq $STATUS_NEW ) {
+        my $item = $G_DATA->{ads}->{$id};
+        if ( $item->{status} eq $STATUS_NEW ) {
             $count_new++;
-
-            $mailTextHtml .= "+ ";
-            $mailTextHtml .= "<a href=\"" . $G_DATA->{ads}->{$id}->{link} . "\">" . $G_DATA->{ads}->{$id}->{title} . "</a><br/>";
-            $mailTextHtml .= " - " . $G_DATA->{ads}->{$id}->{priceStr} . "<br/>";
-            $mailTextHtml .= " - " . str_replace( "^, ", "", join( ', ', @{ $G_DATA->{ads}->{$id}->{info} } ) ) . "<br/>";
-            $mailTextHtml .= " - " . $G_DATA->{ads}->{$id}->{comment} . "<br/>" if $G_DATA->{ads}->{$id}->{comment};
-            $mailTextHtml .= "<br/>";
-
-            $text_new .= "\n+ ["
-              . $G_DATA->{ads}->{$id}->{title} . "]"
-              . "\n - Link:     "
-              . $G_DATA->{ads}->{$id}->{link}
-              . "\n - Ár:       "
-              . $G_DATA->{ads}->{$id}->{priceStr}
-              . "\n - Megjegyzés: "
-              . $G_DATA->{ads}->{$id}->{comment}
-              . "\n - Egyéb:    "
-              . str_replace( "^, ", "", join( ', ', @{ $G_DATA->{ads}->{$id}->{info} } ) ) . "\n";
-
-        } elsif ( $G_DATA->{ads}->{$id}->{status} eq $STATUS_CHANGED ) {
+        } elsif ( $item->{status} eq $STATUS_CHANGED ) {
             $count_changed++;
-
-            $mailTextHtml .= "* ";
-            $mailTextHtml .= "<a href=\"" . $G_DATA->{ads}->{$id}->{link} . "\">" . $G_DATA->{ads}->{$id}->{title} . "</a><br/>";
-            $mailTextHtml .= " - " . $G_DATA->{ads}->{$id}->{priceStr} . "<br/>";
-            $mailTextHtml .= " - " . str_replace( "^, ", "", join( ', ', @{ $G_DATA->{ads}->{$id}->{info} } ) ) . "<br/>";
-            $mailTextHtml .= " - " . $G_DATA->{ads}->{$id}->{comment} . "<br/>" if $G_DATA->{ads}->{$id}->{comment};
-            $mailTextHtml .= "<br/>";
-
-            $text_changed .=
-                "\n* ["
-              . $G_DATA->{ads}->{$id}->{title} . "]"
-              . "\n - Link:     "
-              . $G_DATA->{ads}->{$id}->{link}
-              . "\n - Megjegyzés: "
-              . $G_DATA->{ads}->{$id}->{comment}
-              . "\n - Ár:       "
-              . $G_DATA->{ads}->{$id}->{priceStr}
-              . "\n - Egyéb:    "
-              . str_replace( "^, ", "", join( ', ', @{ $G_DATA->{ads}->{$id}->{info} } ) ) . "\n";
-        } ### elsif ( $G_DATA->{ads}->{...})
+        } else {
+            next;
+        }
+        $mailTextHtml .= getMailTextforItem( $id );
 
     } ### foreach my $id ( keys %{ $G_DATA...})
-    $mailTextHtml .= "</table>";
 
-    $mailText = "\n" . $text_changed . $text_new;
-    $mailText = $mailText . "\nMegjegyzés:\n +: új elem \n *: változott elem\n .: változatlan elem\n";
-    $mailText = "${mailText}\n$G_ITEMS_PROCESSED feldolgozott hirdetés\n";
+    $mailTextHtml .= "\n";
+    $mailTextHtml .= "${mailTextHtml}\n$G_ITEMS_PROCESSED feldolgozott hirdetés\n";
 
     if ( ( $count_new + $count_changed ) == 0 ) {
-        $mailText     = "\nNincs újdonság.\n$mailText";
+        $log->info( "\nNincs újdonság.\n$mailTextHtml" );
         $mailTextHtml = "";
     } else {
-        $mailText = "${mailText}\n_____________________\n$count_new ÚJ hirdetés\n";
-        $mailText = "${mailText}$count_changed MEGVÁLTOZOTT hirdetés\n" if $count_changed;
-        my $fileName = ${collectionDate};
-        $fileName =~ s/[.:]//g;
-        $fileName =~ s/[ ]/_/g;
-        $fileName = "./mails/${fileName}.txt";
-        $log->debug( "Szöveg mentése $fileName file-ba..." );
-        open( MYFILE, ">$fileName" );
-        print MYFILE $mailText;
-        close( MYFILE );
-    } ### else [ if ( ( $count_new + $count_changed...))]
+        $mailTextHtml .= "\n_____________________\n$count_new ÚJ hirdetés\n";
+        $mailTextHtml .= "$count_changed MEGVÁLTOZOTT hirdetés\n" if $count_changed;
+        $log->info( "$mailTextHtml\n" );
+    }
 
-    print "$mailText\n";
     return $mailTextHtml;
 } ### sub getMailText
 
 sub dataSave
 {
-    store $G_DATA, 'data.dat';
-}
+    # Do not save if g_sendMail != 1
+    if ( $g_sendMail ) {
+        store $G_DATA, 'data.dat';
+    } else {
+        $log->info( "Az adatokat nem mentettük el, mert nem történt levélküldés sem, a \$g_sendMail változó értéke miatt.\n" );
+    }
+} ### sub dataSave
 
 sub dataLoad
 {
@@ -626,7 +616,7 @@ sub process
     stopWatch_Reset();
     stopWatch_Continue( "Teljes futás" );
     collectData();
-    sendMail( getMailText() );
+    sndMail( getMailText() );
     dataSave();
 
     stopWatch_Pause( "Teljes futás" );
@@ -654,16 +644,28 @@ sub main
     } ### for ( ; ; )
 } ### sub main
 
-main();
+sub text2html
+{
+    my $text    = shift;
+    my $textBak = $text;
+    $text =~ s|\n|<br>|g;
 
-sub sendMail
+    # " [title](link)\n";
+    # $retval .= "$sign <a href=\"" . $item->{link} . "\">" . $item->{title} . "</a>\n";
+    $text =~ s| \[(.*?)\]\((.*?)\)| <a href="${2}">${1}</a>|g;
+    $text =~ s|\n|<br/>|g;
+
+    # $text =~ s|<br/>|<br/>\n|g;
+    # $log->info( "text2html($textBak)=\"$text\"\n" );
+    return $text;
+} ### sub text2html
+
+sub sndMail
 {
 
     # http://www.revsys.com/writings/perl/sending-email-with-perl.html
     my ( $bodyText ) = @_;
-    my ( $login, $pass, $subj ) = ( 'berczi.sandor@gmail.com', 'qgyaeavmlzljezuw', 'Hasznaltauto.hu frissítés' );
 
-    return if ( not $g_sendMail );
     $log->info( "Levél küldése...\n" );
 
     if ( not $bodyText ) {
@@ -671,140 +673,59 @@ sub sendMail
         return;
     }
 
-    # Email::Send
-    if ( 0 ) {
+    {
+        my $fileName = ${collectionDate};
+        $fileName =~ s/[.:]//g;
+        $fileName =~ s/[ ]/_/g;
+        if ( $g_sendMail ) {
+            $fileName = "./mails/${fileName}.txt";
+        } else {
+            $fileName = "./mails/${fileName}_NOT_SENT.txt";
+        }
+        $log->debug( "Szöveg mentése $fileName file-ba..." );
+        open( MYFILE, ">$fileName" );
+        print MYFILE $bodyText;
+        close( MYFILE );
+    }
 
-        # print "method: Email::Send\n";
-        # my $mailer = Email::Send->new(
-        #     {
-        #         mailer      => 'SMTP::TLS',
-        #         mailer_args => [
-        #             Host     => 'smtp.gmail.com',
-        #             Port     => 587,
-        #             User     => $login,
-        #             Password => $pass,
-        #             Hello    => 'fayland.org',
-        #         ]
-        #     }
-        # );
-        # print Dumper( $mailer );
+    $bodyText = text2html( $bodyText );
 
-        # foreach ( @g_mailRecipients ) {
-        #     my $email = Email::Simple->create(
-        #         header => [
-        #             To             => $_,
-        #             From           => "\"Sanyi\" <$login>",
-        #             Subject        => $subj,
-        #             'Content-Type' => 'text/html',
-        #         ],
-        #         body => $bodyText,
-        #     );
-        #     $log->info( " $_ ...\n" );
-        #     eval { $mailer->send( $email ) };
-        #     die "Error sending email: $@" if $@;
-        # } ### foreach ( @g_mailRecipients)
-    } ### if ( 0 )
+    {
+        my $fileName = ${collectionDate};
+        $fileName =~ s/[.:]//g;
+        $fileName =~ s/[ ]/_/g;
+        if ( $g_sendMail ) {
+            $fileName = "./mails/${fileName}.html";
+        } else {
+            $fileName = "./mails/${fileName}_NOT_SENT.html";
+        }
+        $log->debug( "Szöveg mentése $fileName file-ba..." );
+        open( MYFILE, ">$fileName" );
+        print MYFILE $bodyText;
+        close( MYFILE );
+    }
 
-    # Email::Send::SMTP::Gmail
-    elsif ( 0 ) {
-        # print "method: Email::Send::SMTP::Gmail\n";
-        # use IO::Socket::SSL qw( SSL_VERIFY_NONE );
-        # print "1\n";
-        # my ( $gmail, $error ) = Email::Send::SMTP::Gmail->new(
-        #     -login => $login,
-        #     -pass  => $pass,
-        #     -port  => 587,
+    foreach ( @g_mailRecipients ) {
+        my $email = Email::Simple->create(
+            header => [
+                To             => $_,
+                From           => '"Sanyi" <berczi.sandor@gmail.com>',
+                Subject        => 'Hasznaltauto.hu frissítés',
+                'Content-Type' => 'text/html',
+            ],
+            body => $bodyText,
+        );    # TODO: sending in plain text?
+        $log->info( " $_ ...\n" );
+        $log->debug( "sendmail($bodyText)" );
 
-        #     # -ssl_verify_mode => SSL_VERIFY_NONE,
-        #     -debug   => 1,
-        #     -timeout => 7,
-        # );
-        # print "2\n";
-
-        # if ( $gmail != -1 ) {
-        #     print "Creation of Email::Send::SMTP::Gmail is OK";
-        # } else {
-        #     die "Session error: $error";
-        # }
-        # print "3\n";
-
-        # foreach ( @g_mailRecipients ) {
-
-        #     print "4\n";
-        #     $gmail->send(
-        #         -to          => $_,
-        #         -subject     => "Hasznaltauto.hu frissítés",
-        #         -contenttype => 'text/html',
-        #         -body        => $bodyText,
-
-        #         # -attachments => "full_path_to_file"
-        #     );
-        #     print "5\n";
-        # } ### foreach ( @g_mailRecipients)
-
-        # $gmail->bye;
-
-    } elsif ( 0 ) {
-
-        # my $transportx = Email::Sender::Transport::SMTP->new(
-        #     {
-        #         host          => "smtp.gmail.com",
-        #         port          => 587,
-        #         ssl           => 1,
-        #         ssl_options   => [ tls => 1, tls_certcheck => 0 ],
-        #         sasl_username => "$login",
-        #         sasl_password => "$pass",
-        #         debug         => 1,
-        #     }
-        # );
-        print "method: Email::Sender::Transport::SMTPS\n";
-        my $transport;
-        $transport = Email::Sender::Transport::SMTPS->new(
-            {
-                host          => 'smtp.gmail.com',
-                ssl           => 'starttls',
-                port          => 587,
-                sasl_username => $login,
-                sasl_password => $pass,
-            }
-        );
-
-        # $transport = undef;
-
-        foreach ( @g_mailRecipients ) {
-            my $email = Email::Simple->create(
-                header => [
-                    To             => $_,
-                    From           => "\"Sanyi\" <$login>",
-                    Subject        => $subj,
-                    'Content-Type' => 'text/html',
-                ],
-                body => $bodyText,
-            );
-            $log->info( " $_ ...\n" );
-            sendmail( $email, { transport => $transport } );
-        } ### foreach ( @g_mailRecipients)
-
-    } else {
-        print "method: simple\n";
-        foreach ( @g_mailRecipients ) {
-            my $email = Email::Simple->create(
-                header => [
-                    To             => $_,
-                    From           => "\"Sanyi\" <$login>",
-                    Subject        => $subj,
-                    'Content-Type' => 'text/html',
-                ],
-                body => $bodyText,
-            );
-            $log->info( " $_ ...\n" );
-
-            # Email::Sender::Simple
+        # Email::Sender::Simple
+        if ( $g_sendMail ) {
             sendmail( $email ) or die $!;
-        } ### foreach ( @g_mailRecipients)
-    } ### else [ if ( 0 ) ]
+        }
 
-} ### sub sendMail
+    } ### foreach ( @g_mailRecipients)
+    $log->info( "Levélküldés kihagyva a g_sendMail változó értéke miatt.\n" ) if not $g_sendMail;
+} ### sub sndMail
 
 sub stopWatch_Pause
 {
@@ -818,7 +739,7 @@ sub stopWatch_Pause
 
 sub stopWatch_Info
 {
-    $log->info( "Futásidő összesítés:\n" );
+    $log->info( "\nFutásidő összesítés:\n" );
     foreach my $name ( keys %$g_stopWatch ) {
         my $elapsed;
         $elapsed = $g_stopWatch->{$name}->{elapsed};
@@ -858,3 +779,5 @@ sub stopWatch_Continue
 
     # $g_stopWatch->{$name}->{elapsed} = 0;
 } ### sub stopWatch_Continue
+
+main();
