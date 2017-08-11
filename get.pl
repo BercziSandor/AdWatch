@@ -32,7 +32,7 @@ use Email::Simple::Creator;
 # use Email::Send;
 
 my @g_mailRecipients = ( '"Sanyi" <berczi.sandor@gmail.com>', '"Tillatilla1966" <tillatilla.1966@gmail.com>' );
-@g_mailRecipients = ( '"Sanyi" <berczi.sandor@gmail.com>' );
+# @g_mailRecipients = ( '"Sanyi" <berczi.sandor@gmail.com>' );
 my $g_sendMail = 1;
 
 # Do not change this settings above this line.
@@ -589,7 +589,7 @@ sub collectData
     $G_ITEMS_PROCESSED = 0;
     foreach my $urlId ( sort keys %$urls ) {
         my $url = $urls->{$urlId};
-        $log->info( "\n** $urlId **\n" );
+        $log->info( "\n\n** $urlId **" );
         if ( $G_ITEMS_TO_PROCESS_MAX > 0 and $G_ITEMS_PROCESSED >= $G_ITEMS_TO_PROCESS_MAX ) {
             $log->info( "\nElértük a feldolgozási limitet." );
             return;
@@ -603,7 +603,7 @@ sub collectData
                 $log->info( "\nElértük a feldolgozási limitet." );
                 return;
             }
-            $log->info( sprintf( "\n%" . length( "" . $pageCount ) . "d/%d [", $i, $pageCount ) );
+            $log->info( sprintf( "\n%2d/%d [", $i, $pageCount ) );
             $log->debug( sprintf( "%2.0f%% (%d of %d pages)", ( 0.0 + 100 * ( $i - 1 ) / $pageCount ), ( $i - 1 ), $pageCount ) );
             $html = getHtml( $url, $i );
             parseItems( \$html );
@@ -683,7 +683,7 @@ sub sndMail
             $fileName = "./mails/${fileName}_NOT_SENT.txt";
         }
         $log->debug( "Szöveg mentése $fileName file-ba..." );
-        open( MYFILE, ">$fileName" );
+        open( MYFILE, ">$fileName" ) or die $!;
         print MYFILE $bodyText;
         close( MYFILE );
     }
@@ -700,7 +700,7 @@ sub sndMail
             $fileName = "./mails/${fileName}_NOT_SENT.html";
         }
         $log->debug( "Szöveg mentése $fileName file-ba..." );
-        open( MYFILE, ">$fileName" );
+        open( MYFILE, ">$fileName" ) or die $!;
         print MYFILE $bodyText;
         close( MYFILE );
     }
