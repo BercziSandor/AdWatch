@@ -32,6 +32,7 @@ use Email::Simple::Creator;
 # use Email::Send;
 
 my @g_mailRecipients = ( '"Sanyi" <berczi.sandor@gmail.com>', '"Tillatilla1966" <tillatilla.1966@gmail.com>' );
+
 # @g_mailRecipients = ( '"Sanyi" <berczi.sandor@gmail.com>' );
 my $g_sendMail = 1;
 
@@ -472,6 +473,7 @@ sub ini
 
     $G_ITEMS_IN_DB = ( $G_DATA->{ads} ? scalar( keys %{ $G_DATA->{ads} } ) : 0 );
     $log->info( "Ini: Eddig beolvasott hirdetések száma: " . $G_ITEMS_IN_DB . "\n" );
+
     $log->info( "Ini: Http motor: $g_downloadMethod\n" );
     if ( $g_downloadMethod eq 'httpTiny' ) {
         $httpEngine = HTTP::Tiny->new(
@@ -516,7 +518,7 @@ sub getMailTextforItem
     $retval .= " - " . $item->{priceStr} . "\n";
     $retval .= " - " . str_replace( "^, ", "", join( ', ', @{ $item->{info} } ) ) . "\n";
 
-    foreach my $dt ( sort reverse keys %{ $item->{history} } ) {
+    foreach my $dt ( sort keys %{ $item->{history} } ) {
         $retval .= " - " . strftime( "%Y.%m.%d %H:%M", localtime( $dt ) ) . ": " . $item->{history}->{$dt} . "\n";
     }
 
