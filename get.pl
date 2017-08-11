@@ -474,8 +474,16 @@ sub ini
 
     $G_ITEMS_IN_DB = ( $G_DATA->{ads} ? scalar( keys %{ $G_DATA->{ads} } ) : 0 );
     $log->info( "Ini: Eddig beolvasott hirdetések száma: " . $G_ITEMS_IN_DB . "\n" );
+
     $dataFileDate = $G_DATA->{lastChange} ? ( strftime( "%Y.%m.%d %H:%M", localtime( $G_DATA->{lastChange} ) ) ) : "";
-    $log->info( "Ini: Utolsó frissítés: " . $dataFileDate . "\n" );
+    $log->info( "Ini: Utolsó frissítés: " . $dataFileDate . " - " );
+    my $timeToWait = ( $G_DATA->{lastChange} + $G_WAIT_BETWEEN_FULL_PROCESS_IN_SEC ) - time;
+    if ( $timeToWait > 0 ) {
+        $log->info( sprintf( "Várakozás a következő feldolgozásig: %d másodperc...\n", $timeToWait ) );
+        sleep( $timeToWait );
+    } else {
+        $log->info( "A futás elindítható, az előző futás elég régen volt.\n" );
+    } ### else [ if ( $timeToWait > 0 )]
 
     $log->info( "Ini: Http motor: $g_downloadMethod\n" );
     if ( $g_downloadMethod eq 'httpTiny' ) {
@@ -538,7 +546,7 @@ sub getMailText
     my $count_new     = 0;
     my $count_changed = 0;
 
-    $mailTextHtml="Utolsó állapot: $dataFileDate\n\n";
+    $mailTextHtml = "Utolsó állapot: $dataFileDate\n\n";
     foreach my $id ( keys %{ $G_DATA->{ads} } ) {
         my $item = $G_DATA->{ads}->{$id};
         if ( $item->{status} eq $STATUS_NEW ) {
@@ -689,6 +697,7 @@ sub sndMail
             $fileName = "./mails/${fileName}_NOT_SENT.txt";
         }
         $log->debug( "Szöveg mentése $fileName file-ba..." );
+
         open( MYFILE, ">$fileName" ) or die $!;
         print MYFILE $bodyText;
         close( MYFILE );
