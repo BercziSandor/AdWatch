@@ -32,6 +32,7 @@ use Email::Simple::Creator;
 # use Email::Send;
 
 my @g_mailRecipients = ( '"Sanyi" <berczi.sandor@gmail.com>', '"Tillatilla1966" <tillatilla.1966@gmail.com>' );
+
 # @g_mailRecipients = ( '"Sanyi" <berczi.sandor@gmail.com>' );
 my $g_sendMail = 1;
 
@@ -53,6 +54,7 @@ my $G_WAIT_BETWEEN_GETS_IN_SEC         = 5;
 
 # GLOBAL variables
 # my $url;
+my $dataFileDate;
 my $G_ITEMS_IN_DB;
 my $G_HTML_TREE;
 my $g_stopWatch;
@@ -472,6 +474,9 @@ sub ini
 
     $G_ITEMS_IN_DB = ( $G_DATA->{ads} ? scalar( keys %{ $G_DATA->{ads} } ) : 0 );
     $log->info( "Ini: Eddig beolvasott hirdetések száma: " . $G_ITEMS_IN_DB . "\n" );
+    $dataFileDate = $G_DATA->{lastChange} ? ( strftime( "%Y.%m.%d %H:%M", localtime( $G_DATA->{lastChange} ) ) ) : "";
+    $log->info( "Ini: Utolsó frissítés: " . $dataFileDate . "\n" );
+
     $log->info( "Ini: Http motor: $g_downloadMethod\n" );
     if ( $g_downloadMethod eq 'httpTiny' ) {
         $httpEngine = HTTP::Tiny->new(
@@ -516,7 +521,7 @@ sub getMailTextforItem
     $retval .= " - " . $item->{priceStr} . "\n";
     $retval .= " - " . str_replace( "^, ", "", join( ', ', @{ $item->{info} } ) ) . "\n";
 
-    foreach my $dt ( sort reverse keys %{ $item->{history} } ) {
+    foreach my $dt ( sort keys %{ $item->{history} } ) {
         $retval .= " - " . strftime( "%Y.%m.%d %H:%M", localtime( $dt ) ) . ": " . $item->{history}->{$dt} . "\n";
     }
 
@@ -533,6 +538,7 @@ sub getMailText
     my $count_new     = 0;
     my $count_changed = 0;
 
+    $mailTextHtml="Utolsó állapot: $dataFileDate\n\n"
     foreach my $id ( keys %{ $G_DATA->{ads} } ) {
         my $item = $G_DATA->{ads}->{$id};
         if ( $item->{status} eq $STATUS_NEW ) {
@@ -547,7 +553,7 @@ sub getMailText
     } ### foreach my $id ( keys %{ $G_DATA...})
 
     $mailTextHtml .= "\n";
-    $mailTextHtml .= "${mailTextHtml}\n$G_ITEMS_PROCESSED feldolgozott hirdetés\n";
+    $mailTextHtml .= "$G_ITEMS_PROCESSED feldolgozott hirdetés\n";
 
     if ( ( $count_new + $count_changed ) == 0 ) {
         $log->info( "\nNincs újdonság.\n$mailTextHtml" );
