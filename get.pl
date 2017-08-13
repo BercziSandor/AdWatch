@@ -488,14 +488,14 @@ sub ini
     $log->info( "Ini: Http motor: $g_downloadMethod\n" );
     if ( $g_downloadMethod eq 'httpTiny' ) {
         $httpEngine = HTTP::Tiny->new(
-            timeout    => 15,
+            timeout    => 30,
             cookie_jar => $cookieJar_HttpCookieJar,
             agent      => $agent
         ) or $log->logdie( $! );
     } elsif ( $g_downloadMethod eq 'lwp' ) {
 
         $httpEngine = LWP::UserAgent->new(
-            timeout    => 15,
+            timeout    => 30,
             cookie_jar => $cookieJar_HttpCookieJarLWP,
             agent      => $agent
         ) or $log->logdie( "zzz: $!" );
@@ -505,7 +505,7 @@ sub ini
         # $httpEngine->cookie_jar( $cookieJar );
     } elsif ( $g_downloadMethod eq 'wwwMech' ) {
         $httpEngine = WWW::Mechanize->new(
-            timeout    => 15,
+            timeout    => 30,
             cookie_jar => $cookieJar_HttpCookieJarLWP,
             agent      => $agent
         );
