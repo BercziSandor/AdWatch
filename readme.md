@@ -1,7 +1,9 @@
 Goal of the script: alerting about new ads via email
 
 ## TODO, open issues
- -
+ - fix date 'utolsó állapot'
+ - die function: report all failure in mail
+ - fix format problems of the mail: the links are sometimes formatted wrong
 
 ## Prerequisits
 
