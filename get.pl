@@ -648,6 +648,7 @@ sub main
     for ( ; ; ) {
         my $time = time;
         process();
+        $dataFileDate = $G_DATA->{lastChange} ? ( strftime( "%Y.%m.%d %H:%M", localtime( $G_DATA->{lastChange} ) ) ) : "";
         my $timeToWait = ( $time + $G_WAIT_BETWEEN_FULL_PROCESS_IN_SEC ) - time;
         if ( $timeToWait < 0 ) {
             $log->warn(
