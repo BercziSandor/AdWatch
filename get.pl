@@ -110,7 +110,8 @@ sub getHtml
 
     if ( $url =~ m|talalatilista/([^/]+)/(.{10})[^/]+/page(\d+)| ) {
         $fileName = "$1_$2_$3.html";
-	# $log->debug( "fileName: $fileName" );
+
+        # $log->debug( "fileName: $fileName" );
     } else {
         $log->logdie( "Mi ez az url?? [$url]" );
     }
@@ -329,7 +330,8 @@ sub parseItems
         } else {
             $sign = " ";
         }
-	# $log->debug( Dumper( $G_DATA->{ads}->{$id} ) );
+
+        # $log->debug( Dumper( $G_DATA->{ads}->{$id} ) );
 
         print "$sign";
         $log->debug( " $sign $id: [$title]" );
@@ -387,8 +389,8 @@ sub ini
     } ### unless ( my $return = do $cnfFile)
     dataLoad();
 
-    my $cnt=`ps -aef | grep -v grep | grep -c "$name.pl"`;
-    if ( $cnt > 1 ){ die "Már fut másik $name folyamat, ez leállítva.\n";}
+    my $cnt = `ps -aef | grep -v grep | grep -c "$name.pl"`;
+    if ( $cnt > 1 ) { die "Már fut másik $name folyamat, ez leállítva.\n"; }
 
     $G_HTML_TREE = HTML::TreeBuilder::XPath->new;
 
@@ -486,7 +488,7 @@ sub ini
         sleep( $timeToWait );
     } else {
         $log->info( "A futás elindítható, az előző futás elég régen volt.\n" );
-    } ### else [ if ( $timeToWait > 0 )]
+    }
 
     $log->info( "Ini: Http motor: $g_downloadMethod\n" );
     if ( $g_downloadMethod eq 'httpTiny' ) {
@@ -686,18 +688,16 @@ sub sndMail
 
     $log->info( "Levél küldése...\n" );
 
-    $G_DATA->{lastMailTime}=time if (not defined $G_DATA->{lastMailTime});
+    $G_DATA->{lastMailSendTime} = time if ( not defined $G_DATA->{lastMailSendTime} );
     if ( not $bodyText ) {
-        if ((time - $G_DATA->{lastMailTime})> (60*60) ){
-        	$log->info( " Nincs változás, viszont elég régen nem küldtünk levelet, menjen egy visszajelzés.\n" );
-		$bodyText="Nyugalom, fut az oldal figyelése. Viszont nincs változás, ez van.";
-	}else{
-        	$log->info( " Kihagyva: nincs változás, nem spamelünk. ;)\n" );
-	     	return;
-	}
-    }
-
-
+        if ( ( time - $G_DATA->{lastMailSendTime} ) > ( 60 * 60 ) ) {
+            $log->info( " Nincs változás, viszont elég régen nem küldtünk levelet, menjen egy visszajelzés.\n" );
+            $bodyText = "Nyugalom, fut a hirdetések figyelése. Viszont nincs változás, ez van.";
+        } else {
+            $log->info( " Kihagyva: nincs változás, nem spamelünk. ;)\n" );
+            return;
+        }
+    } ### if ( not $bodyText )
 
     {
         my $fileName = ${collectionDate};
@@ -752,8 +752,7 @@ sub sndMail
 
     } ### foreach ( @g_mailRecipients)
 
-
-    $G_DATA->{lastMailTime}=time;
+    $G_DATA->{lastMailSendTime} = time;
     $log->info( "Levélküldés kihagyva a g_sendMail változó értéke miatt.\n" ) if not $g_sendMail;
 } ### sub sndMail
 
