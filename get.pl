@@ -110,7 +110,7 @@ sub getHtml
 
     if ( $url =~ m|talalatilista/([^/]+)/(.{10})[^/]+/page(\d+)| ) {
         $fileName = "$1_$2_$3.html";
-        $log->debug( "fileName: $fileName" );
+	# $log->debug( "fileName: $fileName" );
     } else {
         $log->logdie( "Mi ez az url?? [$url]" );
     }
