@@ -153,7 +153,6 @@ sub getHtml
         } elsif ( $g_downloadMethod eq 'lwp' ) {
             my $response = $httpEngine->get( $url );
 
-            # print Dumper($response);
             if ( $response->is_success ) {
                 $html    = $response->content;
                 $content = decode_utf8( $html );
@@ -330,7 +329,7 @@ sub parseItems
         } else {
             $sign = " ";
         }
-        $log->debug( Dumper( $G_DATA->{ads}->{$id} ) );
+	# $log->debug( Dumper( $G_DATA->{ads}->{$id} ) );
 
         print "$sign";
         $log->debug( " $sign $id: [$title]" );
