@@ -686,10 +686,18 @@ sub sndMail
 
     $log->info( "Levél küldése...\n" );
 
+    $G_DATA->{lastMailTime}=time if (not defined $G_DATA->{lastMailTime});
     if ( not $bodyText ) {
-        $log->info( " Kihagyva: nincs változás, nem spamelünk. ;)\n" );
-        return;
+        if ((time - $G_DATA->{lastMailTime})> (60*60) ){
+        	$log->info( " Nincs változás, viszont elég régen nem küldtünk levelet, menjen egy visszajelzés.\n" );
+		$bodyText="Nyugalom, fut az oldal figyelése. Viszont nincs változás, ez van.";
+	}else{
+        	$log->info( " Kihagyva: nincs változás, nem spamelünk. ;)\n" );
+	     	return;
+	}
     }
+
+
 
     {
         my $fileName = ${collectionDate};
@@ -743,6 +751,9 @@ sub sndMail
         }
 
     } ### foreach ( @g_mailRecipients)
+
+
+    $G_DATA->{lastMailTime}=time;
     $log->info( "Levélküldés kihagyva a g_sendMail változó értéke miatt.\n" ) if not $g_sendMail;
 } ### sub sndMail
 
