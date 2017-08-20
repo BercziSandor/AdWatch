@@ -387,6 +387,10 @@ sub ini
         die "couldn't run $cnfFile\n" unless $return;
     } ### unless ( my $return = do $cnfFile)
     dataLoad();
+
+    my $cnt=`ps -aef | grep -v grep | grep -c "$name.pl"`;
+    if ( $cnt > 1 ){ die "Már fut másik $name folyamat, ez leállítva.\n";}
+
     $G_HTML_TREE = HTML::TreeBuilder::XPath->new;
 
     # ************************************************
