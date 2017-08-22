@@ -1,53 +1,75 @@
 Goal of the script: alerting about new ads via email
 
-## TODO, open issues
+# TODO, open issues
  - fix date 'utolsó állapot'
  - die function: report all failure in mail
  - fix format problems of the mail: the links are sometimes formatted wrong
 
-## Prerequisits
+# Prerequisits
 
-### System config
+## System config
 
-
-
-# Timezone change
+### User creation
 ~~~~bash
-sudo dpkg-reconfigure tzdata
 
-sudo apt install gcc make perl-openssl-defaults libssl-dev mailutils
+adduser sanyi
+usermod -aG sudo sanyi
+su - sanyi
+~~~~
 
+
+### Swap
+https://www.digitalocean.com/community/tutorials/how-to-add-swap-on-ubuntu-14-04
+~~~~bash
+sudo swapon -s
+free -m
+sudo fallocate -l 4G /swapfile
+sudo chmod 600 /swapfile
+sudo mkswap /swapfile
+sudo swapon /swapfile
+sudo sh -c "echo '/swapfile   none    swap    sw    0   0' >> /etc/fstab"
+~~~~
+
+### APT, cpanm, other system configs
+~~~~bash
+sudo apt update
+sudo apt upgrade
+sudo apt autoremove
 curl -L https://cpanmin.us | perl - --sudo App::cpanminus
+sudo apt install gcc make perl-openssl-defaults libssl-dev mailutils
+sudo apt install mc
+sudo dpkg-reconfigure tzdata
+~~~~
 
+### Perl packages
+~~~~bash
 cpanm --sudo install HTTP::CookieJar
 cpanm --sudo install HTTP::Date
 cpanm --sudo install HTML::TreeBuilder
-~~~~
-	Hack if not working:
-	replace this:
-		use lib '.'
-	with this:
-		use File::Spec;
-		use File::Basename;
-		use File::Copy;
-		use lib dirname( File::Spec->rel2abs(__FILE__) );
-	in file Build.PL
-	Install:
-	perl Build.PL
-	./Build
-	./Build test
-	./Build install
-~~~~
+#    Hack if not working:
+#    replace in /home/sanyi/.cpanm/work/latest-build/HTML-Tree-5.06/Build.PL this:
+#        use lib '.'
+#    with this:
+#        use File::Spec;
+#        use File::Basename;
+#        use File::Copy;
+#        use lib dirname( File::Spec->rel2abs(__FILE__) );
+#
+#    Install:
+#    perl Build.PL
+#    ./Build
+#    ./Build test
+#    sudo ./Build install
+
 cpanm --sudo install HTML::TreeBuilder::XPath
 cpanm --sudo install HTML::Parser
 cpanm --sudo install Log::Log4perl
 cpanm --sudo install LWP::UserAgent
 cpanm --sudo install LWP::Protocol::https
 cpanm --sudo install WWW::Mechanize
-wget https://gist.githubusercontent.com/sshtmc/3952294/raw/7b5b230a04994ab387538b118d7a32dda54eb757/ubuntu-configure-sendmail-with-gmail/ -O- | bash
+cpanm --sudo install Email::Sender::Simple
 ~~~~
-Swap: https://www.digitalocean.com/community/tutorials/how-to-add-swap-on-ubuntu-14-04
-
+### Mail configuration
 ~~~~bash
 #!/bin/bash
 # wget https://gist.githubusercontent.com/sshtmc/3952294/raw/7b5b230a04994ab387538b118d7a32dda54eb757/ubuntu-configure-sendmail-with-gmail/ -O- | bash
@@ -57,36 +79,36 @@ GMAIL_USER=
 GMAIL_PASS=
 
 if [ -z "$GMAIL_USER" ]; then
-	read -p "Gmail username: " GMAIL_USER
+    read -p "Gmail username: " GMAIL_USER
 fi
 
 
 if [ -z "$GMAIL_PASS" ]; then
-	read -sp "Gmail password: " GMAIL_PASS
+    read -sp "Gmail password: " GMAIL_PASS
 fi
 
 function install_postfix() {
 echo | sudo debconf-set-selections <<__EOF
-postfix	postfix/root_address	string
-postfix	postfix/rfc1035_violation	boolean	false
-postfix	postfix/mydomain_warning	boolean
-postfix	postfix/mynetworks	string	127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128
-postfix	postfix/mailname	string	$HOST
-postfix	postfix/tlsmgr_upgrade_warning	boolean
-postfix	postfix/recipient_delim	string	+
-postfix	postfix/main_mailer_type	select	Internet with smarthost
-postfix	postfix/destinations	string	$HOST, localhost.localdomain, localhost
-postfix	postfix/retry_upgrade_warning	boolean
+postfix postfix/root_address    string
+postfix postfix/rfc1035_violation   boolean false
+postfix postfix/mydomain_warning    boolean
+postfix postfix/mynetworks  string  127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128
+postfix postfix/mailname    string  $HOST
+postfix postfix/tlsmgr_upgrade_warning  boolean
+postfix postfix/recipient_delim string  +
+postfix postfix/main_mailer_type    select  Internet with smarthost
+postfix postfix/destinations    string  $HOST, localhost.localdomain, localhost
+postfix postfix/retry_upgrade_warning   boolean
 # Install postfix despite an unsupported kernel?
-postfix	postfix/kernel_version_warning	boolean
-postfix	postfix/not_configured	error
-postfix	postfix/sqlite_warning	boolean
-postfix	postfix/mailbox_limit	string	0
-postfix	postfix/relayhost	string	[smtp.gmail.com]:587
-postfix	postfix/procmail	boolean	false
-postfix	postfix/bad_recipient_delimiter	error
-postfix	postfix/protocols	select	all
-postfix	postfix/chattr	boolean	false
+postfix postfix/kernel_version_warning  boolean
+postfix postfix/not_configured  error
+postfix postfix/sqlite_warning  boolean
+postfix postfix/mailbox_limit   string  0
+postfix postfix/relayhost   string  [smtp.gmail.com]:587
+postfix postfix/procmail    boolean false
+postfix postfix/bad_recipient_delimiter error
+postfix postfix/protocols   select  all
+postfix postfix/chattr  boolean false
 __EOF
 
 echo "Postfix should be configured as Internet site with smarthost"
@@ -147,9 +169,18 @@ echo "Please check your inbox at gmail."
 
 ~~~~
 
+### Git clone
+~~~~bash
+cd ~
+mkdir -p work
+cd work
+git clone https://github.com/BercziSandor/hasznaltAutoWatcher.git
+cd hasznaltAutoWatcher
+./get.pl
 
+~~~~
 
-* Cloud services
+# Cloud services
 Needed layer: Infrastructure as a Service (IAAS)
 
 Some providers (found [here](http://www.techrepublic.com/blog/10-things/10-iaas-providers-who-provide-free-cloud-resources/))
