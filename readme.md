@@ -76,6 +76,7 @@ cpanm --sudo install Email::Sender::Simple
 
 HOST=$(hostname)
 GMAIL_USER=
+# Hint: create app password: https://myaccount.google.com/apppasswords
 GMAIL_PASS=
 
 if [ -z "$GMAIL_USER" ]; then
