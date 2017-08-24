@@ -1,9 +1,7 @@
 Goal of the script: alerting about new ads via email
 
 # TODO, open issues
- - fix date 'utolsó állapot'
- - die function: report all failure in mail
- - fix format problems of the mail: the links are sometimes formatted wrong
+see https://github.com/BercziSandor/hasznaltAutoWatcher/issues
 
 # Prerequisits
 
@@ -37,7 +35,7 @@ sudo apt upgrade
 sudo apt autoremove
 curl -L https://cpanmin.us | perl - --sudo App::cpanminus
 sudo apt install gcc make perl-openssl-defaults libssl-dev mailutils
-sudo apt install mc
+sudo apt install mc htop
 sudo dpkg-reconfigure tzdata
 ~~~~
 
@@ -167,7 +165,6 @@ __EOF
 echo "I have sent you a mail to $GMAIL_USER@gmail.com"
 echo "This will confirm that the configuration is good."
 echo "Please check your inbox at gmail."
-
 ~~~~
 
 ### Git clone
@@ -178,8 +175,12 @@ cd work
 git clone https://github.com/BercziSandor/hasznaltAutoWatcher.git
 cd hasznaltAutoWatcher
 ./get.pl
-
 ~~~~
+
+### Cron
+# TODO
+
+
 
 # Cloud services
 Needed layer: Infrastructure as a Service (IAAS)
