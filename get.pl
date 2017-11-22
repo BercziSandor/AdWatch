@@ -26,11 +26,6 @@ use POSIX qw(strftime);
 use Email::Sender::Simple qw(sendmail);
 use Email::Simple::Creator;
 
-# use Email::Sender::Transport::SMTP;
-# use Email::Sender::Transport::SMTPS;
-# use Email::Send::SMTP::Gmail;
-# use Email::Send;
-
 my @g_mailRecipients = ( '"Sanyi" <berczi.sandor@gmail.com>', '"Tillatilla1966" <tillatilla.1966@gmail.com>' );
 
 # @g_mailRecipients = ( '"Sanyi" <berczi.sandor@gmail.com>' );

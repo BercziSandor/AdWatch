@@ -1,0 +1,2130 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"get",
+				"getUrls"
+			],
+			[
+				"G_RELEASE_",
+				"G_RELEASE_CARMEN_CURRENT_DOT"
+			],
+			[
+				"G_RELE",
+				"G_RELEASE_DOT"
+			],
+			[
+				"G_RELEASE",
+				"G_RELEASE_CURRENT"
+			],
+			[
+				"scrip",
+				"SCRIPT"
+			],
+			[
+				"co",
+				"continue\tfunc"
+			],
+			[
+				"li",
+				"lib::stopWatch"
+			],
+			[
+				"pack",
+				"package\tfunc *"
+			],
+			[
+				"no",
+				"nocreate"
+			],
+			[
+				"configs",
+				"configSpecIncludeFile"
+			],
+			[
+				"pro",
+				"project"
+			],
+			[
+				"rea",
+				"readlink"
+			],
+			[
+				"tar",
+				"targetSub"
+			],
+			[
+				"ta",
+				"targetSub"
+			],
+			[
+				"target",
+				"target3"
+			],
+			[
+				"key",
+				"key2"
+			],
+			[
+				"CO",
+				"CONTEXT_BIN"
+			],
+			[
+				"contex",
+				"contextType_"
+			],
+			[
+				"conte",
+				"contextType"
+			],
+			[
+				"el",
+				"elseif\tfunc"
+			],
+			[
+				"Stri",
+				"StringInStr()"
+			],
+			[
+				"RP",
+				"RPMCOMPAREDIR"
+			],
+			[
+				"u_",
+				"u_rpmGetName"
+			],
+			[
+				"rpm",
+				"rpmCompareWithLatestRemote"
+			],
+			[
+				"time",
+				"timestamp"
+			],
+			[
+				"l_",
+				"l_filePath"
+			],
+			[
+				"SCRIP",
+				"SCRIPTDIR"
+			],
+			[
+				"S",
+				"SCRIPTDIR"
+			],
+			[
+				"makePath_",
+				"makePath_Web"
+			],
+			[
+				"p_",
+				"p_prj"
+			],
+			[
+				"loca",
+				"localToWeb"
+			],
+			[
+				"max",
+				"maxDate"
+			],
+			[
+				"pr",
+				"prj"
+			],
+			[
+				"ret",
+				"retval"
+			],
+			[
+				"getP",
+				"getPackageName"
+			],
+			[
+				"file",
+				"filePath"
+			],
+			[
+				"sw",
+				"swDirs"
+			],
+			[
+				"for",
+				"foreach"
+			],
+			[
+				"do",
+				"do_something_with"
+			],
+			[
+				"colo",
+				"colours"
+			],
+			[
+				"ba",
+				"batchKittySettings.pl"
+			],
+			[
+				"out",
+				"output"
+			],
+			[
+				"setting",
+				"settingsFile"
+			],
+			[
+				"reg",
+				"regFile"
+			],
+			[
+				"all",
+				"all_value"
+			],
+			[
+				"Dum",
+				"Dumper〔module〕"
+			],
+			[
+				"se",
+				"settingsFile"
+			],
+			[
+				"re",
+				"regLines"
+			],
+			[
+				"fore",
+				"foreach\tfunc"
+			],
+			[
+				"com",
+				"compareRPMsInDir"
+			],
+			[
+				"pa",
+				"packageInfo"
+			],
+			[
+				"ex",
+				"extractRpm"
+			],
+			[
+				"temp",
+				"template"
+			],
+			[
+				"tepm",
+				"templateDir"
+			],
+			[
+				"WOR",
+				"WORKDIR"
+			],
+			[
+				"Re",
+				"RelIndep"
+			],
+			[
+				"user",
+				"user-mocc_adm"
+			],
+			[
+				"crea",
+				"createDummySpec"
+			],
+			[
+				"spe",
+				"specContent"
+			],
+			[
+				"up",
+				"uploadFiles"
+			],
+			[
+				"buil",
+				"buildDir"
+			],
+			[
+				"tmp",
+				"tmpDir"
+			],
+			[
+				"pay",
+				"payloadDir"
+			],
+			[
+				"cre",
+				"createPayLoadFile"
+			],
+			[
+				"log",
+				"logFile"
+			],
+			[
+				"IFS",
+				"IFS_BAK"
+			],
+			[
+				"we",
+				"targetWeb"
+			],
+			[
+				"sub",
+				"subDir"
+			],
+			[
+				"pilo",
+				"pilotX"
+			],
+			[
+				"repo",
+				"repoFile"
+			],
+			[
+				"yum",
+				"yum-repo"
+			],
+			[
+				"si",
+				"sizeOut"
+			],
+			[
+				"in",
+				"inFile"
+			],
+			[
+				"ha",
+				"hasznaltAutoWatcher"
+			],
+			[
+				"last",
+				"lastRevFile"
+			],
+			[
+				"las",
+				"lastRevFile"
+			],
+			[
+				"mai",
+				"mainCall"
+			],
+			[
+				"OP",
+				"OPT_revEnd"
+			],
+			[
+				"OPT",
+				"OPT_revStart"
+			],
+			[
+				"ver",
+				"verboseMode"
+			],
+			[
+				"rev",
+				"revEnd"
+			],
+			[
+				"hidre",
+				"hirdetések"
+			],
+			[
+				"dir",
+				"dir_orig"
+			],
+			[
+				"foe",
+				"foreach"
+			],
+			[
+				"exe",
+				"executeCommand"
+			],
+			[
+				"SVN",
+				"SVNSUB"
+			],
+			[
+				"expo",
+				"exportOutRoot"
+			],
+			[
+				"base",
+				"baseName"
+			],
+			[
+				"lo",
+				"logPath"
+			],
+			[
+				"WS",
+				"WSRBASE"
+			],
+			[
+				"commi",
+				"commitNeeded"
+			],
+			[
+				"clearca",
+				"clearcaseRoot"
+			],
+			[
+				"clea",
+				"cleartool"
+			],
+			[
+				"cle",
+				"clearcaseRoot"
+			],
+			[
+				"install",
+				"installFile"
+			],
+			[
+				"insta",
+				"installFile"
+			],
+			[
+				"ch",
+				"chdir\tfunc"
+			],
+			[
+				"WSR",
+				"WSRSUB"
+			],
+			[
+				"date",
+				"dateString2"
+			],
+			[
+				"data",
+				"dataFileDate"
+			],
+			[
+				"text",
+				"text2html"
+			],
+			[
+				"count",
+				"count_new"
+			],
+			[
+				"STAT",
+				"STATUS_CHANGED"
+			],
+			[
+				"getMa",
+				"getMailTextforItem"
+			],
+			[
+				"send",
+				"sendMail"
+			],
+			[
+				"cookieJar_HttpCook",
+				"cookieJar_HttpCookieJarLWP"
+			],
+			[
+				"mail",
+				"mailTextHtml"
+			],
+			[
+				"G",
+				"G_ITEMS_IN_DB"
+			],
+			[
+				"sp",
+				"sprintf"
+			],
+			[
+				"de",
+				"decode_utf8"
+			],
+			[
+				"tala",
+				"talalatokszama"
+			],
+			[
+				"cook",
+				"cookieJar"
+			],
+			[
+				"http",
+				"httpEngine"
+			],
+			[
+				"htt",
+				"httpEngine"
+			],
+			[
+				"test",
+				"testStr"
+			],
+			[
+				"G_",
+				"G_WAIT_BETWEEN_FULL_PROCESS_IN_SEC"
+			],
+			[
+				"body",
+				"bodyText"
+			],
+			[
+				"G_ITE",
+				"G_ITEMS_TO_PROCESS_MAX"
+			],
+			[
+				"url",
+				"urlId"
+			],
+			[
+				"ur",
+				"urls"
+			],
+			[
+				"g_",
+				"g_last_get_time"
+			],
+			[
+				"G_I",
+				"G_ITEMS_TO_PROCESS_MAX"
+			],
+			[
+				"collec",
+				"collectionDate"
+			],
+			[
+				"sho",
+				"ShowUsage"
+			],
+			[
+				"stop",
+				"stopWatch_Reset"
+			],
+			[
+				"te",
+				"text_changed"
+			],
+			[
+				"stopWatch_",
+				"stopWatch_Info"
+			],
+			[
+				"coo",
+				"cookieJar"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "other/autoscout24/getAutoscout24.at.pl",
+			"settings":
+			{
+				"buffer_size": 23647,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "other/autoscout24/test.log",
+			"settings":
+			{
+				"buffer_size": 1310,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "other/autoscout24/input/Gebrauchte Suzuki Angebote bei AutoScout24.html",
+			"settings":
+			{
+				"buffer_size": 640993,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+		[
+			[
+				[
+					"Packages/AutoItScript/AutoIt.sublime-build",
+					""
+				],
+				[
+					"Packages/AutoItScript/AutoIt.sublime-build",
+					"Run"
+				]
+			],
+			[
+				"Packages/AutoItScript/AutoIt.sublime-build",
+				""
+			]
+		],
+		[
+			[
+				[
+					"Packages/Bash Build System/Bash.sublime-build",
+					""
+				],
+				[
+					"Packages/User/node.sublime-build",
+					""
+				]
+			],
+			[
+				"Packages/Bash Build System/Bash.sublime-build",
+				""
+			]
+		],
+		[
+			[
+				[
+					"Packages/User/Perl-checksyntax.sublime-build",
+					""
+				],
+				[
+					"Packages/User/Perl-checksyntax.sublime-build",
+					"Run"
+				],
+				[
+					"Packages/User/Perl.sublime-build",
+					""
+				]
+			],
+			[
+				"Packages/User/Perl.sublime-build",
+				""
+			]
+		],
+		[
+			[
+				[
+					"Packages/User/node.sublime-build",
+					""
+				],
+				[
+					"Packages/User/Perl-checksyntax.sublime-build",
+					""
+				],
+				[
+					"Packages/User/Perl-checksyntax.sublime-build",
+					"Run"
+				],
+				[
+					"Packages/User/Perl.sublime-build",
+					""
+				]
+			],
+			[
+				"Packages/User/Perl.sublime-build",
+				""
+			]
+		]
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 490.0,
+		"last_filter": "xpath",
+		"selected_items":
+		[
+			[
+				"xpath",
+				"XPath: Query document"
+			],
+			[
+				"xpa",
+				"XPath: Re-run last query and select all results"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"package",
+				"Package Control: Remove Package"
+			],
+			[
+				"pack",
+				"Package Control: Install Package"
+			],
+			[
+				"indent",
+				"IndentX: Indent"
+			],
+			[
+				"inden",
+				"Indentation: Reindent Lines"
+			],
+			[
+				"calc",
+				"Calculate"
+			],
+			[
+				"cal",
+				"Calculate"
+			],
+			[
+				"snip",
+				"Snippet: Create link from url"
+			],
+			[
+				"table",
+				"Table Editor: Set table syntax 'Simple' for current view"
+			],
+			[
+				"start",
+				"Snippet: markdeep_starter"
+			],
+			[
+				"markdeep",
+				"Set Syntax: Markdeep"
+			],
+			[
+				"mark",
+				"Set Syntax: Markdown"
+			],
+			[
+				"bash",
+				"Set Syntax: Shell Script (Bash)"
+			],
+			[
+				"perl",
+				"Set Syntax: ModernPerl"
+			],
+			[
+				"ins",
+				"Package Control: Install Package"
+			],
+			[
+				"sni",
+				"Snippet: Create link from url"
+			],
+			[
+				"compa",
+				"Compare with..."
+			],
+			[
+				"snippe",
+				"Snippet: Create link from title"
+			],
+			[
+				"snippet",
+				"Snippet: markdeep_starter"
+			],
+			[
+				"markde",
+				"Set Syntax: Markdeep"
+			],
+			[
+				"table editor enable",
+				"Table Editor: Enable for current syntax"
+			],
+			[
+				"markd",
+				"Markdeep: Open documentation"
+			],
+			[
+				"pla",
+				"Set Syntax: Plain Text"
+			],
+			[
+				"inde",
+				"Indentation: Reindent Lines"
+			],
+			[
+				"com",
+				"Compare with..."
+			],
+			[
+				"packa",
+				"Package Control: Add Repository"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
+			],
+			[
+				"sublimelin",
+				"SublimeLinter: Enable Linter"
+			],
+			[
+				"create li",
+				"SublimeLinter: Create Linter Plugin"
+			],
+			[
+				"sublime",
+				"SublimeLinter: Enable Linter"
+			],
+			[
+				"compare",
+				"Compare with..."
+			],
+			[
+				"push",
+				"Git: Push"
+			],
+			[
+				"qc",
+				"Git: Quick Commit (current file)"
+			],
+			[
+				"markdo",
+				"Markdown Preview: Preview in Browser"
+			],
+			[
+				"markdee",
+				"Set Syntax: Markdeep"
+			],
+			[
+				"git push",
+				"Git: Push"
+			],
+			[
+				"indentx",
+				"IndentX: Indent"
+			],
+			[
+				"git s",
+				"Git: Status"
+			],
+			[
+				"scrip",
+				"Set Syntax: JavaScript"
+			],
+			[
+				"shell",
+				"Set Syntax: Shell Script (Bash)"
+			],
+			[
+				"xml",
+				"Set Syntax: XML"
+			],
+			[
+				"madk",
+				"Set Syntax: Markdeep"
+			],
+			[
+				"Package Control: ",
+				"Package Control: Install Package"
+			],
+			[
+				"git p",
+				"Git: Push"
+			],
+			[
+				"git qc",
+				"Git: Quick Commit (repo)"
+			],
+			[
+				"browse pa",
+				"Preferences: Browse Packages"
+			],
+			[
+				"git q",
+				"Git: Quick Commit (repo)"
+			],
+			[
+				"sta",
+				"Snippet: markdeep_starter"
+			],
+			[
+				"git pus",
+				"Git: Push"
+			],
+			[
+				"git commi",
+				"Git: Amend Commit"
+			],
+			[
+				"git",
+				"Git: Commit"
+			],
+			[
+				"qui",
+				"Git: Quick Commit (current file)"
+			],
+			[
+				"git pull",
+				"Git: Pull"
+			],
+			[
+				"git rese",
+				"Git: Reset (hard) HEAD"
+			],
+			[
+				"git a",
+				"Git: Amend Commit"
+			],
+			[
+				"svn",
+				"TortoiseSVN: Commit"
+			],
+			[
+				"lint",
+				"SublimeLinter: Lint This View"
+			],
+			[
+				"json",
+				"Indent JSON"
+			],
+			[
+				"jso",
+				"Set Syntax: JSON"
+			],
+			[
+				"sql",
+				"Set Syntax: SQL"
+			],
+			[
+				"iden",
+				"Auto indent"
+			],
+			[
+				"au",
+				"Set Syntax: AutoIt Script"
+			],
+			[
+				"insert",
+				"InsertDate: Default"
+			],
+			[
+				"live",
+				"LiveReload: Self test"
+			],
+			[
+				"autore",
+				"Disable Autorefresh"
+			],
+			[
+				"git w",
+				"Git: Diff Current File (Ignore Whitespace)"
+			],
+			[
+				"git stat",
+				"Git: Status"
+			],
+			[
+				"tidy",
+				"PerlTidy: Tidy"
+			],
+			[
+				"pytho",
+				"Build With: Python - Syntax Check"
+			],
+			[
+				"star",
+				"Snippet: markdeep_starter"
+			],
+			[
+				"set sy mar",
+				"Set Syntax: Markdeep"
+			],
+			[
+				"link",
+				"Snippet: Create link"
+			],
+			[
+				"remove",
+				"Package Control: Remove Package"
+			],
+			[
+				"changes",
+				"Modific: Toggle highlight changes"
+			],
+			[
+				"plain",
+				"Set Syntax: Plain Text"
+			],
+			[
+				"html",
+				"HTMLPrettify"
+			],
+			[
+				"tid",
+				"Tidy Tabs"
+			],
+			[
+				"xm",
+				"Set Syntax: XML"
+			],
+			[
+				"convert case",
+				"Convert Case: Title Case"
+			],
+			[
+				"commi",
+				"TortoiseSVN: Commit"
+			],
+			[
+				"preview",
+				"Markdown Preview: Preview in Browser"
+			],
+			[
+				"toc",
+				"MarkdownTOC:Insert TOC"
+			],
+			[
+				"html2",
+				"HTML2Text: Convert clipboard content"
+			],
+			[
+				"pandoc",
+				"Pandoc"
+			],
+			[
+				"case",
+				"Convert Case: Title Case"
+			],
+			[
+				"lore",
+				"Add some Lorem Gibson"
+			],
+			[
+				"spell",
+				"Google Spell Check"
+			],
+			[
+				"sort",
+				"Sort Lines by Selection"
+			],
+			[
+				"line",
+				"Line Ending: Unix"
+			],
+			[
+				"plai",
+				"Set Syntax: Plain Text"
+			],
+			[
+				"reloa",
+				"LiveReload: Self test"
+			],
+			[
+				"bro",
+				"View In Browser"
+			],
+			[
+				"snipper",
+				"Snippet: Markdown Header 1"
+			],
+			[
+				"package ",
+				"Package Control: Remove Package"
+			],
+			[
+				"sort li",
+				"Sort Lines by Selection"
+			],
+			[
+				"ur",
+				"StringEncode: URL Encode"
+			],
+			[
+				"string",
+				"StringEncode: URL Encode"
+			],
+			[
+				"view",
+				"View In Browser"
+			],
+			[
+				"previ",
+				"Markdown Preview: Preview in Browser"
+			],
+			[
+				"css",
+				"Format CSS: Compact (No Spaces)"
+			],
+			[
+				"tiny",
+				"Tidy CSS (Low Compression)"
+			],
+			[
+				"lorem",
+				"Add some Lorem Gibson"
+			],
+			[
+				"ma",
+				"Markdown Preview: Preview in Browser"
+			],
+			[
+				"beau",
+				"HTMLBeautify"
+			],
+			[
+				"install ",
+				"Package Control: Install Package"
+			],
+			[
+				"markdown",
+				"Markdown Preview: Export HTML in Sublime Text"
+			],
+			[
+				"",
+				"Build With: Perl"
+			],
+			[
+				"file",
+				"File: Save All"
+			]
+		],
+		"width": 752.0
+	},
+	"console":
+	{
+		"height": 345.0,
+		"history":
+		[
+			"import urllib.request,os,hashlib; h = 'df21e130d211cfc94d9b0905775a7c0f' + '1e3d39e33b79698005270310898eea76'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)",
+			"Install Package",
+			"import urllib.request,os,hashlib; h = '2915d1851351e5ee549c20394736b442' + '8bc59f460fa1548d1514676163dafc88'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/C/Users/sberczi/Documents/hasznaltAutoWatcher",
+		"/C/Users/sberczi/Documents/hasznaltAutoWatcher/other",
+		"/C/Users/sberczi/Documents/hasznaltAutoWatcher/other/autoscout24"
+	],
+	"file_history":
+	[
+		"/C/Users/sberczi/Documents/hasznaltAutoWatcher/other/autoscout24/input/test_minimal.html",
+		"/C/work/CBS/git/cbs-build-scripts/bin-utils.sh",
+		"/C/work/CBS/git/cbs-build-scripts/doc/docu-releasely.md.html",
+		"/C/Users/sberczi/Downloads/AutoHotkey_1.1.26.01/mouse_move.ahk",
+		"/C/work/CBS/git/cbs-build-scripts/new-utils.sh",
+		"/C/work/CBS/git/cbs-build-scripts/maintenance/idaReportRemove.sh",
+		"/C/work/CBS/git/cbs-build-scripts/doit.sh",
+		"/C/work/CBS/git/cbs-build-scripts/report-utils.sh",
+		"/C/Users/sberczi/Documents/hasznaltAutoWatcher/get.pl",
+		"/C/Users/sberczi/Documents/hasznaltAutoWatcher/other/autoscout24/lib/stopWatch.pm",
+		"/C/Users/sberczi/Documents/yamamoto/README.md",
+		"/C/Users/sberczi/Dropbox/!/_Eladas/Spirotrap/readme.txt",
+		"/C/Users/sberczi/Documents/hasznaltAutoWatcher/other/autoscout24/test.log",
+		"/C/Users/sberczi/Documents/hasznaltAutoWatcher/other/autoscout24/getAutoscout24.at.cfg.pl",
+		"/C/Users/sberczi/Documents/hasznaltAutoWatcher/other/autoscout24/getAutoscout24.at.pl.cfg",
+		"/C/Users/sberczi/Dropbox/prog/Sublime/Data/Packages/xpath/xpath.sublime-settings",
+		"/C/Users/sberczi/Dropbox/prog/Sublime/Data/Packages/User/xpath.sublime-settings",
+		"/C/Users/sberczi/Documents/hasznaltAutoWatcher/other/autoscout24/input/test.html",
+		"/C/Users/sberczi/Documents/hasznaltAutoWatcher/other/autoscout24/input/Gebrauchte Suzuki Angebote bei AutoScout24.html",
+		"/C/work/CBS/git/cbs-build-scripts/maintenance/crontab_g_ratbld.txt",
+		"/C/work/CBS/git/cbs-build-scripts/maintenance/crontab.txtú",
+		"/C/Users/sberczi/Downloads/Családi album/readme.txt",
+		"/C/Users/sberczi/Dropbox/prog/autoIt/itsh/vpnConnect/vpnConnect.au3",
+		"/C/Users/sberczi/AppData/Local/Temp/scp39561/view/berczis_packaging_ux/vobs/rbi_source/cbt/build/packaging/config/packages_cbs.entw.18.1",
+		"/C/work/1710_evo/readme.md.html",
+		"/C/Users/sberczi/Dropbox/notes.md.html",
+		"/C/Users/sberczi/AppData/Local/Temp/scp29072/view/berczis_packaging_ux/vobs/rbi_source/cbt/build/packaging/bin/20171110.152826/cbs/18.1/entw/buildTmp/packaging_logs/log_18.1_entw_linux-x86_64_2017-11-10_15-28-56.0.txt",
+		"/C/Users/sberczi/AppData/Local/Temp/scp32840/view/berczis_packaging_ux/vobs/int_source/int/src/packaging/configfiles/packages.entw.18.1",
+		"/C/Users/sberczi/AppData/Local/Temp/scp27850/view/berczis_packaging_ux/vobs/rbi_source/cbt/build/packaging/bin/20171110.152621/cbs/18.1/entw/buildTmp/packaging_logs/log_18.1_entw_linux-x86_64_2017-11-10_15-26-52.0.txt",
+		"/C/Users/sberczi/AppData/Local/Temp/scp25230/nethome/tmt1773/b/berczis/tmp/CWbTransfer/20171110_105800_CBS-1830_288458/log/wbcbs_ewu0302ExecuteCcImport_sberczi.ksh_20171110111652.log",
+		"/C/Users/sberczi/AppData/Local/Temp/scp44949/nethome/tmt305/s/sberczi/chechSVNChanges.sh",
+		"/C/Users/sberczi/AppData/Local/Temp/scp48944/nethome/tmt1773/b/berczis/tmp/CWbTransfer/20171110_105800_CBS-1830_288458/log/wbcbs_ewu0302ExecuteCcImport_sberczi.ksh_20171110114810.log",
+		"/C/Users/sberczi/AppData/Local/Temp/scp04815/view/berczis_packaging_ux/vobs/rbi_source/cbt/build/packaging/config/packages_cbs.entw.18.1",
+		"/C/Users/sberczi/AppData/Local/Temp/scp44856/nethome/tmt305/s/sberczi/lastRev.txt",
+		"/C/work/1710_evo/readme.txt",
+		"/C/Users/sberczi/AppData/Local/Temp/scp36015/view/berczis_packaging_ux/vobs/rbi_source/cbt/build/packaging/lib/cbs/tm_mkpkg_collect.py",
+		"/C/Users/sberczi/AppData/Local/Temp/scp37206/view/berczis_packaging_ux/vobs/rbi_source/cbt/build/packaging/lib/cbs/tm_mkpkg_globals.py",
+		"/C/Users/sberczi/AppData/Local/Temp/scp59653/view/berczis_packaging_ux/vobs/rbi_source/cbt/build/packaging/config/packages_cbs.entw.18.1",
+		"/C/Users/sberczi/AppData/Local/Temp/scp47118/view/berczis_packaging_ux/vobs/rbi_source/cbt/build/packaging/bin/20171109.194512/cbs/18.1/entw/buildTmp/packaging_logs/log_18.1_entw_linux-x86_64_2017-11-09_19-45-27.0.txt",
+		"/C/Users/sberczi/AppData/Local/Temp/scp23288/view/berczis_packaging_ux/vobs/int_source/int/src/packaging/configfiles/packages.entw.18.1",
+		"/C/Users/sberczi/AppData/Local/Temp/scp43696/view/berczis_packaging_ux/vobs/rbi_source/cbt/build/packaging/bin/20171109.184702/cbs/18.1/entw/buildTmp/packaging_logs/log_18.1_entw_linux-x86_64_2017-11-09_18-47-11.0.txt",
+		"/C/Users/sberczi/AppData/Local/Temp/scp25664/view/berczis_packaging_ux/vobs/rbi_source/cbt/build/packaging/bin/20171109.182447/cbs/18.1/entw/buildTmp/packaging_logs/log_18.1_entw_linux-x86_64_2017-11-09_18-25-08.0.txt",
+		"/C/Users/sberczi/AppData/Local/Temp/scp32870/view/berczis_packaging_ux/vobs/rbi_source/cbt/build/packaging/bin/20171109.183112/cbs/18.1/entw/buildTmp/packaging_logs/log_18.1_entw_linux-x86_64_2017-11-09_18-31-25.0.txt",
+		"/C/Users/sberczi/AppData/Local/Temp/scp39922/view/berczis_packaging_ux/vobs/rbi_source/cbt/build/packaging/bin/20171109.183854/cbs/18.1/entw/buildTmp/packaging_logs/log_18.1_entw_linux-x86_64_2017-11-09_18-39-13.0.txt",
+		"/C/Users/sberczi/AppData/Local/Temp/scp33747/view/berczis_packaging_ux/vobs/rbi_source/cbt/build/packaging/bin/20171109.183323/cbs/18.1/entw/buildTmp/packaging_logs/log_18.1_entw_linux-x86_64_2017-11-09_18-33-38.0.txt",
+		"/C/Users/sberczi/AppData/Local/Temp/scp21138/view/berczis_packaging_ux/vobs/rbi_source/cbt/build/packaging/bin/20171109.181655/cbs/18.1/entw/buildTmp/packaging_logs/log_18.1_entw_linux-x86_64_2017-11-09_18-17-17.0.txt",
+		"/C/Users/sberczi/AppData/Local/Temp/scp18630/view/berczis_packaging_ux/vobs/rbi_source/cbt/build/packaging/bin/20171109.163455/cbs/18.1/entw/logs/mkpkg.log",
+		"/C/Users/sberczi/AppData/Local/Temp/scp25971/view/berczis_packaging_ux/vobs/rbi_source/cbt/build/packaging/bin/20171109.182447/cbs/18.1/entw/logs/mkpkg.log",
+		"/C/Users/sberczi/AppData/Local/Temp/scp20808/view/berczis_packaging_ux/vobs/rbi_source/cbt/build/packaging/bin/20171109.163455/cbs/18.1/entw/logs/mkpkg.error.log",
+		"/C/Users/sberczi/AppData/Local/Temp/scp14815/view/berczis_packaging_ux/vobs/rbi_source/cbt/build/packaging/bin/20171109.172356/cbs/18.1/entw/buildTmp/packaging_logs/log_18.1_entw_linux-x86_64_2017-11-09_17-24-25.0.txt",
+		"/C/Users/sberczi/AppData/Local/Temp/scp19322/view/berczis_packaging_ux/vobs/rbi_source/cbt/build/packaging/bin/20171109.163455/cbs/18.1/entw/buildTmp/packaging_logs/log_18.1_entw_linux-x86_64_2017-11-09_16-35-06.0.txt",
+		"/C/Users/sberczi/AppData/Local/Temp/scp35897/view/berczis_packaging_ux/vobs/rbi_source/cbt/build/packaging/bin/20171109.103227/cbs/18.1/entw/buildTmp/packaging_logs/log_18.1_entw_linux-x86_64_2017-11-09_10-32-52.0.txt",
+		"/C/Users/sberczi/AppData/Local/Temp/scp05382/view/berczis_packaging_ux/vobs/rbi_source/cbt/build/packaging/config/control-rel181-packaging",
+		"/C/Users/sberczi/AppData/Local/Temp/scp22561/view/berczis_packaging_ux/vobs/int_source/int_apps/src/autobuild/data/control-rel181-packaging",
+		"/C/Users/sberczi/AppData/Local/Temp/scp03461/view/berczis_packaging_ux/vobs/rbi_source/cbt/build/packaging/bin/20171109.104150/configSpec/config_spec.default.compiled.20171109_104150",
+		"/C/Users/sberczi/AppData/Local/Temp/scp56269/view/berczis_packaging_ux/vobs/rbi_source/cbt/build/packaging/bin/packageAndPublish.sh",
+		"/C/Users/sberczi/AppData/Local/Temp/scp32078/view/berczis_packaging_ux/vobs/rbi_source/cbt/build/packaging/bin/20171109.092526/cbs/18.1/entw/buildTmp/packaging_logs/log_18.1_entw_linux-x86_64_2017-11-09_09-25-41.0.txt",
+		"/C/Users/sberczi/AppData/Local/Temp/scp00188/view/berczis_packaging_ux/vobs/rbi_source/cbt/build/packaging/config/control-rel_cbs.entw.18.1",
+		"/C/Users/sberczi/AppData/Local/Temp/scp31164/view/berczis_packaging_ux/vobs/rbi_source/cbt/build/packaging/bin/20171108.192758/cbs/18.1/entw/buildTmp/packaging_logs/log_18.1_entw_linux-x86_64_2017-11-08_19-28-18.0.txt",
+		"/C/Users/sberczi/AppData/Local/Temp/scp31888/view/berczis_packaging_ux/vobs/rbi_source/cbt/build/packaging/bin/20171108.192758/cbs/18.1/entw/logs/mkpkg.error.log",
+		"/C/Users/sberczi/AppData/Local/Temp/scp24816/view/berczis_packaging_ux/vobs/rbi_source/cbt/build/packaging/config/control-rel181-packaging",
+		"/C/Users/sberczi/AppData/Local/Temp/scp47033/view/berczis_packaging_ux/vobs/rbi_source/cbt/build/packaging/bin/packageAndPublish.sh",
+		"/C/Users/sberczi/AppData/Local/Temp/scp58201/view/berczis_packaging_ux/vobs/rbi_source/cbt/build/packaging/bin/20171108.172632/cbs/18.1/entw/buildTmp/rel-18.1/entw/pkginfo_files/linux-x86_64/E181INTlr/pkginfo",
+		"/C/Users/sberczi/AppData/Local/Temp/scp35854/view/berczis_packaging_ux/vobs/rbi_source/cbt/build/packaging/config/control-rel_cbs.entw.18.1",
+		"/C/Users/sberczi/AppData/Local/Temp/scp19442/view/berczis_packaging_ux/vobs/rbi_source/cbt/build/packaging/lib/cbs/tm_mkpkg_globals.py",
+		"/C/Users/sberczi/AppData/Local/Temp/scp35234/view/berczis_packaging_ux/vobs/rbi_source/cbt/build/packaging/config/packages_cbs.entw.18.1",
+		"/C/Users/sberczi/AppData/Local/Temp/scp28857/view/berczis_packaging_ux/vobs/rbi_source/cbt/build/packaging/bin/20171108.192758/cbs/18.1/entw/buildTmp/packaging_logs/log_18.1_entw_linux-x86_64_2017-11-08_19-28-18.0.txt",
+		"/C/Users/sberczi/AppData/Local/Temp/scp28046/view/berczis_packaging_ux/vobs/rbi_source/cbt/build/packaging/bin/20171108.172632/cbs/18.1/entw/buildTmp/packaging_logs/log_18.1_entw_linux-x86_64_2017-11-08_17-26-42.0.txt",
+		"/C/Users/sberczi/AppData/Local/Temp/scp23274/view/berczis_packaging_ux/vobs/rbi_source/cbt/build/packaging/bin/20171108.134502/cbs/18.1/entw/buildTmp/packaging_logs/log_18.1_entw_linux-x86_64_2017-11-08_13-45-12.0.txt",
+		"/C/Users/sberczi/AppData/Local/Temp/scp26171/view/berczis_packaging_ux/vobs/rbi_source/cbt/build/packaging/bin/20171108.192557/cbs/18.1/entw/buildTmp/packaging_logs/log_18.1_entw_linux-x86_64_2017-11-08_19-26-12.0.txt",
+		"/C/Users/sberczi/AppData/Local/Temp/scp10694/view/berczis_packaging_ux/vobs/rbi_source/cbt/build/packaging/bin/20171108.134502/cbs/18.1/entw/buildTmp/rel-18.1/entw/2017_11_08/pkg_input/linux-x86_64/E181INTlr/E181INTlr.log.10427",
+		"/C/Users/sberczi/AppData/Local/Temp/scp09132/view/berczis_packaging_ux/vobs/rbi_source/cbt/build/packaging/bin/20171108.134502/cbs/18.1/entw/buildTmp/rel-18.1/entw/2017_11_08/pkg_input/linux-x86_64/E181INTlr/_create_rpm",
+		"/C/Users/sberczi/AppData/Local/Temp/scp10394/view/berczis_packaging_ux/vobs/rbi_source/cbt/build/packaging/bin/20171108.134502/configSpec/config_spec.default.compiled.20171108_134502",
+		"/C/Users/sberczi/AppData/Local/Temp/scp21622/view/berczis_packaging_ux/vobs/rbi_source/cbt/build/packaging/lib/cbs/tm_mkpkg_import.py",
+		"/C/Users/sberczi/AppData/Local/Temp/scp21569/view/berczis_packaging_ux/vobs/rbi_source/cbt/build/packaging/lib/cbs/mkpkg.py",
+		"/C/Users/sberczi/AppData/Local/Temp/scp19874/view/berczis_packaging_ux/vobs/rbi_source/cbt/build/packaging/lib/tm_mkpkg_globals.py",
+		"/C/Users/sberczi/AppData/Local/Temp/scp41263/view/berczis_packaging_ux/vobs/rbi_source/cbt/build/packaging/bin/20171108.172632/configSpec/config_spec.backup",
+		"/C/work/170921_packaging/lib/lib/tm_mkpkg_import.py",
+		"/C/work/170921_packaging/lib/lib/tm_mkpkg_collect.py",
+		"/C/Users/sberczi/AppData/Local/Temp/scp24584/view/berczis_packaging_ux/vobs/rbi_source/cbt/build/packaging/config/packages_mocca.abn.17.3",
+		"/C/Users/sberczi/AppData/Local/Temp/scp13874/view/berczis_packaging_ux/vobs/rbi_source/cbt/build/packaging/bin/20171108.134502/cbs/18.1/entw/buildTmp/rel-18.1/entw/2017_11_08/pkg_input/linux-x86_64/E181INTlr/E181INTlr.spec",
+		"/C/Users/sberczi/AppData/Local/Temp/scp14232/view/berczis_packaging_ux/vobs/rbi_source/cbt/build/packaging/bin/20171108.134502/cbs/18.1/entw/buildTmp/rel-18.1/entw/2017_11_08/pkg_input/linux-x86_64/E181INTlr/E181INTlr.spec.pre",
+		"/C/Users/sberczi/AppData/Local/Temp/scp14482/view/berczis_packaging_ux/vobs/rbi_source/cbt/build/packaging/bin/20171108.134502/cbs/18.1/entw/buildTmp/rel-18.1/entw/2017_11_08/pkg_input/linux-x86_64/E181INTlr/buildroot/appl/local/cbs/E181INTlr/20171108/scripts/preremove",
+		"/C/Users/sberczi/AppData/Local/Temp/scp14759/view/berczis_packaging_ux/vobs/rbi_source/cbt/build/packaging/bin/20171108.134502/cbs/18.1/entw/buildTmp/rel-18.1/entw/2017_11_08/pkg_input/linux-x86_64/E181INTlr/buildroot/appl/local/cbs/E181INTlr/20171108/scripts/postinstall",
+		"/C/Users/sberczi/AppData/Local/Temp/scp33197/view/berczis_packaging_ux/vobs/rbi_source/cbt/build/packaging/bin/20171108.133241/cbs/18.1/entw/buildTmp/packaging_logs/log_18.1_entw_linux-x86_64_2017-11-08_13-33-08.0.txt",
+		"/C/work/CBS/git/cbs-build-scripts/packaging/doc/Packaging_installation_documentation.md.html",
+		"/C/Users/sberczi/Documents/hasznaltAutoWatcher/other/mobile.de/lib/stopWatch.pm",
+		"/C/Users/sberczi/Documents/hasznaltAutoWatcher/other/mobile.de/getMobile.de.pl",
+		"/C/work/CBS/git/cbs-build-scripts/job-utils.sh",
+		"/C/work/CBS/git/cbs-build-scripts/ddd-utils.sh",
+		"/C/work/CBS/git/cbs-build-scripts/jira-utils.sh",
+		"/C/work/CBS/git/cbs-build-scripts/check-utils.sh",
+		"/C/Users/sberczi/Documents/hasznaltAutoWatcher/other/mobile.de/lib/stopwatch.pm",
+		"/C/Users/sberczi/Documents/hasznaltAutoWatcher/other/mobile.de/readme.txt",
+		"/C/Users/sberczi/Dropbox/prog/Kitty_portable/Sessions/CBS/Billing Evolution/tmv2331%20%2F%20cbse3",
+		"/C/Users/sberczi/Dropbox/prog/Kitty_portable/Sessions/CBS/Billing Evolution/tmv2331%20%2F%20cbse2",
+		"/C/Users/sberczi/Dropbox/Documents/HasznalatiUtmutato/Bosch mosógép/readme.txt",
+		"/C/Users/sberczi/Documents/yamamoto/2017/jamamoto_v0.2.xlsm",
+		"/C/Users/sberczi/Dropbox/prog/Kitty_portable/Rutty/QDE6Z1_moccaq3.rutty.txt",
+		"/C/Users/sberczi/Dropbox/!/_Eladas/1710/rename.sh",
+		"/C/Users/sberczi/Dropbox/!/_Eladas/1710/PelenkazoAllvany/readme.txt",
+		"/C/Users/sberczi/Dropbox/!/_Eladas/1710/Kisagy/readme.txt",
+		"/C/Users/sberczi/Dropbox/!/_Eladas/1710/Angelcare AC300/readme.txt",
+		"/C/Users/sberczi/Dropbox/prog/Kitty_portable/Sessions/Mocca/P3X/QDE7WG_sberczi.rutty.txt",
+		"/C/Users/sberczi/Dropbox/prog/Kitty_portable/Sessions/Mocca/P3X/QDE7WG_moccax3.rutty.txt",
+		"/C/Users/sberczi/Dropbox/prog/Kitty_portable/Sessions/Mocca/P3X/QDE7WG_moccax2.rutty.txt",
+		"/C/Users/sberczi/Dropbox/prog/Kitty_portable/Sessions/Mocca/P3X/QDE7WG_moccax1.rutty.txt",
+		"/C/Users/sberczi/Dropbox/prog/Kitty_portable/Sessions/Mocca/P3X/1S%20moccax1",
+		"/C/Users/sberczi/Dropbox/prog/Kitty_portable/Sessions/Mocca/P3X/1S%20moccax2",
+		"/C/Users/sberczi/Dropbox/prog/Kitty_portable/Sessions/Mocca/P3X/1S%20moccax3",
+		"/C/Users/sberczi/Dropbox/prog/Kitty_portable/Sessions/Mocca/P3X/1S%20sberczi%20-%20install",
+		"/C/Users/sberczi/Dropbox/prog/Kitty_portable/Sessions/Mocca/P3X/QDE7WF_sberczi.rutty.txt",
+		"/C/Users/sberczi/Dropbox/prog/Kitty_portable/Sessions/Mocca/P3X/QDE7WF_moccax3.rutty.txt",
+		"/C/Users/sberczi/Dropbox/prog/Kitty_portable/Sessions/Mocca/P3X/QDE7WF_moccax2.rutty.txt",
+		"/C/Users/sberczi/Dropbox/prog/Kitty_portable/Sessions/Mocca/P3X/QDE7WF_moccax1.rutty.txt",
+		"/C/Users/sberczi/Dropbox/prog/Kitty_portable/Sessions/Mocca/P3X/1P%20moccap3",
+		"/C/Users/sberczi/Dropbox/prog/Kitty_portable/Sessions/Mocca/P3X/1P%20moccap2",
+		"/C/Users/sberczi/Dropbox/prog/Kitty_portable/Sessions/Mocca/P3X/1P%20moccap1",
+		"/C/Users/sberczi/Dropbox/prog/Kitty_portable/Sessions/Mocca/P3X/1P%20sberczi%20-%20install",
+		"/C/Users/sberczi/Dropbox/prog/Kitty_portable/Sessions/Mocca/P3X/1S%20moccap3",
+		"/C/Users/sberczi/Dropbox/prog/Kitty_portable/Sessions/Mocca/P3X/1S%20moccap2",
+		"/C/Users/sberczi/Dropbox/prog/Kitty_portable/Sessions/Mocca/P3X/1S%20moccap1",
+		"/C/work/1709_MoccaYumRepoServer/Reposerver documentation.md.html",
+		"/C/Users/sberczi/Dropbox/prog/Kitty_portable/Sessions/Mocca/P Line/2P%20moccap2",
+		"/C/Users/sberczi/Dropbox/prog/Kitty_portable/Sessions/Mocca/P Line/test/2P%20sberczi%20-%20install",
+		"/C/Users/sberczi/Dropbox/prog/Kitty_portable/Sessions/Mocca/P Line/test/2P%20moccap3",
+		"/C/Users/sberczi/Dropbox/prog/Kitty_portable/Sessions/Mocca/P Line/test/2P%20moccap2",
+		"/C/Users/sberczi/Dropbox/prog/Kitty_portable/Sessions/Mocca/P Line/test/2P%20moccap1"
+	],
+	"find":
+	{
+		"height": 52.0
+	},
+	"find_in_files":
+	{
+		"height": 134.0,
+		"where_history":
+		[
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"parsePageCount",
+			":",
+			"parsePageCount",
+			"lwp",
+			"pagest",
+			" ### ",
+			"PAGESTRING",
+			"XXPAGEXX",
+			"PAGE",
+			"__PAGE__",
+			"__PAGE",
+			"g_downloadMethod",
+			"¤page¤",
+			"×page×",
+			"info",
+			"G_DATA",
+			"dataSave",
+			"g_data",
+			"g_sendMail",
+			"G_ITEMS_PER_PAGE",
+			"20",
+			"G_ITEMS_PER_PAGE",
+			"value",
+			"$G_HTML_TREE->",
+			"count",
+			"searches",
+			"urls",
+			"getHtml",
+			"%2C",
+			"\n    ",
+			"&",
+			"XPATH_TALALATI_LISTA",
+			"cl-list-elements",
+			"XPATH_TALALATI_LISTA",
+			"XPATH_TITLE",
+			"sc-ellipsis",
+			"sc-font-m",
+			"\"",
+			"data-item-name",
+			"data-test",
+			"990",
+			"1.0 cl",
+			"XPATH_TITLE",
+			"splash",
+			"thisyear",
+			"doit",
+			"for",
+			"foreach",
+			"makers",
+			"from",
+			"#   - ",
+			"től",
+			" tól",
+			"é",
+			":",
+			"-",
+			"\"",
+			"<label for=\"",
+			"<item key=",
+			"&",
+			"${RELEASE}",
+			"${PROJECT}",
+			"${RELEASE}",
+			"RELEASE",
+			"${RELEASE}",
+			"PROJECT",
+			"carmen",
+			"${PROJECT}",
+			"CURRENT",
+			"${CHECK}",
+			"${DOIT}",
+			"sh",
+			"G_RELEASE",
+			"18.1",
+			"_CURRENT",
+			"-",
+			"OUR_ORS_PORT_BIL_POST_1",
+			"OUR_RE_ORS_PORT_BIL_POST_1",
+			"orsproc%RE_BIL_POST_1",
+			"ct mkelem -nc",
+			"$",
+			"$1",
+			"local_0",
+			"berczi",
+			"OUR_RE_SERVICENAME_BIL_POST_1",
+			"OUR_RE",
+			"OUR_RE_XOXI_PORT_BIL_POST_1",
+			"OUR_RE_SERVICENAME_BIL_POST_1",
+			"local",
+			"local_1",
+			"OUR_RE_SHMOPT_KEY_COMMON_PART",
+			"=%%",
+			"orsproc",
+			"\t Parameter = ",
+			"MY_RE_OCSREQ_SHM_KEYPART",
+			"noInter",
+			"OUR_RE_SERVICENAME_POST_1=",
+			"OUR_RE_SHM_KEY_COMMON_PART",
+			"OUR_RE_OCSREQ_SHM_KEYPART_POST_1",
+			"OUR_RE_DOMAINCODE_POST_1",
+			"OUR_RE_PROCESSINGNODECODE_POST_1",
+			"OUR_RE_SERVICENAME_POST_1",
+			"OUR_RE_PROCESSINGNODECODE_POST_1",
+			"OUR_RE_DOMAINCODE_POST_1",
+			"OUR_RE_SERVICENAME_POST_1",
+			"OUR_RE_PROCESSINGNODECODE_POST_1=",
+			"OUR_RE_PROCESSINGNODECODE_POST_1",
+			"OUR_RE_SERVICENAME_POST_1",
+			"our_re",
+			"OUR_RE_SERVICENAME_POST_1",
+			"MY_RE_OCSREQ_SHM_KEYPART",
+			"=",
+			"MY_RE_OCSREQ_SHM_KEYPART",
+			"MY_RE_PROCESSINGNODECODE",
+			"MY_RE_OCSREQ_SHM_KEYPART",
+			"MY_RE_DOMAINCODE",
+			"MY_RE_PROCESSINGNODECODE",
+			"Parameter",
+			"CBS=",
+			"CBS",
+			"DB_UMG_CHAR",
+			"rep_apps.ocsreqobj%RE_BIL_POST_1",
+			"rep_apps.orsproc%RE_BIL_POST_1",
+			"int_apps",
+			"pgp",
+			".txt",
+			"[ant]",
+			"rep_apps"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"QDE7WC"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 1,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "other/autoscout24/getAutoscout24.at.pl",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 23647,
+						"regions":
+						{
+							"bookmarks":
+							{
+								"flags": 144,
+								"icon": "bookmark",
+								"regions":
+								[
+									[
+										20574,
+										20574
+									]
+								],
+								"scope": "bookmarks"
+							}
+						},
+						"selection":
+						[
+							[
+								21523,
+								21523
+							]
+						],
+						"settings":
+						{
+							"auto_complete": false,
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.clone": -1,
+							"bracket_highlighter.clone_locations":
+							{
+								"close":
+								{
+									"1":
+									[
+										22509,
+										22510
+									]
+								},
+								"icon":
+								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/curly_bracket.png",
+										"region.purplish"
+									]
+								},
+								"open":
+								{
+									"1":
+									[
+										21509,
+										21510
+									]
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.clone_regions":
+							[
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content"
+							],
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+									"1":
+									[
+										22596,
+										22597
+									]
+								},
+								"icon":
+								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/curly_bracket.png",
+										"region.purplish"
+									]
+								},
+								"open":
+								{
+									"1":
+									[
+										21429,
+										21430
+									]
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content"
+							],
+							"syntax": "Packages/ModernPerl/ModernPerl.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true,
+							"word_wrap": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 11776.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "other/autoscout24/test.log",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1310,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								538,
+								539
+							]
+						],
+						"settings":
+						{
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.clone": -1,
+							"bracket_highlighter.clone_locations":
+							{
+								"close":
+								{
+								},
+								"icon":
+								{
+								},
+								"open":
+								{
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.clone_regions":
+							[
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content"
+							],
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+								},
+								"icon":
+								{
+								},
+								"open":
+								{
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content"
+							],
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "other/autoscout24/input/Gebrauchte Suzuki Angebote bei AutoScout24.html",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 640993,
+						"regions":
+						{
+							"bookmarks":
+							{
+								"flags": 144,
+								"icon": "bookmark",
+								"regions":
+								[
+									[
+										27491,
+										27492
+									]
+								],
+								"scope": "bookmarks"
+							}
+						},
+						"selection":
+						[
+							[
+								27460,
+								27460
+							]
+						],
+						"settings":
+						{
+							"auto_complete": false,
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.clone": -1,
+							"bracket_highlighter.clone_locations":
+							{
+								"close":
+								{
+									"1":
+									[
+										27531,
+										27535
+									]
+								},
+								"icon":
+								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/tag.png",
+										"region.orangish"
+									]
+								},
+								"open":
+								{
+									"1":
+									[
+										27454,
+										27458
+									]
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.clone_regions":
+							[
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content"
+							],
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+									"1":
+									[
+										27531,
+										27535
+									]
+								},
+								"icon":
+								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/tag.png",
+										"region.orangish"
+									]
+								},
+								"open":
+								{
+									"1":
+									[
+										27454,
+										27458
+									]
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content"
+							],
+							"syntax": "Packages/HTML/HTML.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 32.0
+	},
+	"input":
+	{
+		"height": 48.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 459.0
+	},
+	"output.find_results":
+	{
+		"height": 130.0
+	},
+	"output.git":
+	{
+		"height": 201.0
+	},
+	"output.jotter":
+	{
+		"height": 130.0
+	},
+	"output.markdown":
+	{
+		"height": 130.0
+	},
+	"output.mde":
+	{
+		"height": 130.0
+	},
+	"pinned_build_system": "",
+	"project": "hasznaltAutoWatcher.sublime-project",
+	"replace":
+	{
+		"height": 59.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 625.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"",
+				"C:\\work\\build-data.sublime-project"
+			]
+		],
+		"width": 475.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": false,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 326.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
