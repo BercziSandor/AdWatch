@@ -5,6 +5,9 @@ use warnings;
 use Data::Dumper;
 use Log::Log4perl;
 
+use FindBin;
+use lib "$FindBin::Bin/lib";
+
 # Http engines
 use HTTP::Tiny;
 use WWW::Mechanize;
@@ -28,7 +31,7 @@ use File::Basename;
 use Email::Sender::Simple qw(sendmail);
 use Email::Simple::Creator;
 
-require lib::stopWatch;
+require stopWatch;
 our %MAKERS;
 our $searchConfig;
 my $thisYear;
@@ -70,7 +73,7 @@ my $G_DATA;
 my $G_ITEMS_PROCESSED = 0;
 my $G_ITEMS_PER_PAGE  = 20;    # default:10 max:100
 my $G_LAST_GET_TIME   = 0;
-my $log;
+our $log;
 my $httpEngine;
 my $collectionDate;
 
@@ -211,23 +214,6 @@ sub getUrls
     return $urls;
 } ### sub getUrls
 
-# lista: //*div[@class='cl-list-elements']
-# my $XPATH_TALALATI_LISTA = '//*[@id="main_nagyoldal_felcserelve"]//div[contains(concat(" ", @class, " "), " talalati_lista ")]';
-# my $XPATH_TITLE          = 'div[@class="talalati_lista_bal"]/div[@class="talalati_lista_headcont"]/div[@class="talalati_lista_head"]/h2/a';
-# my $XPATH_LINK           = 'div[@class="talalati_lista_bal"]/div[@class="talalati_lista_headcont"]/div[@class="talalati_lista_head"]/h2/a/@href';
-# my $XPATH_PRICE          = 'div[@class="talalati_lista_jobb"]/div[@class="talalati_lista_vetelar"]/div[@class="arsor"]';
-# my $XPATH_INFO           = 'div[@class="talalati_lista_bal"]/div[@class="talalati_lista_infosor"]';
-# my $XPATH_DESC =
-#   'div[@class="talalati_lista_bal"]/div[@class="talalati_lista_tartalom"]/div[@class="talalati_lista_szoveg"]/p[@class="leiras-nyomtatas"]';
-# my $XPATH_FEATURES =
-#   'div[@class="talalati_lista_bal"]/div[@class="talalati_lista_tartalom"]/div[@class="talalati_lista_szoveg"]/p[@class="felszereltseg-nyomtatas"]';
-# my $XPATH_KEP =
-#   'div[@class="talalati_lista_bal"]/div[@class="talalati_lista_tartalom"]/div[@class="talalati_lista_kep"]/a/img[@id="talalati_2"]/@src';
-
-# https://www.autoscout24.at/ergebnisse?priceto=3000&pricetype=public&cy=A&mmvmk0=29&pricefrom=0&sort=standard&ustate=N&ustate=U&atype=C&page=3
-# https://www.autoscout24.at/ergebnisse?priceto=3000&pricetype=public&cy=A&mmvmk0=29&pricefrom=0&sort=standard&ustate=N&ustate=U&atype=C&page=4
-# size: max 20, default 20
-
 sub getHtml
 {
     my ( $url, $page ) = @_;
@@ -245,10 +231,7 @@ sub getHtml
 
     my $fileName = $url;
 
-    # "https://www.hasznaltauto.hu/talalatilista/auto/QLCS1E1TTFYOULSU8S9....SGHQ1CYY9G9C5EUHUUI4LLU/pag"$PAGESTRING";
-
     if ( $url =~ m|autoscout24| ) {
-
         # $log->debug( "fileName: $fileName" );
     } else {
         $log->logdie( "Mi ez az url?? [$url]" );
@@ -381,7 +364,7 @@ sub parseItems
 
         my $link = $item->findvalue( $XPATH_LINK );
         my $id   = $link;
-        $link = "https://www.autoscout24.at/$link";
+        $link = "https://www.autoscout24.at${link}";
 
         # /angebote/audi-a3-2-0-tdi-ambition-klimaauto-dpf-alu-6-gang-diesel-schwarz-99d1f527-0d81-ed66-e053-e250040a9fc2
         $id =~ s/^.*-(.{36})$/$1/g;
@@ -632,7 +615,8 @@ sub sndMail
         # Email::Sender::Simple
         if ( $g_sendMail ) {
             sendmail( $email ) or die $!;
-        }
+            $log->info("Levél küldése sikeres.");
+    	}
 
     } ### foreach ( @g_mailRecipients)
 

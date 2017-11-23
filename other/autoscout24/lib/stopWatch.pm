@@ -15,7 +15,7 @@ sub pause
 
 sub info
 {
-    $log->info( "\nFutásidő összesítés:\n" );
+    my $retval="\nFutásidő összesítés:\n";
     foreach my $name ( keys %$g_stopWatch ) {
         my $elapsed;
         $elapsed = $g_stopWatch->{$name}->{elapsed};
@@ -23,8 +23,9 @@ sub info
             ${elapsed} += ( Time::HiRes::time() - $g_stopWatch->{$name}->{start} );
         }
 
-        # $log->info( sprintf( " - %-15s %6.2fs (%.2felem/s)\n", $name, ${elapsed}, ( 0.0 + $G_ITEMS_PROCESSED / ${elapsed} ) ) );
+        $retval .= sprintf( " - %-15s %6.2fs (%.2felem/s)\n", $name, ${elapsed}, ( 0.0 + $G_ITEMS_PROCESSED / ${elapsed} ) );
     } ### foreach my $name ( keys %$g_stopWatch)
+    return $retval;
 } ### sub info
 
 sub readValue
