@@ -29,8 +29,8 @@ use Email::Sender::Simple qw(sendmail);
 use Email::Simple::Creator;
 
 require lib::stopWatch;
-my %MAKERS;
-my $searchConfig;
+our %MAKERS;
+our $searchConfig;
 my $thisYear;
 my $urls;
 my $PAGESTRING = "VVPAGEVV";
@@ -42,25 +42,25 @@ my $SW_DOWNLOAD        = 'Letoltes';
 my $SW_FULL_PROCESSING = 'Teljes futás';
 my $SW_PROCESSING      = 'Feldolgozás';
 
-my $XPATH_TALALATI_LISTA;
-my $XPATH_TITLE;
-my $XPATH_TITLE2;
-my $XPATH_SUBTITLE;
-my $XPATH_LINK;
-my $XPATH_PRICE;
-my $XPATH_INFO;
-my $XPATH_DESC;
-my $XPATH_FEATURES;
-my $XPATH_KEP;
+# variables from config file
+our $XPATH_TALALATI_LISTA;
+our $XPATH_TITLE;
+our $XPATH_TITLE2;
+our $XPATH_SUBTITLE;
+our $XPATH_LINK;
+our $XPATH_PRICE;
+our $XPATH_INFO;
+our $XPATH_DESC;
+our $XPATH_FEATURES;
+our $XPATH_KEP;
+our $textToDelete;
+our $g_sendMail;
 
 $Data::Dumper::Sortkeys = 1;
 
 my $offline       = 0;
 my $saveHtmlFiles = 0;
-my $g_downloadMethod;
-$g_downloadMethod = 'lwp';
-$g_downloadMethod = 'httpTiny';
-$g_downloadMethod = 'wwwMech';
+our $g_downloadMethod;
 
 my $dataFileDate;
 my $G_ITEMS_IN_DB;
@@ -70,11 +70,9 @@ my $G_DATA;
 my $G_ITEMS_PROCESSED = 0;
 my $G_ITEMS_PER_PAGE  = 20;    # default:10 max:100
 my $G_LAST_GET_TIME   = 0;
-my $textToDelete;
 my $log;
 my $httpEngine;
 my $collectionDate;
-my $g_sendMail = 0;
 
 my $G_ITEMS_TO_PROCESS_MAX             = 0;        # 0: unlimited
 my $G_WAIT_BETWEEN_FULL_PROCESS_IN_SEC = 8 * 60;
@@ -107,244 +105,24 @@ sub ini
     $log         = Log::Log4perl->get_logger();
     $G_HTML_TREE = HTML::TreeBuilder::XPath->new;
 
-    %MAKERS = (
-        "Audi"              => 9,
-        "BMW"               => 13,
-        "Ford"              => 29,
-        "Mercedes-Benz"     => 47,
-        "Opel"              => 54,
-        "Volkswagen"        => 74,
-        "Abarth"            => 16396,
-        "AC"                => 14979,
-        "ACM"               => 16429,
-        "Acura"             => 16356,
-        "Aixam"             => 16352,
-        "Alfa Romeo"        => 6,
-        "Alpina"            => 14,
-        "Amphicar"          => 51545,
-        "Ariel"             => 16419,
-        "Artega"            => 16427,
-        "Aspid"             => 16431,
-        "Aston Martin"      => 8,
-        "Austin"            => 15643,
-        "Autobianchi"       => 15644,
-        "Auverland"         => 16437,
-        "Baic"              => 51774,
-        "Bedford"           => 16400,
-        "Bellier"           => 16416,
-        "Bentley"           => 11,
-        "Bollore"           => 16418,
-        "Borgward"          => 16424,
-        "Brilliance"        => 16367,
-        "Bugatti"           => 15,
-        "Buick"             => 16,
-        "BYD"               => 16379,
-        "Cadillac"          => 17,
-        "Caravans-Wohnm"    => 15672,
-        "Casalini"          => 16407,
-        "Caterham"          => 16335,
-        "Changhe"           => 16401,
-        "Chatenet"          => 16357,
-        "Chery"             => 16384,
-        "Chevrolet"         => 19,
-        "Chrysler"          => 20,
-        "Citroen"           => 21,
-        "CityEL"            => 16411,
-        "CMC"               => 16406,
-        "Corvette"          => 16380,
-        "Courb"             => 51558,
-        "Dacia"             => 16360,
-        "Daewoo"            => 22,
-        "DAF"               => 16333,
-        "Daihatsu"          => 23,
-        "Daimler"           => 16397,
-        "Dangel"            => 16434,
-        "De la Chapelle"    => 16423,
-        "De Tomaso"         => 51779,
-        "Derways"           => 16391,
-        "DFSK"              => 51773,
-        "Dodge"             => 2152,
-        "Donkervoort"       => 16339,
-        "DR Motor"          => 16383,
-        "DS Automobiles"    => 16415,
-        "Dutton"            => 51552,
-        "Estrima"           => 16436,
-        "Ferrari"           => 27,
-        "Fiat"              => 28,
-        "FISKER"            => 51543,
-        "Gac Gonow"         => 51542,
-        "Galloper"          => 16337,
-        "GAZ"               => 16386,
-        "Geely"             => 16392,
-        "GEM"               => 16403,
-        "GEMBALLA"          => 51540,
-        "Giotti Victoria"   => 16421,
-        "GMC"               => 2153,
-        "Great Wall"        => 16382,
-        "Grecav"            => 16409,
-        "Haima"             => 51512,
-        "Hamann"            => 51534,
-        "Honda"             => 31,
-        "HUMMER"            => 15674,
-        "Hurtan"            => 51767,
-        "Hyundai"           => 33,
-        "Infiniti"          => 16355,
-        "Innocenti"         => 15629,
-        "Iso Rivolta"       => 16402,
-        "Isuzu"             => 35,
-        "Iveco"             => 14882,
-        "IZH"               => 16387,
-        "Jaguar"            => 37,
-        "Jeep"              => 38,
-        "Karabag"           => 16417,
-        "Kia"               => 39,
-        "Koenigsegg"        => 51781,
-        "KTM"               => 50060,
-        "Lada"              => 40,
-        "Lamborghini"       => 41,
-        "Lancia"            => 42,
-        "Land Rover"        => 15641,
-        "LDV"               => 16426,
-        "Lexus"             => 43,
-        "Lifan"             => 16393,
-        "Ligier"            => 16353,
-        "Lincoln"           => 14890,
-        "Lotus"             => 44,
-        "Mahindra"          => 16359,
-        "MAN"               => 51780,
-        "Mansory"           => 16435,
-        "Martin Motors"     => 16410,
-        "Maserati"          => 45,
-        "Maybach"           => 16348,
-        "Mazda"             => 46,
-        "McLaren"           => 51519,
-        "Melex"             => 16399,
-        "MG"                => 48,
-        "Microcar"          => 16361,
-        "Minauto"           => 51766,
-        "MINI"              => 16338,
-        "Mitsubishi"        => 50,
-        "Mitsuoka"          => 51782,
-        "Morgan"            => 51,
-        "Moskvich"          => 16388,
-        "MP Lafer"          => 51554,
-        "Nissan"            => 52,
-        "Oldsmobile"        => 53,
-        "Oldtimer"          => 15670,
-        "Pagani"            => 16341,
-        "Panther Westwinds" => 51553,
-        "Peugeot"           => 55,
-        "PGO"               => 50083,
-        "Piaggio"           => 16350,
-        "Plymouth"          => 51770,
-        "Pontiac"           => 56,
-        "Porsche"           => 57,
-        "Proton"            => 15636,
-        "Puch"              => 51768,
-        "Qoros"             => 16412,
-        "Qvale"             => 16425,
-        "Reliant"           => 16398,
-        "Renault"           => 60,
-        "Rolls-Royce"       => 61,
-        "Rover"             => 62,
-        "Ruf"               => 51536,
-        "Saab"              => 63,
-        "Santana"           => 16369,
-        "Savel"             => 16405,
-        "SDG"               => 51771,
-        "SEAT"              => 64,
-        "Skoda"             => 65,
-        "smart"             => 15525,
-        "SpeedArt"          => 51538,
-        "Spyker"            => 16377,
-        "SsangYong"         => 66,
-        "Subaru"            => 67,
-        "Suzuki"            => 68,
-        "TagAZ"             => 16395,
-        "Talbot"            => 51551,
-        "Tasso"             => 16404,
-        "Tata"              => 16327,
-        "Tazzari EV"        => 51557,
-        "TECHART"           => 51535,
-        "Tesla"             => 51520,
-        "Town Life"         => 16420,
-        "Toyota"            => 70,
-        "Trabant"           => 15633,
-        "Trailer-Anhaenger" => 16326,
-        "Triumph"           => 2120,
-        "Trucks-Lkw"        => 16253,
-        "TVR"               => 71,
-        "UAZ"               => 16389,
-        "VAZ"               => 16385,
-        "VEM"               => 16422,
-        "Volvo"             => 73,
-        "Vortex"            => 51514,
-        "Wallys"            => 51776,
-        "Wartburg"          => 16336,
-        "Westfield"         => 51513,
-        "Wiesmann"          => 16351,
-        "Zastava"           => 16408,
-        "ZAZ"               => 16394,
-        "Sonstige"          => 16328,
-    );
-
     $thisYear = strftime "%Y", localtime;
     my ( $name, $path, $suffix ) = fileparse( $0, qr{\.[^.]*$} );
 
     my $cnfFile = "${path}${name}.cfg.pl";
-    unless ( my $return = do $cnfFile ) {
+    unless ( my $return = require $cnfFile ) {
         die "'$cnfFile' does not exist, aborting.\n" if ( not -e $cnfFile );
         die "couldn't parse $cnfFile: $@\n" if $@;
-        die "couldn't do $cnfFile: $!\n" unless defined $return;
+        die "couldn't include $cnfFile: $!\n" unless defined $return;
         die "couldn't run $cnfFile\n" unless $return;
-    } ### unless ( my $return = do $cnfFile)
+    } ### unless ( my $return = require...)
 
     dataLoad();
-    $textToDelete =
-'Weitere Informationen zum offiziellen Kraftstoffverbrauch und den offiziellen spezifischen CO2-Emissionen neuer Personenkraftwagen können dem "Leitfaden über den Kraftstoffverbrauch, die CO2-Emissionen und den Stromverbrauch neuer Personenkraftwagen" entnommen werden, der an allen Verkaufsstellen und bei der Deutschen Automobil Treuhand GmbH unter www.dat.at unentgeltlich erhältlich ist.';
-
-    $XPATH_TALALATI_LISTA = '//div[contains(concat(" ", @class, " "), " cl-list-element cl-list-element-gap ")]';
-    $XPATH_TITLE          = './/h2[contains(concat(" ", @class, " "), " cldt-summary-makemodel ")]';
-    $XPATH_TITLE2         = './/h2[contains(concat(" ", @class, " "), " cldt-summary-version ")]';
-    $XPATH_DESC           = './/h3[contains(concat(" ", @class, " "), " cldt-summary-subheadline ")]';
-    $XPATH_LINK           = './/div[contains(concat(" ", @class, " "), " cldt-summary-titles ")]/a/@href';
-    $XPATH_PRICE          = './/span[contains(concat(" ", @class, " "), " cldt-price ")]';
-    $XPATH_FEATURES       = './/div[contains(concat(" ", @class, " "), " cldt-summary-vehicle-data ")]/ul/li';
+    $dataFileDate = $G_DATA->{lastChange} ? ( strftime( "%Y.%m.%d %H:%M", localtime( $G_DATA->{lastChange} ) ) ) : "";
 
     my $cnt = `ps -aef | grep -v grep | grep -c "$name.pl"`;
     if ( $cnt > 1 ) { die "Már fut másik $name folyamat, ez leállítva.\n"; }
 
-# mmvmk0=9&mmvco=1&fregfrom=2013&fregto=2015&pricefrom=0&priceto=8000&fuel=B&kmfrom=10000&powertype=kw&atype=C&ustate=N%2CU&sort=standard&desc=0
-# offer=D : Vorführfahrzeug # offer=J : Jahreswagen # offer=N : Neu # offer=O : Oldtimer # offer=S : Tageszulassung # offer=U : Gebraucht
-# ustate=N%2CU&             # Balesetes: N,U:   nem; # ustate=A&                 # Balesetes: A:     csak balesetes; # ustate=A%2CN%2CU&         # Balesetes: A,N,U: balesetes is
-    $searchConfig->{defaults}->{priceto}            = 7000;
-    $searchConfig->{defaults}->{priceto}            = 500;
-    $searchConfig->{defaults}->{sort}               = 'age';
-    $searchConfig->{defaults}->{desc}               = 0;
-    $searchConfig->{defaults}->{cy}                 = 'A,D';               # cy=A&             # Austria # cy=D&             # Germany
-    $searchConfig->{defaults}->{offer}              = 'D,J,O,S,U';
-    $searchConfig->{defaults}->{mmvco}              = 1;
-    $searchConfig->{defaults}->{powertype}          = 'kw';
-    $searchConfig->{defaults}->{atype}              = 'C';
-    $searchConfig->{defaults}->{ustate}             = 'A%2CN%2CU';
-    $searchConfig->{defaults}->{ustate}             = 'A,N,U';
-    $searchConfig->{defaults}->{page}               = "$PAGESTRING";
-    $searchConfig->{defaults}->{size}               = $G_ITEMS_PER_PAGE;
-    $searchConfig->{mmvmk0}->{Citroen}->{maxAge}    = 11;
-    $searchConfig->{mmvmk0}->{Fiat}->{maxAge}       = 11;
-    $searchConfig->{mmvmk0}->{Ford}->{maxAge}       = 11;
-    $searchConfig->{mmvmk0}->{Opel}->{maxAge}       = 11;
-    $searchConfig->{mmvmk0}->{Peugeot}->{maxAge}    = 11;
-    $searchConfig->{mmvmk0}->{Renault}->{maxAge}    = 11;
-    $searchConfig->{mmvmk0}->{SEAT}->{maxAge}       = 11;
-    $searchConfig->{mmvmk0}->{Skoda}->{maxAge}      = 11;
-    $searchConfig->{mmvmk0}->{Suzuki}->{maxAge}     = 11;
-    $searchConfig->{mmvmk0}->{Toyota}->{maxAge}     = 11;
-    $searchConfig->{mmvmk0}->{Volkswagen}->{maxAge} = 15;
-    $searchConfig->{mmvmk0}->{Audi}->{maxAge}       = 15;
-    $searchConfig->{mmvmk0}->{Honda}->{maxAge}      = 12;
-
-    getUrls();
+    $urls = getUrls();
 
     my $cookieJar_HttpCookieJar = HTTP::CookieJar->new;
     my $agent = 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36';
@@ -363,6 +141,9 @@ sub ini
     $cookieJar_HttpCookieJarLWP->add( "http://hasznaltauto.hu", "visitor_telepules=3148 Path=/; Domain=.hasznaltauto.hu" )              or die "$!";
 
     $G_ITEMS_IN_DB = ( $G_DATA->{ads} ? scalar( keys %{ $G_DATA->{ads} } ) : 0 );
+    if ($G_DATA){
+        $log->info(Dumper($G_DATA));
+    }
     $log->info( "Ini: Eddig beolvasott hirdetések száma: " . $G_ITEMS_IN_DB . "\n" );
 
     $log->info( "Ini: Http motor: $g_downloadMethod\n" );
@@ -397,7 +178,7 @@ sub ini
 
 sub getUrls
 {
-    # my $urls;
+    my $urls;
     if ( not defined $thisYear ) { ini; }
 
 # https://www.autoscout24.de/ergebnisse?mmvmk0=9&mmvco=1&fregfrom=2013&fregto=2015&pricefrom=0&priceto=8000&fuel=B&kmfrom=10000&powertype=kw&atype=C&ustate=N%2CU&sort=standard&desc=0
@@ -425,9 +206,9 @@ sub getUrls
         } ### foreach my $k ( sort keys %...)
 
         # print "$out\n";
-        $urls->{$maker}=$out;
+        $urls->{$maker} = $out;
     } ### foreach my $maker ( sort keys...)
-    # return \$urls;
+    return $urls;
 } ### sub getUrls
 
 # lista: //*div[@class='cl-list-elements']
@@ -708,7 +489,8 @@ sub collectData
     $collectionDate = strftime "%Y.%m.%d %H:%M:%S", localtime;
 
     $G_ITEMS_PROCESSED = 0;
-    $log->info(Dumper($urls));
+
+    # $log->info(Dumper($urls));
 
     foreach my $maker ( sort keys %$urls ) {
 
@@ -734,7 +516,7 @@ sub collectData
             }
             parseItems( \$html );
         } ### for ( my $i = 1 ; $i <=...)
-    } ### foreach my $url ( @$urls )
+    } ### foreach my $maker ( sort keys...)
 } ### sub collectData
 
 sub str_replace
@@ -772,9 +554,12 @@ sub dataSave
 
 sub dataLoad
 {
-    $G_DATA = () unless $G_DATA;
-    return if ( not -e 'data.dat' );
-    $G_DATA = retrieve( 'data.dat' );
+    # $G_DATA = () unless $G_DATA;
+    if ( not -e 'data.dat' ){
+        $log->info("dataLoad(): returning - there is no file to load.\n");
+        return;
+    };
+    $G_DATA = retrieve( 'data.dat' ) or die ;
     foreach my $id ( keys %{ $G_DATA->{ads} } ) {
         $G_DATA->{ads}->{$id}->{status} = $STATUS_EMPTY;
     }
@@ -844,11 +629,6 @@ sub sndMail
         );    # TODO: sending in plain text?
         $log->info( " $_ ...\n" );
 
-        # my $tmp=$bodyText;
-        # $tmp=~s/<br>/\n/g;
-
-        # $log->debug( "sendmail($bodyText)" );
-
         # Email::Sender::Simple
         if ( $g_sendMail ) {
             sendmail( $email ) or die $!;
@@ -856,8 +636,11 @@ sub sndMail
 
     } ### foreach ( @g_mailRecipients)
 
-    $G_DATA->{lastMailSendTime} = time;
-    $log->info( "Levélküldés kihagyva a g_sendMail változó értéke miatt.\n" ) if not $g_sendMail;
+    if ( $g_sendMail ) {
+        $G_DATA->{lastMailSendTime} = time;
+    } else {
+        $log->info( "Levélküldés kihagyva a g_sendMail változó értéke miatt.\n" ) if not $g_sendMail;
+    }
 } ### sub sndMail
 
 sub text2html
@@ -866,13 +649,9 @@ sub text2html
     my $textBak = $text;
     $text =~ s|\n|<br>|g;
 
-    # " [title](link)\n";
-    # $retval .= "$sign <a href=\"" . $item->{link} . "\">" . $item->{title} . "</a>\n";
     $text =~ s| \[(.*?)\]\((.*?)\)| <a href="${2}">${1}</a>|g;
     $text =~ s|\n|<br/>|g;
 
-    # $text =~ s|<br/>|<br/>\n|g;
-    # $log->info( "text2html($textBak)=\"$text\"\n" );
     return $text;
 } ### sub text2html
 
@@ -957,8 +736,6 @@ sub main
         my $time = time;
         process();
 
-
-        $dataFileDate = $G_DATA->{lastChange} ? ( strftime( "%Y.%m.%d %H:%M", localtime( $G_DATA->{lastChange} ) ) ) : "";
         my $timeToWait = ( $time + $G_WAIT_BETWEEN_FULL_PROCESS_IN_SEC ) - time;
         if ( $timeToWait < 0 ) {
             $log->warn(
@@ -974,4 +751,3 @@ sub main
 } ### sub main
 
 main();
-
