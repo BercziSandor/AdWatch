@@ -144,6 +144,7 @@ smtp_sasl_security_options = noanonymous
 smtp_tls_loglevel = 1
 smtp_tls_per_site = hash:/etc/postfix/tls_per_site
 smtp_tls_CAfile = /etc/ssl/certs/Equifax_Secure_CA.pem
+smtp_tls_CApath = /etc/ssl/certs
 smtp_tls_session_cache_database = btree:/var/lib/postfix/smtp_tls_session_cache
 __EOF
 
@@ -178,8 +179,10 @@ cd hasznaltAutoWatcher
 ~~~~
 
 ### Cron
-# TODO
-
+~~~~bash
+# for app user: sanyi
+*/10 * * * * cd ~/work/hasznaltAutoWatcher; ./watch.sh
+~~~~
 
 
 # Cloud services
