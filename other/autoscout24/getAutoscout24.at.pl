@@ -1,4 +1,5 @@
 #!/usr/bin/perl
+# -Mutf8 -CS
 
 use strict;
 use warnings;
@@ -38,8 +39,10 @@ my $thisYear;
 my $urls;
 my $PAGESTRING = "VVPAGEVV";
 
-my @g_mailRecipients = ( '"Sanyi" <berczi.sandor@gmail.com>', '"Tillatilla1966" <tillatilla.1966@gmail.com>' );
-@g_mailRecipients = ( '"Sanyi" <berczi.sandor@gmail.com>' );
+my @g_mailRecipients;
+@g_mailRecipients = ( '"Sanyi" <berczi.sandor@gmail.com>', '"Tillatilla1966" <tillatilla.1966@gmail.com>' );
+
+# @g_mailRecipients = ( '"Sanyi" <berczi.sandor@gmail.com>' );
 
 my $SW_DOWNLOAD        = 'Letoltes';
 my $SW_FULL_PROCESSING = 'Teljes futás';
@@ -58,12 +61,11 @@ our $XPATH_FEATURES;
 our $XPATH_KEP;
 our $textToDelete;
 our $g_sendMail;
+our $g_downloadMethod;
 
 $Data::Dumper::Sortkeys = 1;
-
 my $offline       = 0;
 my $saveHtmlFiles = 0;
-our $g_downloadMethod;
 
 my $dataFileDate;
 my $G_ITEMS_IN_DB;
@@ -96,6 +98,7 @@ sub ini
             log4perl.appender.Logfile.filename                 = test.log
             log4perl.appender.Logfile.layout                   = Log::Log4perl::Layout::PatternLayout
             log4perl.appender.Logfile.layout.ConversionPattern = %d %r [%-5p] %F %4L - %m%n
+            log4perl.appender.Logfile.Threshold                = DEBUG
 
             log4perl.appender.Screen                           = Log::Log4perl::Appender::Screen
             log4perl.appender.Screen.stderr                    = 0
@@ -129,23 +132,14 @@ sub ini
 
     my $cookieJar_HttpCookieJar = HTTP::CookieJar->new;
     my $agent = 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36';
-
-# $CookieJar_HttpCookieJar->add( "http://hasznaltauto.hu", "telepules_saved=1; telepules_id_user=3148; visitor_telepules=3148; talalatokszama=${G_ITEMS_PER_PAGE}; Path=/; Domain=.hasznaltauto.hu" ) or die "$!";
-    $cookieJar_HttpCookieJar->add( "http://hasznaltauto.hu", "talalatokszama=${G_ITEMS_PER_PAGE}; Path=/; Domain=.hasznaltauto.hu" ) or die "$!";
-    $cookieJar_HttpCookieJar->add( "http://hasznaltauto.hu", "telepules_saved=1; Path=/; Domain=.hasznaltauto.hu" )                  or die "$!";
-    $cookieJar_HttpCookieJar->add( "http://hasznaltauto.hu", "telepules_id_user=3148; Path=/; Domain=.hasznaltauto.hu" )             or die "$!";
-    $cookieJar_HttpCookieJar->add( "http://hasznaltauto.hu", "visitor_telepules=3148 Path=/; Domain=.hasznaltauto.hu" )              or die "$!";
+    $cookieJar_HttpCookieJar->add( "http://hasznaltauto.hu", "visitor_telepules=3148 Path=/; Domain=.hasznaltauto.hu" ) or die "$!";
 
     my $cookieJar_HttpCookieJarLWP = HTTP::CookieJar::LWP->new;
-    $cookieJar_HttpCookieJarLWP->add( "http://hasznaltauto.hu", "talalatokszama=${G_ITEMS_PER_PAGE}; Path=/; Domain=.hasznaltauto.hu" ) or die "$!";
-    $cookieJar_HttpCookieJarLWP->add( "http://hasznaltauto.hu", "talalatokszama=${G_ITEMS_PER_PAGE}; Path=/; Domain=.hasznaltauto.hu" ) or die "$!";
-    $cookieJar_HttpCookieJarLWP->add( "http://hasznaltauto.hu", "telepules_saved=1; Path=/; Domain=.hasznaltauto.hu" )                  or die "$!";
-    $cookieJar_HttpCookieJarLWP->add( "http://hasznaltauto.hu", "telepules_id_user=3148; Path=/; Domain=.hasznaltauto.hu" )             or die "$!";
-    $cookieJar_HttpCookieJarLWP->add( "http://hasznaltauto.hu", "visitor_telepules=3148 Path=/; Domain=.hasznaltauto.hu" )              or die "$!";
+    $cookieJar_HttpCookieJarLWP->add( "http://hasznaltauto.hu", "visitor_telepules=3148 Path=/; Domain=.hasznaltauto.hu" ) or die "$!";
 
     $G_ITEMS_IN_DB = ( $G_DATA->{ads} ? scalar( keys %{ $G_DATA->{ads} } ) : 0 );
-    if ($G_DATA){
-        $log->info(Dumper($G_DATA));
+    if ( $G_DATA ) {
+        $log->info( Dumper( $G_DATA ) );
     }
     $log->info( "Ini: Eddig beolvasott hirdetések száma: " . $G_ITEMS_IN_DB . "\n" );
 
@@ -216,9 +210,9 @@ sub getUrls
 
 sub getHtml
 {
-    my ( $url, $page ) = @_;
+    my ( $url, $page, $maker ) = @_;
     $page = 1 if not defined $page;
-    $log->debug( "getHtml($page, $g_downloadMethod)\n" );
+    $log->debug( "getHtml($url, $page, $g_downloadMethod)\n" );
 
     # $log->debug( "getHtml($url, page: $page)" );
     # $log->debug( "replace: '$PAGESTRING' -> $page in $url" );
@@ -229,10 +223,7 @@ sub getHtml
     my $html    = '';
     my $content = '';
 
-    my $fileName = $url;
-
     if ( $url =~ m|autoscout24| ) {
-        # $log->debug( "fileName: $fileName" );
     } else {
         $log->logdie( "Mi ez az url?? [$url]" );
     }
@@ -291,10 +282,13 @@ sub getHtml
 
     # $log->debug( $content );
     if ( $saveHtmlFiles ) {
-        open( MYFILE, ">$fileName" );
-        print MYFILE $html;
+        my $fileName = $url;
+        $fileName = int( time ) . ".${maker}.${page}.html";
+        $log->debug( "fileName: $fileName" );
+        open( MYFILE, ">$fileName" ) or die "$fileName: $!";
+        print MYFILE encode_utf8( $html );
         close( MYFILE );
-    }
+    } ### if ( $saveHtmlFiles )
     $log->logdie( "The content of the received html is emply." ) if ( length( $html ) == 0 );
 
     # $G_HTML_TREE = HTML::TreeBuilder::XPath->new_from_content( $html);
@@ -343,13 +337,10 @@ sub parseItems
 {
     my ( $html ) = @_;
 
-    # $log->debug( "parseItems()\n" );
     stopWatch::continue( $SW_PROCESSING );
 
-    # print \$html;
     my $items;
 
-    # my $tmp = $G_HTML_TREE->findvalue( "//title" ) or die "$!";
     # $log->debug( "TEST: title: [$tmp]\n" );
 
     $items = $G_HTML_TREE->findnodes( $XPATH_TALALATI_LISTA );
@@ -399,6 +390,7 @@ sub parseItems
         if ( defined $G_DATA->{ads}->{$id} ) {
 
             $log->debug( "Updating [$title] in the database...\n" );
+
             $G_DATA->{ads}->{$id}->{status} = $STATUS_EMPTY;
 
             if ( not defined $G_DATA->{ads}->{$id}->{history} ) {
@@ -424,8 +416,8 @@ sub parseItems
 
         } else {
 
-            # add
             $log->debug( "Adding [$title] to the database\n" );
+
             $G_DATA->{ads}->{$id}->{history}->{$t} = " Adatbázisba került; ";
             $G_DATA->{ads}->{$id}->{title}         = $title;
             $G_DATA->{ads}->{$id}->{link}          = $link;
@@ -438,6 +430,7 @@ sub parseItems
             $G_DATA->{ads}->{$id}->{priceNr}  = $priceNr;
             $G_DATA->{ads}->{$id}->{status}   = $STATUS_NEW;
         } ### else [ if ( defined $G_DATA->...)]
+
         $G_DATA->{lastChange} = time;
 
         my $sign;
@@ -449,7 +442,7 @@ sub parseItems
             $sign = " ";
         }
 
-        # $log->debug( Dumper( $G_DATA->{ads}->{$id} ) );
+        # $log->debug( "\n$id:" . Dumper( $G_DATA->{ads}->{$id} ) );
 
         print "$sign";
 
@@ -464,7 +457,7 @@ sub parseItems
 
     # or die "findnodes error: $!\n";
     $log->debug( " There are " . scalar( @$items ) . " 'talalati_lista' items\n" );
-    $log->logwarn( "parseItems(): No items, aborting\n" ) unless $items;
+    # $log->logwarn( "parseItems(): No items, aborting\n" ) unless $items;
 } ### sub parseItems
 
 sub collectData
@@ -483,7 +476,7 @@ sub collectData
             $log->info( "\nElértük a feldolgozási limitet." );
             return;
         }
-        my $html = getHtml( $url, 1 );
+        my $html = getHtml( $url, 1, $maker );
         my $pageCount = parsePageCount( \$html );
         $log->logdie( "PageCount is 0" ) if ( $pageCount == 0 );
 
@@ -495,7 +488,7 @@ sub collectData
             $log->info( sprintf( "\n%2d/%d [", $i, $pageCount ) );
             $log->debug( sprintf( "%2.0f%% (%d of %d pages)", ( 0.0 + 100 * ( $i - 1 ) / $pageCount ), $i, $pageCount ) );
             if ( $i > 1 ) {
-                $html = getHtml( $url, $i );
+                $html = getHtml( $url, $i, $maker );
             }
             parseItems( \$html );
         } ### for ( my $i = 1 ; $i <=...)
@@ -538,11 +531,11 @@ sub dataSave
 sub dataLoad
 {
     # $G_DATA = () unless $G_DATA;
-    if ( not -e 'data.dat' ){
-        $log->info("dataLoad(): returning - there is no file to load.\n");
+    if ( not -e 'data.dat' ) {
+        $log->info( "dataLoad(): returning - there is no file to load.\n" );
         return;
-    };
-    $G_DATA = retrieve( 'data.dat' ) or die ;
+    }
+    $G_DATA = retrieve( 'data.dat' ) or die;
     foreach my $id ( keys %{ $G_DATA->{ads} } ) {
         $G_DATA->{ads}->{$id}->{status} = $STATUS_EMPTY;
     }
@@ -615,8 +608,8 @@ sub sndMail
         # Email::Sender::Simple
         if ( $g_sendMail ) {
             sendmail( $email ) or die $!;
-            $log->info("Levél küldése sikeres.");
-    	}
+            $log->info( "Levél küldése sikeres." );
+        }
 
     } ### foreach ( @g_mailRecipients)
 
@@ -652,9 +645,12 @@ sub getMailText
         my $item = $G_DATA->{ads}->{$id};
         if ( $item->{status} eq $STATUS_NEW ) {
             $count_new++;
+            $log->debug( "$id: new\n" );
         } elsif ( $item->{status} eq $STATUS_CHANGED ) {
             $count_changed++;
+            $log->debug( "$id: changed\n" );
         } else {
+            $log->debug( "$id: ??? .[" . $item->{status} . "]\n" );
             next;
         }
         $mailTextHtml .= getMailTextforItem( $id );

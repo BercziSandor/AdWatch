@@ -2,9 +2,7 @@
 $g_downloadMethod = 'lwp';
 $g_downloadMethod = 'httpTiny';
 $g_downloadMethod = 'wwwMech';
-$g_sendMail = 1;
-
-
+$g_sendMail       = 1;
 
 $XPATH_TALALATI_LISTA = '//div[contains(concat(" ", @class, " "), " cl-list-element cl-list-element-gap ")]';
 $XPATH_TITLE          = './/h2[contains(concat(" ", @class, " "), " cldt-summary-makemodel ")]';
@@ -18,19 +16,19 @@ $textToDelete =
 
 # mmvmk0=9&mmvco=1&fregfrom=2013&fregto=2015&pricefrom=0&priceto=8000&fuel=B&kmfrom=10000&powertype=kw&atype=C&ustate=N%2CU&sort=standard&desc=0
 
-# ustate=N%2CU&		N,U: nem balesetes; A: balesetes;
+# ustate=N%2CU&     N,U: nem balesetes; A: balesetes;
 $searchConfig->{defaults}->{priceto}   = 7000;
 $searchConfig->{defaults}->{priceto}   = 500;
 $searchConfig->{defaults}->{sort}      = 'age';
 $searchConfig->{defaults}->{desc}      = 0;
-$searchConfig->{defaults}->{cy}        = 'A,D';           # A: Austria; D: Germany
-$searchConfig->{defaults}->{offer}     = 'D,J,O,S,U';     # D: Vorführfahrzeug, J: Jahreswagen, N: Neu, O: Oldtimer, S: Tageszulassung, U: Gebraucht
+$searchConfig->{defaults}->{cy}        = 'A,D';          # A: Austria; D: Germany
+$searchConfig->{defaults}->{offer}     = 'D,J,O,S,U';    # D: Vorführfahrzeug, J: Jahreswagen, N: Neu, O: Oldtimer, S: Tageszulassung, U: Gebraucht
 $searchConfig->{defaults}->{mmvco}     = 1;
 $searchConfig->{defaults}->{powertype} = 'kw';
 $searchConfig->{defaults}->{atype}     = 'C';
-$searchConfig->{defaults}->{ustate}    = 'A,N,U';         #  A: balesetes; N,U: nem balesetes;
-$searchConfig->{defaults}->{page}      = "$PAGESTRING";
-$searchConfig->{defaults}->{size}      = 20;              # size per page
+$searchConfig->{defaults}->{ustate}    = 'A,N,U';        #  A: balesetes; N,U: nem balesetes;
+$searchConfig->{defaults}->{page}      = "VVPAGEVV";
+$searchConfig->{defaults}->{size}      = 20;             # size per page
 $searchConfig->{mmvmk0}->{Citroen}->{maxAge}    = 11;
 $searchConfig->{mmvmk0}->{Fiat}->{maxAge}       = 11;
 $searchConfig->{mmvmk0}->{Ford}->{maxAge}       = 11;
