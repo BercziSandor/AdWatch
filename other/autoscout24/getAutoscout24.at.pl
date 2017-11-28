@@ -1,5 +1,4 @@
 #!/usr/bin/perl
-# -Mutf8 -CS
 
 use strict;
 use warnings;
@@ -33,35 +32,20 @@ use Email::Sender::Simple qw(sendmail);
 use Email::Simple::Creator;
 
 require stopWatch;
-our %MAKERS;
-our $searchConfig;
+
+# our %MAKERS;
+# our $G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults};
 my $thisYear;
-my $urls;
-my $PAGESTRING = "VVPAGEVV";
 
-my @g_mailRecipients;
-@g_mailRecipients = ( '"Sanyi" <berczi.sandor@gmail.com>', '"Tillatilla1966" <tillatilla.1966@gmail.com>' );
+# my $urls;
 
-# @g_mailRecipients = ( '"Sanyi" <berczi.sandor@gmail.com>' );
-
+my $PAGESTRING         = "VVPAGEVV";
 my $SW_DOWNLOAD        = 'Letoltes';
 my $SW_FULL_PROCESSING = 'Teljes futás';
 my $SW_PROCESSING      = 'Feldolgozás';
 
 # variables from config file
-our $XPATH_TALALATI_LISTA;
-our $XPATH_TITLE;
-our $XPATH_TITLE2;
-our $XPATH_SUBTITLE;
-our $XPATH_LINK;
-our $XPATH_PRICE;
-our $XPATH_INFO;
-our $XPATH_DESC;
-our $XPATH_FEATURES;
-our $XPATH_KEP;
-our $textToDelete;
-our $g_sendMail;
-our $g_downloadMethod;
+our $G_DATA;
 
 $Data::Dumper::Sortkeys = 1;
 my $offline       = 0;
@@ -71,7 +55,6 @@ my $dataFileDate;
 my $G_ITEMS_IN_DB;
 my $G_HTML_TREE;
 my $g_stopWatch;
-my $G_DATA;
 my $G_ITEMS_PROCESSED = 0;
 my $G_ITEMS_PER_PAGE  = 20;    # default:10 max:100
 my $G_LAST_GET_TIME   = 0;
@@ -128,29 +111,31 @@ sub ini
     my $cnt = `ps -aef | grep -v grep | grep -c "$name.pl"`;
     if ( $cnt > 1 ) { die "Már fut másik $name folyamat, ez leállítva.\n"; }
 
-    $urls = getUrls();
-
-    my $cookieJar_HttpCookieJar = HTTP::CookieJar->new;
-    my $agent = 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36';
-    $cookieJar_HttpCookieJar->add( "http://hasznaltauto.hu", "visitor_telepules=3148 Path=/; Domain=.hasznaltauto.hu" ) or die "$!";
-
+    my $cookieJar_HttpCookieJar    = HTTP::CookieJar->new;
     my $cookieJar_HttpCookieJarLWP = HTTP::CookieJar::LWP->new;
+    my $agent = 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36';
+
+    # Specific code
+    getUrls();
+
+    $cookieJar_HttpCookieJar->add( "http://hasznaltauto.hu", "visitor_telepules=3148 Path=/; Domain=.hasznaltauto.hu" ) or die "$!";
     $cookieJar_HttpCookieJarLWP->add( "http://hasznaltauto.hu", "visitor_telepules=3148 Path=/; Domain=.hasznaltauto.hu" ) or die "$!";
 
+    # Generic
     $G_ITEMS_IN_DB = ( $G_DATA->{ads} ? scalar( keys %{ $G_DATA->{ads} } ) : 0 );
     if ( $G_DATA ) {
         $log->info( Dumper( $G_DATA ) );
     }
     $log->info( "Ini: Eddig beolvasott hirdetések száma: " . $G_ITEMS_IN_DB . "\n" );
 
-    $log->info( "Ini: Http motor: $g_downloadMethod\n" );
-    if ( $g_downloadMethod eq 'httpTiny' ) {
+    $log->info( "Ini: Http motor: $G_DATA->{downloadMethod}\n" );
+    if ( $G_DATA->{downloadMethod} eq $G_DATA->{CONSTANTS}->{DOWNLOADMETHODS}->{httpTiny} ) {
         $httpEngine = HTTP::Tiny->new(
             timeout    => 30,
             cookie_jar => $cookieJar_HttpCookieJar,
             agent      => $agent
         ) or $log->logdie( $! );
-    } elsif ( $g_downloadMethod eq 'lwp' ) {
+    } elsif ( $G_DATA->{downloadMethod} eq $G_DATA->{CONSTANTS}->{DOWNLOADMETHODS}->{lwp} ) {
 
         $httpEngine = LWP::UserAgent->new(
             timeout    => 30,
@@ -161,7 +146,7 @@ sub ini
         # $httpEngine->cookie_jar( $cookieJar_HttpCookieJarLWP );
 
         # $httpEngine->cookie_jar( $cookieJar );
-    } elsif ( $g_downloadMethod eq 'wwwMech' ) {
+    } elsif ( $G_DATA->{downloadMethod} eq $G_DATA->{CONSTANTS}->{DOWNLOADMETHODS}->{wwwMech} ) {
         $httpEngine = WWW::Mechanize->new(
             timeout    => 30,
             cookie_jar => $cookieJar_HttpCookieJarLWP,
@@ -175,22 +160,22 @@ sub ini
 
 sub getUrls
 {
-    my $urls;
-    if ( not defined $thisYear ) { ini; }
+    die "Run ini() before getUrls, aborting.\n" if ( not defined $thisYear );
 
-# https://www.autoscout24.de/ergebnisse?mmvmk0=9&mmvco=1&fregfrom=2013&fregto=2015&pricefrom=0&priceto=8000&fuel=B&kmfrom=10000&powertype=kw&atype=C&ustate=N%2CU&sort=standard&desc=0
-    foreach my $maker ( sort keys %{ $searchConfig->{mmvmk0} } ) {
-
-        # print "$maker " . $MAKERS{$maker} . "\n";
+    # AUTOSCOUT
+    foreach my $maker ( sort keys %{ $G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0} } ) {
+        # print "$maker " . $G_DATA->{AUTOSCOUT}->{makers}->{$maker} . "\n";
         my $out = "https://www.autoscout24.at/ergebnisse?";
-        $out .= "mmvmk0=" . $MAKERS{$maker};
-        $out .= "&fregfrom=" . ( $thisYear - ( $searchConfig->{mmvmk0}->{$maker}->{maxAge} ) );
-        foreach my $k ( sort keys %{ $searchConfig->{defaults} } ) {
+        $out .= "mmvmk0=" . $G_DATA->{AUTOSCOUT}->{makers}->{$maker};
+        $log->logdie( $G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{$maker}->{maxAge} . "is not defined, it is mandatory. Aborting." )
+          if ( not defined $G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{$maker}->{maxAge} );
+        $out .= "&fregfrom=" . ( $thisYear - ( $G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{$maker}->{maxAge} ) );
+        foreach my $k ( sort keys %{ $G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults} } ) {
             my $val;
-            if ( defined $searchConfig->{mmvmk0}->{$maker}->{$k} ) {
-                $val = $searchConfig->{mmvmk0}->{$maker}->{$k};
+            if ( defined $G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{$maker}->{$k} ) {
+                $val = $G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{$maker}->{$k};
             } else {
-                $val = $searchConfig->{defaults}->{$k};
+                $val = $G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults}->{$k};
             }
             if ( index( $val, ',' ) > 0 ) {
                 my @vals = split( ',', $val );
@@ -203,31 +188,28 @@ sub getUrls
         } ### foreach my $k ( sort keys %...)
 
         # print "$out\n";
-        $urls->{$maker} = $out;
+        $G_DATA->{AUTOSCOUT}->{urls}->{$maker} = $out;
     } ### foreach my $maker ( sort keys...)
-    return $urls;
 } ### sub getUrls
 
 sub getHtml
 {
     my ( $url, $page, $maker ) = @_;
     $page = 1 if not defined $page;
-    $log->debug( "getHtml($url, $page, $g_downloadMethod)\n" );
+    $log->debug( "getHtml($url, $page, $G_DATA->{downloadMethod})\n" );
 
-    # $log->debug( "getHtml($url, page: $page)" );
-    # $log->debug( "replace: '$PAGESTRING' -> $page in $url" );
     $url =~ s/$PAGESTRING/$page/g;
-
-    # $log->debug( "result: $url" );
 
     my $html    = '';
     my $content = '';
 
+    # Specific code
     if ( $url =~ m|autoscout24| ) {
     } else {
         $log->logdie( "Mi ez az url?? [$url]" );
     }
 
+    # Generic code
     $log->debug( " reading remote\n" );
     stopWatch::continue( $SW_DOWNLOAD );
     my $wtime = int( ( $G_LAST_GET_TIME + $G_WAIT_BETWEEN_GETS_IN_SEC ) - time );
@@ -239,7 +221,7 @@ sub getHtml
 
     $G_LAST_GET_TIME = time;
 
-    if ( $g_downloadMethod eq 'httpTiny' ) {
+    if ( $G_DATA->{downloadMethod} eq 'httpTiny' ) {
         my $response = $httpEngine->get( $url );
         if ( $response->{success} ) {
             $html    = $response->{content};
@@ -253,7 +235,7 @@ sub getHtml
                   . "(599: timeout, too big response etc.)" );
             die();
         } ### else [ if ( $response->{success...})]
-    } elsif ( $g_downloadMethod eq 'lwp' ) {
+    } elsif ( $G_DATA->{downloadMethod} eq $G_DATA->{CONSTANTS}->{DOWNLOADMETHODS}->{lwp} ) {
         my $response = $httpEngine->get( $url );
         if ( $response->is_success ) {
             $html    = $response->content;
@@ -261,7 +243,7 @@ sub getHtml
         } else {
             $log->logdie( $response->status_line );
         }
-    } elsif ( $g_downloadMethod eq 'wwwMech' ) {
+    } elsif ( $G_DATA->{downloadMethod} eq $G_DATA->{CONSTANTS}->{DOWNLOADMETHODS}->{wwwMech} ) {
         my $response = $httpEngine->get( $url );
         if ( $httpEngine->success() ) {
             $html    = $httpEngine->content();
@@ -271,11 +253,8 @@ sub getHtml
         } else {
             $log->logdie( "ajjjjaj: httpEngine error: " . $httpEngine->status() . "\n" );    #$httpEngine->status()
         }
-
-    } elsif ( $g_downloadMethod eq 'wget' ) {
-    } elsif ( $g_downloadMethod eq 'curl' ) {
     } else {
-        $log->logdie( "The value of variable g_downloadMethod is not ok, aborting" );
+        $log->logdie( "The value of $G_DATA->{iable g_downlo}adMethod is not ok, aborting" );
     }
 
     stopWatch::pause( $SW_DOWNLOAD );
@@ -343,31 +322,31 @@ sub parseItems
 
     # $log->debug( "TEST: title: [$tmp]\n" );
 
-    $items = $G_HTML_TREE->findnodes( $XPATH_TALALATI_LISTA );
+    $items = $G_HTML_TREE->findnodes( $G_DATA->{AUTOSCOUT}->{XPATHS}->{XPATH_TALALATI_LISTA} );
     foreach my $item ( $items->get_nodelist ) {
         $G_ITEMS_PROCESSED++;
         my $tmp;
-        my $title = $item->findvalue( $XPATH_TITLE );
-        $tmp = $item->findvalue( $XPATH_TITLE2 );
+        my $title = $item->findvalue( $G_DATA->{AUTOSCOUT}->{XPATHS}->{XPATH_TITLE} );
+        $tmp = $item->findvalue( $G_DATA->{AUTOSCOUT}->{XPATHS}->{XPATH_TITLE2} );
         $title .= " - " . $tmp if $tmp;
         $title = encode_utf8( $title );
-        my $desc = $item->findvalue( $XPATH_DESC );
+        my $desc = $item->findvalue( $G_DATA->{AUTOSCOUT}->{XPATHS}->{XPATH_DESC} );
 
-        my $link = $item->findvalue( $XPATH_LINK );
+        my $link = $item->findvalue( $G_DATA->{AUTOSCOUT}->{XPATHS}->{XPATH_LINK} );
         my $id   = $link;
         $link = "https://www.autoscout24.at${link}";
 
         # /angebote/audi-a3-2-0-tdi-ambition-klimaauto-dpf-alu-6-gang-diesel-schwarz-99d1f527-0d81-ed66-e053-e250040a9fc2
         $id =~ s/^.*-(.{36})$/$1/g;
 
-        my $priceStr = encode_utf8( $item->findvalue( $XPATH_PRICE ) );
+        my $priceStr = encode_utf8( $item->findvalue( $G_DATA->{AUTOSCOUT}->{XPATHS}->{XPATH_PRICE} ) );
         $priceStr = "?" unless $priceStr;
         my $priceNr = $priceStr;
         $priceNr =~ s/\D//g;
         $priceNr = 0 unless $priceStr;
 
-        my $features = encode_utf8( join( '#', $item->findvalues( $XPATH_FEATURES ) ) );
-        $features =~ s/$textToDelete//g;
+        my $features = encode_utf8( join( '#', $item->findvalues( $G_DATA->{AUTOSCOUT}->{XPATHS}->{XPATH_FEATURES} ) ) );
+        $features =~ s/$G_DATA->{AUTOSCOUT}->{textToDelete}//g;
         $features =~ s/^ //;
         $features =~ s/ $//;
         $features =~ s/ # /#/g;
@@ -457,6 +436,7 @@ sub parseItems
 
     # or die "findnodes error: $!\n";
     $log->debug( " There are " . scalar( @$items ) . " 'talalati_lista' items\n" );
+
     # $log->logwarn( "parseItems(): No items, aborting\n" ) unless $items;
 } ### sub parseItems
 
@@ -466,11 +446,10 @@ sub collectData
 
     $G_ITEMS_PROCESSED = 0;
 
-    # $log->info(Dumper($urls));
+    # AUTOSCOUT
+    foreach my $maker ( sort keys %{ $G_DATA->{AUTOSCOUT}->{urls} } ) {
 
-    foreach my $maker ( sort keys %$urls ) {
-
-        my $url = $urls->{$maker};
+        my $url = $G_DATA->{AUTOSCOUT}->{urls}->{$maker};
         $log->info( "\n\n** $maker **\n" );
         if ( $G_ITEMS_TO_PROCESS_MAX > 0 and $G_ITEMS_PROCESSED >= $G_ITEMS_TO_PROCESS_MAX ) {
             $log->info( "\nElértük a feldolgozási limitet." );
@@ -493,6 +472,7 @@ sub collectData
             parseItems( \$html );
         } ### for ( my $i = 1 ; $i <=...)
     } ### foreach my $maker ( sort keys...)
+
 } ### sub collectData
 
 sub str_replace
@@ -521,10 +501,10 @@ sub dataSave
 {
     # Do not save if g_sendMail != 1
     $G_DATA = () unless $G_DATA;
-    if ( $g_sendMail ) {
+    if ( $G_DATA->{sendmail} ) {
         store $G_DATA, 'data.dat';
     } else {
-        $log->info( "Az adatokat nem mentettük el, mert nem történt levélküldés sem, a \$g_sendMail változó értéke miatt.\n" );
+        $log->info( "Az adatokat nem mentettük el, mert nem történt levélküldés sem, a \$G_DATA->{sendmail} változó értéke miatt.\n" );
     }
 } ### sub dataSave
 
@@ -564,7 +544,7 @@ sub sndMail
         my $fileName = ${collectionDate};
         $fileName =~ s/[.:]//g;
         $fileName =~ s/[ ]/_/g;
-        if ( $g_sendMail ) {
+        if ( $G_DATA->{sendmail} ) {
             $fileName = "./mails/${fileName}.txt";
         } else {
             $fileName = "./mails/${fileName}_NOT_SENT.txt";
@@ -576,13 +556,13 @@ sub sndMail
         close( MYFILE );
     }
 
-    $bodyText = text2html( $bodyText );
+    $bodyText = u_text2html( $bodyText );
 
     {
         my $fileName = ${collectionDate};
         $fileName =~ s/[.:]//g;
         $fileName =~ s/[ ]/_/g;
-        if ( $g_sendMail ) {
+        if ( $G_DATA->{sendmail} ) {
             $fileName = "./mails/${fileName}.html";
         } else {
             $fileName = "./mails/${fileName}_NOT_SENT.html";
@@ -593,7 +573,7 @@ sub sndMail
         close( MYFILE );
     }
 
-    foreach ( @g_mailRecipients ) {
+    foreach ( @{ $G_DATA->{mailRecipients} } ) {
         my $email = Email::Simple->create(
             header => [
                 To             => $_,
@@ -602,25 +582,25 @@ sub sndMail
                 'Content-Type' => 'text/html',
             ],
             body => $bodyText,
-        );    # TODO: sending in plain text?
+        );
         $log->info( " $_ ...\n" );
 
         # Email::Sender::Simple
-        if ( $g_sendMail ) {
+        if ( $G_DATA->{sendmail} ) {
             sendmail( $email ) or die $!;
             $log->info( "Levél küldése sikeres." );
         }
 
-    } ### foreach ( @g_mailRecipients)
+    } ### foreach ( @{ $G_DATA->{mailRecipients...}})
 
-    if ( $g_sendMail ) {
+    if ( $G_DATA->{sendmail} ) {
         $G_DATA->{lastMailSendTime} = time;
     } else {
-        $log->info( "Levélküldés kihagyva a g_sendMail változó értéke miatt.\n" ) if not $g_sendMail;
+        $log->info( "Levélküldés kihagyva (ok: 'g_sendMail' változó értéke: false.\n" );
     }
 } ### sub sndMail
 
-sub text2html
+sub u_text2html
 {
     my $text    = shift;
     my $textBak = $text;
@@ -630,7 +610,7 @@ sub text2html
     $text =~ s|\n|<br/>|g;
 
     return $text;
-} ### sub text2html
+} ### sub u_text2html
 
 sub getMailText
 {
@@ -668,7 +648,6 @@ sub getMailText
         $mailTextHtml .= "$count_changed MEGVÁLTOZOTT hirdetés\n" if $count_changed;
         $log->info( "$mailTextHtml\n" );
     }
-
     return $mailTextHtml;
 } ### sub getMailText
 
@@ -721,7 +700,7 @@ sub main
             $log->warn(
 "Warning: Túl alacsony a G_WAIT_BETWEEN_FULL_PROCESS_IN_SEC változó értéke: folyamatosan fut a feldolgozás. \nA mostani futás hossza "
                   . ( time - $time )
-                  . " másodperc volt, a változó értéke pedig $G_WAIT_BETWEEN_FULL_PROCESS_IN_SEC.\n" );
+                  . " másodperc volt, ennyinek kellene lenni a változónak legalább. Jelenleg ez: $G_WAIT_BETWEEN_FULL_PROCESS_IN_SEC." );
         } else {
             $log->info( sprintf( "Várakozás a következő feldolgozásig: %d másodperc...\n", $timeToWait ) );
             sleep( $timeToWait );

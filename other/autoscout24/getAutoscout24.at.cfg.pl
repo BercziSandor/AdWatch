@@ -1,49 +1,57 @@
 # debug options for the developer;
-$g_downloadMethod = 'lwp';
-$g_downloadMethod = 'httpTiny';
-$g_downloadMethod = 'wwwMech';
-$g_sendMail       = 1;
 
-$XPATH_TALALATI_LISTA = '//div[contains(concat(" ", @class, " "), " cl-list-element cl-list-element-gap ")]';
-$XPATH_TITLE          = './/h2[contains(concat(" ", @class, " "), " cldt-summary-makemodel ")]';
-$XPATH_TITLE2         = './/h2[contains(concat(" ", @class, " "), " cldt-summary-version ")]';
-$XPATH_DESC           = './/h3[contains(concat(" ", @class, " "), " cldt-summary-subheadline ")]';
-$XPATH_LINK           = './/div[contains(concat(" ", @class, " "), " cldt-summary-titles ")]/a/@href';
-$XPATH_PRICE          = './/span[contains(concat(" ", @class, " "), " cldt-price ")]';
-$XPATH_FEATURES       = './/div[contains(concat(" ", @class, " "), " cldt-summary-vehicle-data ")]/ul/li';
-$textToDelete =
+$G_DATA->{CONSTANTS}->{DOWNLOADMETHODS}->{lwp}='lwp';
+$G_DATA->{CONSTANTS}->{DOWNLOADMETHODS}->{httpTiny}='httpTiny';
+$G_DATA->{CONSTANTS}->{DOWNLOADMETHODS}->{wwwMech}='wwwMech';
+
+$G_DATA->{downloadMethod} = $G_DATA->{CONSTANTS}->{DOWNLOADMETHODS}->{wwwMech};
+
+$G_DATA->{sendMail} = 1;
+$G_DATA->{mailRecipients} = ( '"Sanyi" <berczi.sandor@gmail.com>', '"Tillatilla1966" <tillatilla.1966@gmail.com>' );
+# FIXME: debug
+$G_DATA->{mailRecipients} = ( '"Sanyi" <berczi.sandor@gmail.com>' );
+
+$G_DATA->{AUTOSCOUT}->{XPATHS}->{XPATH_TALALATI_LISTA} = '//div[contains(concat(" ", @class, " "), " cl-list-element cl-list-element-gap ")]';
+$G_DATA->{AUTOSCOUT}->{XPATHS}->{XPATH_TITLE}          = './/h2[contains(concat(" ", @class, " "), " cldt-summary-makemodel ")]';
+$G_DATA->{AUTOSCOUT}->{XPATHS}->{XPATH_TITLE2}         = './/h2[contains(concat(" ", @class, " "), " cldt-summary-version ")]';
+$G_DATA->{AUTOSCOUT}->{XPATHS}->{XPATH_DESC}           = './/h3[contains(concat(" ", @class, " "), " cldt-summary-subheadline ")]';
+$G_DATA->{AUTOSCOUT}->{XPATHS}->{XPATH_LINK}           = './/div[contains(concat(" ", @class, " "), " cldt-summary-titles ")]/a/@href';
+$G_DATA->{AUTOSCOUT}->{XPATHS}->{XPATH_PRICE}          = './/span[contains(concat(" ", @class, " "), " cldt-price ")]';
+$G_DATA->{AUTOSCOUT}->{XPATHS}->{XPATH_FEATURES}       = './/div[contains(concat(" ", @class, " "), " cldt-summary-vehicle-data ")]/ul/li';
+$G_DATA->{AUTOSCOUT}->{textToDelete} =
 'Weitere Informationen zum offiziellen Kraftstoffverbrauch und den offiziellen spezifischen CO2-Emissionen neuer Personenkraftwagen können dem "Leitfaden über den Kraftstoffverbrauch, die CO2-Emissionen und den Stromverbrauch neuer Personenkraftwagen" entnommen werden, der an allen Verkaufsstellen und bei der Deutschen Automobil Treuhand GmbH unter www.dat.at unentgeltlich erhältlich ist.';
 
 # mmvmk0=9&mmvco=1&fregfrom=2013&fregto=2015&pricefrom=0&priceto=8000&fuel=B&kmfrom=10000&powertype=kw&atype=C&ustate=N%2CU&sort=standard&desc=0
 
 # ustate=N%2CU&     N,U: nem balesetes; A: balesetes;
-$searchConfig->{defaults}->{priceto}   = 7000;
-$searchConfig->{defaults}->{priceto}   = 500;
-$searchConfig->{defaults}->{sort}      = 'age';
-$searchConfig->{defaults}->{desc}      = 0;
-$searchConfig->{defaults}->{cy}        = 'A,D';          # A: Austria; D: Germany
-$searchConfig->{defaults}->{offer}     = 'D,J,O,S,U';    # D: Vorführfahrzeug, J: Jahreswagen, N: Neu, O: Oldtimer, S: Tageszulassung, U: Gebraucht
-$searchConfig->{defaults}->{mmvco}     = 1;
-$searchConfig->{defaults}->{powertype} = 'kw';
-$searchConfig->{defaults}->{atype}     = 'C';
-$searchConfig->{defaults}->{ustate}    = 'A,N,U';        #  A: balesetes; N,U: nem balesetes;
-$searchConfig->{defaults}->{page}      = "VVPAGEVV";
-$searchConfig->{defaults}->{size}      = 20;             # size per page
-$searchConfig->{mmvmk0}->{Citroen}->{maxAge}    = 11;
-$searchConfig->{mmvmk0}->{Fiat}->{maxAge}       = 11;
-$searchConfig->{mmvmk0}->{Ford}->{maxAge}       = 11;
-$searchConfig->{mmvmk0}->{Opel}->{maxAge}       = 11;
-$searchConfig->{mmvmk0}->{Peugeot}->{maxAge}    = 11;
-$searchConfig->{mmvmk0}->{Renault}->{maxAge}    = 11;
-$searchConfig->{mmvmk0}->{SEAT}->{maxAge}       = 11;
-$searchConfig->{mmvmk0}->{Skoda}->{maxAge}      = 11;
-$searchConfig->{mmvmk0}->{Suzuki}->{maxAge}     = 11;
-$searchConfig->{mmvmk0}->{Toyota}->{maxAge}     = 11;
-$searchConfig->{mmvmk0}->{Volkswagen}->{maxAge} = 15;
-$searchConfig->{mmvmk0}->{Audi}->{maxAge}       = 15;
-$searchConfig->{mmvmk0}->{Honda}->{maxAge}      = 12;
+$G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults}->{priceto} = 7000;
+$G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults}->{priceto} = 500;
+$G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults}->{sort}    = 'age';
+$G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults}->{desc}    = 0;
+$G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults}->{cy}      = 'A,D';    # A: Austria; D: Germany
+$G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults}->{offer} =
+  'D,J,O,S,U';    # D: Vorführfahrzeug, J: Jahreswagen, N: Neu, O: Oldtimer, S: Tageszulassung, U: Gebraucht
+$G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults}->{mmvco}              = 1;
+$G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults}->{powertype}          = 'kw';
+$G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults}->{atype}              = 'C';
+$G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults}->{ustate}             = 'A,N,U';      #  A: balesetes; N,U: nem balesetes;
+$G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults}->{page}               = "VVPAGEVV";
+$G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults}->{size}               = 20;           # size per page
+$G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{Citroen}->{maxAge}    = 11;
+$G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{Fiat}->{maxAge}       = 11;
+$G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{Ford}->{maxAge}       = 11;
+$G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{Opel}->{maxAge}       = 11;
+$G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{Peugeot}->{maxAge}    = 11;
+$G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{Renault}->{maxAge}    = 11;
+$G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{SEAT}->{maxAge}       = 11;
+$G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{Skoda}->{maxAge}      = 11;
+$G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{Suzuki}->{maxAge}     = 11;
+$G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{Toyota}->{maxAge}     = 11;
+$G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{Volkswagen}->{maxAge} = 15;
+$G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{Audi}->{maxAge}       = 15;
+$G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{Honda}->{maxAge}      = 12;
 
-%MAKERS = (
+my %MAKERS = (
     "Audi"              => 9,
     "BMW"               => 13,
     "Ford"              => 29,
@@ -223,4 +231,5 @@ $searchConfig->{mmvmk0}->{Honda}->{maxAge}      = 12;
     "ZAZ"               => 16394,
     "Sonstige"          => 16328,
 );
+$G_DATA->{AUTOSCOUT}->{makers} = %MAKERS;
 
