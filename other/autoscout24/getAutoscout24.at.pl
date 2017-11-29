@@ -91,7 +91,8 @@ sub ini
           );
 
     Log::Log4perl::init( \$logConf );
-    $log         = Log::Log4perl->get_logger();
+    $log = Log::Log4perl->get_logger();
+    $log->info( "ini(): entering" );
     $G_HTML_TREE = HTML::TreeBuilder::XPath->new;
 
     $thisYear = strftime "%Y", localtime;
@@ -104,6 +105,17 @@ sub ini
         die "couldn't include $cnfFile: $!\n" unless defined $return;
         die "couldn't run $cnfFile\n" unless $return;
     } ### unless ( my $return = require...)
+
+    # Checking config
+    if (   not defined $G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}
+        or not defined $G_DATA->{CONSTANTS}->{DOWNLOADMETHODS}
+        or not defined $G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults}
+        or not defined $G_DATA->{AUTOSCOUT}->{XPATHS}
+        or not defined $G_DATA->{sendMail}
+        or not defined $G_DATA->{mailRecipients}
+        or not defined $G_DATA->{downloadMethod} ) {
+        die "G_DATA is not ok, aborting\n";
+    } ### if ( not defined $G_DATA...)
 
     dataLoad();
     $dataFileDate = $G_DATA->{lastChange} ? ( strftime( "%Y.%m.%d %H:%M", localtime( $G_DATA->{lastChange} ) ) ) : "";
@@ -160,18 +172,30 @@ sub ini
 
 sub getUrls
 {
+    $log->debug( "getUrls(): entering" );
     die "Run ini() before getUrls, aborting.\n" if ( not defined $thisYear );
 
     # AUTOSCOUT
     foreach my $maker ( sort keys %{ $G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0} } ) {
-        # print "$maker " . $G_DATA->{AUTOSCOUT}->{makers}->{$maker} . "\n";
+
+        $log->info( "maker: [$maker]\n" );
         my $out = "https://www.autoscout24.at/ergebnisse?";
+
+        # $log->info( Dumper( $G_DATA ) );
         $out .= "mmvmk0=" . $G_DATA->{AUTOSCOUT}->{makers}->{$maker};
-        $log->logdie( $G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{$maker}->{maxAge} . "is not defined, it is mandatory. Aborting." )
-          if ( not defined $G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{$maker}->{maxAge} );
+
+        # $log->info( "out=$out\n" );
+
+        if ( not defined $G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{$maker}->{maxAge} ) {
+            $log->logdie( $G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{$maker}->{maxAge} . " is not defined. Aborting." );
+        }
         $out .= "&fregfrom=" . ( $thisYear - ( $G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{$maker}->{maxAge} ) );
+
+        # $log->info( "out=$out\n" );
+
         foreach my $k ( sort keys %{ $G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults} } ) {
             my $val;
+            $log->debug( "Default: $k\n" );
             if ( defined $G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{$maker}->{$k} ) {
                 $val = $G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{$maker}->{$k};
             } else {
@@ -181,13 +205,15 @@ sub getUrls
                 my @vals = split( ',', $val );
                 foreach my $v ( @vals ) {
                     $out .= "&$k=$v";
+                    $log->debug( "out=[$out]\n" );
                 }
             } else {
                 $out .= "&$k=$val";
+                $log->debug( "out=[$out]\n" );
             }
         } ### foreach my $k ( sort keys %...)
 
-        # print "$out\n";
+        $log->debug( "\$G_DATA->{AUTOSCOUT}->{urls}->{" . $maker . "}=" . $out . "\n" );
         $G_DATA->{AUTOSCOUT}->{urls}->{$maker} = $out;
     } ### foreach my $maker ( sort keys...)
 } ### sub getUrls
@@ -284,6 +310,7 @@ sub getHtml
 
 sub parsePageCount
 {
+    $log->debug( "parsePageCount(): entering" );
 
     my $count = undef;
     $log->logDie( "Error: G_HTML_TREE is not defined." ) unless $G_HTML_TREE;
@@ -315,6 +342,7 @@ sub parsePageCount
 sub parseItems
 {
     my ( $html ) = @_;
+    $log->debug( "parseItems(): entering" );
 
     stopWatch::continue( $SW_PROCESSING );
 
@@ -442,6 +470,7 @@ sub parseItems
 
 sub collectData
 {
+    $log->info( "collectData(): entering" );
     $collectionDate = strftime "%Y.%m.%d %H:%M:%S", localtime;
 
     $G_ITEMS_PROCESSED = 0;
@@ -621,7 +650,7 @@ sub getMailText
     my $count_changed = 0;
 
     $mailTextHtml = "Utolsó állapot: $dataFileDate\n\n";
-    foreach my $id ( keys %{ $G_DATA->{ads} } ) {
+    foreach my $id ( sort keys %{ $G_DATA->{ads} } ) {
         my $item = $G_DATA->{ads}->{$id};
         if ( $item->{status} eq $STATUS_NEW ) {
             $count_new++;
