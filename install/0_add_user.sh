@@ -3,8 +3,9 @@ set -euo pipefail
 
 
 # install:
-# curl -L https://raw.githubusercontent.com/do-community/automated-setups/master/Ubuntu-18.04/initial_server_setup.sh -o /tmp/initial_setup.sh
-# bash <(curl -s https://raw.githubusercontent.com/BercziSandor/hasznaltAutoWatcher/master/installDigitalCloud/initial_setup.sh)
+this=https://raw.githubusercontent.com/BercziSandor/hasznaltAutoWatcher/master/install/0_add_user.sh
+# curl -L $this -o /tmp/$(basename $this)
+# bash <(curl -s $this)
 
 ########################
 ### SCRIPT VARIABLES ###
