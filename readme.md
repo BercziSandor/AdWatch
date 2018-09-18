@@ -4,11 +4,18 @@ Goal of the script: alerting about new ads via email
  - 2018.09.17: filter on mobile.de: 2006-; 500-7000€
 
 # TODO, open issues
-see https://github.com/BercziSandor/hasznaltAutoWatcher/issues
+see [issues https://github.com/BercziSandor/hasznaltAutoWatcher/issues]
 
 # Prerequisits
 
 ## System config
+### Useful apps
+~~~~bash
+sudo apt update
+sudo apt install mc
+sudo apt install vim
+
+~~~~
 
 ### User creation
 ~~~~bash
