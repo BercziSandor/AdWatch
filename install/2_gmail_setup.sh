@@ -71,10 +71,11 @@ smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd
 smtp_sasl_security_options = noanonymous
 smtp_tls_loglevel = 1
 smtp_tls_per_site = hash:/etc/postfix/tls_per_site
-smtp_tls_CAfile = /etc/ssl/certs/Equifax_Secure_CA.pem
+smtp_tls_CAfile = /etc/postfix/cacert.pem
 smtp_tls_CApath = /etc/ssl/certs
 smtp_tls_session_cache_database = btree:/var/lib/postfix/smtp_tls_session_cache
 __EOF
+# smtp_tls_CAfile = /etc/ssl/certs/Equifax_Secure_CA.pem
 
 echo "[smtp.gmail.com]:587 $GMAIL_USER:$GMAIL_PASS" | sudo tee /etc/postfix/sasl_passwd >/dev/null
 sudo chmod 400 /etc/postfix/sasl_passwd
