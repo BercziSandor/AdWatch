@@ -1,5 +1,6 @@
 #!/bin/bash
 set -euo pipefail
+set -vx
 
 # call with root
 
@@ -15,6 +16,6 @@ git config --global user.name "Berczi Sándor"
 # OR bash <(curl -s $this)
 
 
-apt update > /dev/null
+apt -y update > /dev/null
 apt -y install mc
 apt -y install vim
