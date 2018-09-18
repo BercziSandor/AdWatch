@@ -15,6 +15,6 @@ git config --global user.name "Berczi Sándor"
 # OR bash <(curl -s $this)
 
 
-apt update
-apt install mc
-apt install vim
+apt update > /dev/null
+apt -y install mc
+apt -y install vim
