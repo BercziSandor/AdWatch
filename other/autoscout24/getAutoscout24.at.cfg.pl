@@ -7,10 +7,10 @@ $G_DATA->{CONSTANTS}->{DOWNLOADMETHODS}->{wwwMech}  = 'wwwMech';
 $G_DATA->{downloadMethod} = $G_DATA->{CONSTANTS}->{DOWNLOADMETHODS}->{wwwMech};
 
 $G_DATA->{sendMail} = 1;
-# $G_DATA->{mailRecipients} = [ '"Sanyi" <berczi.sandor@gmail.com>', '"Tillatilla1966" <tillatilla.1966@gmail.com>' ];
 
 # FIXME: debug
 $G_DATA->{mailRecipients} = [ '"Sanyi" <berczi.sandor@gmail.com>' ];
+$G_DATA->{mailRecipients} = [ '"Sanyi" <berczi.sandor@gmail.com>', '"Tillatilla1966" <tillatilla.1966@gmail.com>' ];
 
 $G_DATA->{AUTOSCOUT}->{XPATHS}->{XPATH_TALALATI_LISTA} = '//div[contains(concat(" ", @class, " "), " cl-list-element cl-list-element-gap ")]';
 $G_DATA->{AUTOSCOUT}->{XPATHS}->{XPATH_TITLE}          = './/h2[contains(concat(" ", @class, " "), " cldt-summary-makemodel ")]';
@@ -25,8 +25,8 @@ $G_DATA->{AUTOSCOUT}->{textToDelete} =
 # mmvmk0=9&mmvco=1&fregfrom=2013&fregto=2015&pricefrom=0&priceto=8000&fuel=B&kmfrom=10000&powertype=kw&atype=C&ustate=N%2CU&sort=standard&desc=0
 
 # ustate=N%2CU&     N,U: nem balesetes; A: balesetes;
+$G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults}->{pricefrom} = 500;
 $G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults}->{priceto} = 7000;
-$G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults}->{priceto} = 500;
 $G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults}->{sort}    = 'age';
 $G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults}->{desc}    = 0;
 $G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults}->{cy}      = 'A,D';    # A: Austria; D: Germany
