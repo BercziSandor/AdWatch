@@ -1,6 +1,11 @@
 #!/bin/bash
 set -euo pipefail
 
+
+# install:
+# curl -L https://raw.githubusercontent.com/do-community/automated-setups/master/Ubuntu-18.04/initial_server_setup.sh -o /tmp/initial_setup.sh
+# bash <(curl -s https://raw.githubusercontent.com/BercziSandor/hasznaltAutoWatcher/master/installDigitalCloud/initial_setup.sh)
+
 ########################
 ### SCRIPT VARIABLES ###
 ########################
@@ -8,8 +13,7 @@ set -euo pipefail
 # Name of the user to create and grant sudo privileges
 USERNAME=sanyi
 
-# Whether to copy over the root user's `authorized_keys` file to the new sudo
-# user.
+# Whether to copy over the root user's `authorized_keys` file to the new sudo user.
 COPY_AUTHORIZED_KEYS_FROM_ROOT=true
 
 # Additional public keys to add to the new sudo user
