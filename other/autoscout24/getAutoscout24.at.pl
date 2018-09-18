@@ -606,7 +606,7 @@ sub sndMail
             header => [
                 To             => $_,
                 From           => '"Sanyi" <berczi.sandor@gmail.com>',
-                Subject        => 'Hasznaltauto.hu frissítés',
+                Subject        => 'Autoscout24.at frissítés',
                 'Content-Type' => 'text/html',
             ],
             body => $bodyText,
