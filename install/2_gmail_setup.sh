@@ -63,7 +63,8 @@ if ! [ -f /etc/postfix/main.cf.original ]; then
   sudo cp /etc/postfix/main.cf /etc/postfix/main.cf.original
 fi
 
-sudo tee /etc/ssl/certs/Equifax_Secure_CA.pem >/dev/null <<__EOF
+# https://www.curvve.com/blog/servers/2013/fixing-postfix-certificate-verification-failed-for-gmail-untrusted-issuer-error-message/
+sudo tee /etc/postfix/ssl/Equifax_Secure_CA.pem >/dev/null <<__EOF
 -----BEGIN CERTIFICATE-----
 MIIDIDCCAomgAwIBAgIENd70zzANBgkqhkiG9w0BAQUFADBOMQswCQYDVQQGEwJVUzEQMA4GA1UE
 ChMHRXF1aWZheDEtMCsGA1UECxMkRXF1aWZheCBTZWN1cmUgQ2VydGlmaWNhdGUgQXV0aG9yaXR5
@@ -82,6 +83,9 @@ BIZCe/zuf6IWUrVnZ9NA2zsmWLIodz2uFHdh1voqZiegDfqnc1zqcPGUIWVEX/r87yloqaKHee95
 70+sB3c4
 -----END CERTIFICATE-----
 __EOF
+
+cat /etc/postfix/ssl/Equifax_Secure_CA.pem        >> /etc/postfix/ssl/cacert.pem
+echo                                              >> /etc/postfix/ssl/cacert.pem
 
 sudo tee /etc/postfix/ssl/Thawte_Premium_Server_CA.pem >/dev/null <<__EOF
 -----BEGIN CERTIFICATE-----
@@ -103,9 +107,6 @@ UCemDaYj+bvLpgcUQg==
 -----END CERTIFICATE-----
 __EOF
 
-
-cat /etc/postfix/ssl/Equifax_Secure_CA.pem        >> /etc/postfix/ssl/cacert.pem
-echo                                              >> /etc/postfix/ssl/cacert.pem
 cat /etc/postfix/ssl/Thawte_Premium_Server_CA.pem >> /etc/postfix/ssl/cacert.pem
 
 sudo tee /etc/postfix/main.cf >/dev/null <<__EOF
