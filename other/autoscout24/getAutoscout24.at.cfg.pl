@@ -7,10 +7,10 @@ $G_DATA->{CONSTANTS}->{DOWNLOADMETHODS}->{wwwMech}  = 'wwwMech';
 $G_DATA->{downloadMethod} = $G_DATA->{CONSTANTS}->{DOWNLOADMETHODS}->{wwwMech};
 
 $G_DATA->{sendMail} = 1;
-$G_DATA->{mailRecipients} = ( '"Sanyi" <berczi.sandor@gmail.com>', '"Tillatilla1966" <tillatilla.1966@gmail.com>' );
+# $G_DATA->{mailRecipients} = ( '"Sanyi" <berczi.sandor@gmail.com>', '"Tillatilla1966" <tillatilla.1966@gmail.com>' );
 
 # FIXME: debug
-$G_DATA->{mailRecipients} = ( '"Sanyi" <berczi.sandor@gmail.com>' );
+$G_DATA->{mailRecipients} = [ '"Sanyi" <berczi.sandor@gmail.com>' ];
 
 $G_DATA->{AUTOSCOUT}->{XPATHS}->{XPATH_TALALATI_LISTA} = '//div[contains(concat(" ", @class, " "), " cl-list-element cl-list-element-gap ")]';
 $G_DATA->{AUTOSCOUT}->{XPATHS}->{XPATH_TITLE}          = './/h2[contains(concat(" ", @class, " "), " cldt-summary-makemodel ")]';
@@ -412,4 +412,3 @@ $G_DATA->{AUTOSCOUT}->{makers}->{"Wiesmann"}          = 16351;
 $G_DATA->{AUTOSCOUT}->{makers}->{"Zastava"}           = 16408;
 $G_DATA->{AUTOSCOUT}->{makers}->{"ZAZ"}               = 16394;
 $G_DATA->{AUTOSCOUT}->{makers}->{"Sonstige"}          = 16328;
-
