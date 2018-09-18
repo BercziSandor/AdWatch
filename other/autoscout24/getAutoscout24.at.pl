@@ -616,7 +616,7 @@ sub sndMail
         # Email::Sender::Simple
         if ( $G_DATA->{sendMail} == 1 ) {
             sendmail( $email ) or die $!;
-            $log->info( "Levél küldése sikeres." );
+            $log->info( "Levél küldése sikeres. To: [$_]" );
         }
 
     } ### foreach ( @{ $G_DATA->{mailRecipients...}})
