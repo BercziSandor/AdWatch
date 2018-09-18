@@ -64,6 +64,7 @@ if ! [ -f /etc/postfix/main.cf.original ]; then
 fi
 
 # https://www.curvve.com/blog/servers/2013/fixing-postfix-certificate-verification-failed-for-gmail-untrusted-issuer-error-message/
+mkdir -p /etc/postfix/ssl | true
 sudo tee /etc/postfix/ssl/Equifax_Secure_CA.pem >/dev/null <<__EOF
 -----BEGIN CERTIFICATE-----
 MIIDIDCCAomgAwIBAgIENd70zzANBgkqhkiG9w0BAQUFADBOMQswCQYDVQQGEwJVUzEQMA4GA1UE
@@ -117,8 +118,8 @@ smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd
 smtp_sasl_security_options = noanonymous
 smtp_tls_loglevel = 1
 smtp_tls_per_site = hash:/etc/postfix/tls_per_site
-smtp_tls_CAfile = /etc/postfix/ssl/cacert.pem
-smtp_tls_CApath = /etc/postfix/ssl
+smtp_tls_CAfile = /etc/ssl/certs/ca-certificates.crt
+smtp_tls_CApath = /etc/ssl/certs
 smtp_tls_session_cache_database = btree:/var/lib/postfix/smtp_tls_session_cache
 __EOF
 
