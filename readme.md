@@ -1,5 +1,8 @@
 Goal of the script: alerting about new ads via email
 
+# History
+ - 2018.09.17: filter on mobile.de: 2006-; 500-7000€
+
 # TODO, open issues
 see https://github.com/BercziSandor/hasznaltAutoWatcher/issues
 
@@ -86,7 +89,3 @@ Some providers (found [here](http://www.techrepublic.com/blog/10-things/10-iaas-
  - https://www.koding.com/features
  - https://azure.microsoft.com/en-us/pricing/details/app-service/
  - https://aws.amazon.com/?nc1=h_ls (IAAS)
-
-
-
-
