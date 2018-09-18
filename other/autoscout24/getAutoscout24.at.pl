@@ -528,12 +528,11 @@ sub str_replace
 
 sub dataSave
 {
-    # Do not save if g_sendMail != 1
     $G_DATA = () unless $G_DATA;
-    if ( $G_DATA->{sendmail} ) {
+    if ( $G_DATA->{sendMail} == 1 ) {
         store $G_DATA, 'data.dat';
     } else {
-        $log->info( "Az adatokat nem mentettük el, mert nem történt levélküldés sem, a \$G_DATA->{sendmail} változó értéke miatt.\n" );
+        $log->info( "Az adatokat nem mentettük el, mert nem történt levélküldés sem, a \$G_DATA->{sendMail} változó értéke miatt.\n" );
     }
 } ### sub dataSave
 
@@ -573,7 +572,7 @@ sub sndMail
         my $fileName = ${collectionDate};
         $fileName =~ s/[.:]//g;
         $fileName =~ s/[ ]/_/g;
-        if ( $G_DATA->{sendmail} ) {
+        if ( $G_DATA->{sendMail} == 1 ) {
             $fileName = "./mails/${fileName}.txt";
         } else {
             $fileName = "./mails/${fileName}_NOT_SENT.txt";
@@ -591,7 +590,7 @@ sub sndMail
         my $fileName = ${collectionDate};
         $fileName =~ s/[.:]//g;
         $fileName =~ s/[ ]/_/g;
-        if ( $G_DATA->{sendmail} ) {
+        if ( $G_DATA->{sendMail} == 1 ) {
             $fileName = "./mails/${fileName}.html";
         } else {
             $fileName = "./mails/${fileName}_NOT_SENT.html";
@@ -615,17 +614,17 @@ sub sndMail
         $log->info( " $_ ...\n" );
 
         # Email::Sender::Simple
-        if ( $G_DATA->{sendmail} ) {
+        if ( $G_DATA->{sendMail} == 1 ) {
             sendmail( $email ) or die $!;
             $log->info( "Levél küldése sikeres." );
         }
 
     } ### foreach ( @{ $G_DATA->{mailRecipients...}})
 
-    if ( $G_DATA->{sendmail} ) {
+    if ( $G_DATA->{sendMail} == 1 ) {
         $G_DATA->{lastMailSendTime} = time;
     } else {
-        $log->info( "Levélküldés kihagyva (ok: 'g_sendMail' változó értéke: false.\n" );
+        $log->info( "Levélküldés kihagyva (ok: 'sendMail' változó értéke: false.\n" );
     }
 } ### sub sndMail
 
