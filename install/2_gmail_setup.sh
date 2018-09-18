@@ -85,8 +85,8 @@ BIZCe/zuf6IWUrVnZ9NA2zsmWLIodz2uFHdh1voqZiegDfqnc1zqcPGUIWVEX/r87yloqaKHee95
 -----END CERTIFICATE-----
 __EOF
 
-cat /etc/postfix/ssl/Equifax_Secure_CA.pem        >> /etc/postfix/ssl/cacert.pem
-echo                                              >> /etc/postfix/ssl/cacert.pem
+sudo cat /etc/postfix/ssl/Equifax_Secure_CA.pem        >> /etc/postfix/ssl/cacert.pem
+sudo echo                                              >> /etc/postfix/ssl/cacert.pem
 
 sudo tee /etc/postfix/ssl/Thawte_Premium_Server_CA.pem >/dev/null <<__EOF
 -----BEGIN CERTIFICATE-----
@@ -108,7 +108,7 @@ UCemDaYj+bvLpgcUQg==
 -----END CERTIFICATE-----
 __EOF
 
-cat /etc/postfix/ssl/Thawte_Premium_Server_CA.pem >> /etc/postfix/ssl/cacert.pem
+sudo cat /etc/postfix/ssl/Thawte_Premium_Server_CA.pem >> /etc/postfix/ssl/cacert.pem
 
 sudo tee /etc/postfix/main.cf >/dev/null <<__EOF
 relayhost = [smtp.gmail.com]:587
