@@ -501,10 +501,9 @@ sub collectData {
       return;
     }
     my $html = getHtml( $url, 1, $maker );
-    my $pageCount = parsePageCount( \$html );
-    # $log->info("$maker, 1: \n[$html]\n") ;
-
-    $log->logdie("PageCount is 0") if ( $pageCount == 0 );
+    # pagecount is hard to parse, skipping it.
+    # my $pageCount = parsePageCount( \$html );
+    # $log->logdie("PageCount is 0") if ( $pageCount == 0 );
 
     # for ( my $i = 1 ; $i <= $pageCount ; $i++ ) {
     for ( my $i = 1 ; ; $i++ ) {
