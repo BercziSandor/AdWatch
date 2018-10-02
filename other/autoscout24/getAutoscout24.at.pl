@@ -322,8 +322,15 @@ sub parsePageCount {
   $log->logDie("Error: G_HTML_TREE is not defined.") unless $G_HTML_TREE;
 
   # <span class="cl-header-results-counter">2.773</span>
-  my $value = $G_HTML_TREE->findvalue('//span[@id="resultscounter"]')
-    or return 1;    #  @title="Utolsó oldal"
+
+
+  my $value;
+  # $value = $G_HTML_TREE->findvalue('//span[@id="resultscounter"]') or return 1;    #  @title="Utolsó oldal"
+  $value = $G_HTML_TREE->findvalue('//li[@class="next-page"]/preceding-sibling::li[1]/a/@href') or {
+    return 1;    #  @title="Utolsó oldal"
+  }
+
+
   $value =~ s/\.//g;
   $log->debug("parsePageCount: $value\n");
 
