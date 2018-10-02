@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use Data::Dumper;
 use Log::Log4perl;
+use Log::Dispatch::File::Rolling;
 
 use FindBin;
 use lib "$FindBin::Bin/lib";
@@ -27,6 +28,7 @@ use Storable;
 use Time::HiRes qw( time );
 use POSIX qw(strftime);
 use File::Basename;
+use Cwd 'abs_path';
 
 use Email::Sender::Simple qw(sendmail);
 use Email::Simple::Creator;
@@ -61,9 +63,9 @@ my $G_LAST_GET_TIME   = 0;
 our $log;
 my $httpEngine;
 my $collectionDate;
+my $SCRIPTDIR;
 
 my $G_ITEMS_TO_PROCESS_MAX             = 0;        # 0: unlimited
-my $G_WAIT_BETWEEN_FULL_PROCESS_IN_SEC = 8 * 60;
 my $G_WAIT_BETWEEN_GETS_IN_SEC         = 5;
 
 # CONSTANTS
@@ -73,21 +75,22 @@ my $STATUS_NEW     = 'new';
 
 sub ini
 {
+  $SCRIPTDIR = abs_path($0);
     # Logging
     my $logConf = q(
-            log4perl.rootLogger = DEBUG, Logfile, Screen
+            log4perl.rootLogger                                 = DEBUG, Logfile, Screen
 
-            log4perl.appender.Logfile                          = Log::Log4perl::Appender::File
-            log4perl.appender.Logfile.filename                 = test.log
-            log4perl.appender.Logfile.layout                   = Log::Log4perl::Layout::PatternLayout
-            log4perl.appender.Logfile.layout.ConversionPattern = %d %r [%-5p] %F %4L - %m%n
-            log4perl.appender.Logfile.Threshold                = DEBUG
+            log4perl.appender.Logfile                           = Log::Log4perl::Appender::File
+            log4perl.appender.Logfile.filename                  = test.log
+            log4perl.appender.Logfile.layout                    = Log::Log4perl::Layout::PatternLayout
+            log4perl.appender.Logfile.layout.ConversionPattern  = %d %r [%-5p] %F %4L - %m%n
+            log4perl.appender.Logfile.Threshold                 = DEBUG
 
-            log4perl.appender.Screen                           = Log::Log4perl::Appender::Screen
-            log4perl.appender.Screen.stderr                    = 0
-            log4perl.appender.Screen.layout                    = Log::Log4perl::Layout::PatternLayout
-            log4perl.appender.Screen.layout.ConversionPattern  = %m
-            log4perl.appender.Screen.Threshold                 = INFO
+            log4perl.appender.Screen                            = Log::Log4perl::Appender::Screen
+            log4perl.appender.Screen.stderr                     = 0
+            log4perl.appender.Screen.layout                     = Log::Log4perl::Layout::PatternLayout
+            log4perl.appender.Screen.layout.ConversionPattern   = %m
+            log4perl.appender.Screen.Threshold                  = INFO
           );
 
     Log::Log4perl::init( \$logConf );
@@ -530,7 +533,7 @@ sub dataSave
 {
     $G_DATA = () unless $G_DATA;
     if ( $G_DATA->{sendMail} == 1 ) {
-        store $G_DATA, 'data.dat';
+        store $G_DATA, "$SCRIPTDIR/data.dat";
     } else {
         $log->info( "Az adatokat nem mentettük el, mert nem történt levélküldés sem, a \$G_DATA->{sendMail} változó értéke miatt.\n" );
     }
@@ -539,11 +542,11 @@ sub dataSave
 sub dataLoad
 {
     # $G_DATA = () unless $G_DATA;
-    if ( not -e 'data.dat' ) {
+    if ( not -e "$SCRIPTDIR/data.dat" ) {
         $log->info( "dataLoad(): returning - there is no file to load.\n" );
         return;
     }
-    $G_DATA = retrieve( 'data.dat' ) or die;
+    $G_DATA = retrieve( "$SCRIPTDIR/data.dat" ) or die;
     foreach my $id ( keys %{ $G_DATA->{ads} } ) {
         $G_DATA->{ads}->{$id}->{status} = $STATUS_EMPTY;
     }
@@ -721,15 +724,18 @@ sub main
 
     for ( ; ; ) {
         my $time = time;
+        while ( (strftime("%H", localtime) > $G_DATA->{silentHours}->{from} ) and ( strftime("%H", localtime) < $G_DATA->{silentHours}->{till} ) ){
+          $log->info( "Éjszaka nem dolgozunk, majd reggel mennek ki az ajánlatok egyben\n" );
+          sleep( 1* 60 ); # wait 1 minute
+        }
         process();
 
-        my $timeToWait = ( $time + $G_WAIT_BETWEEN_FULL_PROCESS_IN_SEC ) - time;
+        my $timeToWait;
         if ( $timeToWait < 0 ) {
             $log->warn(
 "Warning: Túl alacsony a G_WAIT_BETWEEN_FULL_PROCESS_IN_SEC változó értéke: folyamatosan fut a feldolgozás. \nA mostani futás hossza "
                   . ( time - $time )
-                  . " másodperc volt, ennyinek kellene lenni a változónak legalább. Jelenleg ez: $G_WAIT_BETWEEN_FULL_PROCESS_IN_SEC." );
-        } else {
+                           } else {
             $log->info( sprintf( "Várakozás a következő feldolgozásig: %d másodperc...\n", $timeToWait ) );
             sleep( $timeToWait );
         }

@@ -7,6 +7,11 @@ $G_DATA->{CONSTANTS}->{DOWNLOADMETHODS}->{wwwMech}  = 'wwwMech';
 $G_DATA->{downloadMethod} = $G_DATA->{CONSTANTS}->{DOWNLOADMETHODS}->{wwwMech};
 
 $G_DATA->{sendMail} = 1;
+$G_DATA->{G_WAIT_BETWEEN_FULL_PROCESS_IN_SEC} = 8 * 60;
+
+$G_DATA->{silentHours}->{from} = 20;
+$G_DATA->{silentHours}->{till} = 06;
+
 
 # FIXME: debug
 $G_DATA->{mailRecipients} = [ '"Sanyi" <berczi.sandor@gmail.com>' ];
