@@ -46,6 +46,7 @@ cpanm --sudo install HTML::TreeBuilder
 cpanm --sudo install HTML::TreeBuilder::XPath
 cpanm --sudo install HTML::Parser
 cpanm --sudo install Log::Log4perl
+# cpanm --sudo install Log::Dispatch::File::Rolling
 cpanm --sudo install LWP::UserAgent
 cpanm --sudo install LWP::Protocol::https
 cpanm --sudo install WWW::Mechanize

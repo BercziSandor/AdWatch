@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use Data::Dumper;
 use Log::Log4perl;
-use Log::Dispatch::File::Rolling;
+# use Log::Dispatch::File::Rolling;
 
 use FindBin;
 use lib "$FindBin::Bin/lib";
