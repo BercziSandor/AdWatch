@@ -518,7 +518,7 @@ sub collectData {
       if ( $i > 1 ) {
         $html = getHtml( $url, $i, $maker );
       }
-      parseItems( \$html ) or break;
+      parseItems( \$html ) or next;
     } ### for ( my $i = 1 ; $i <=...)
   } ### foreach my $maker ( sort keys...)
 
