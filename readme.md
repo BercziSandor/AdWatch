@@ -1,6 +1,10 @@
 Goal of the script: alerting about new ads via email
 
 # History
+ - 2018.10.02:
+   - Max 6000€
+   - Skoda, Seat, Volkswagen, Audi, Hyundai, Citroen, Mazda, Honda, Toyota, Nissan, Opel, Fiat, Ford.
+   - 2007-
  - 2018.09.17: filter on mobile.de: 2006-; 500-7000€
 
 # TODO, open issues

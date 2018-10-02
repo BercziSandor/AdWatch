@@ -26,7 +26,7 @@ $G_DATA->{AUTOSCOUT}->{textToDelete} =
 
 # ustate=N%2CU&     N,U: nem balesetes; A: balesetes;
 $G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults}->{pricefrom} = 500;
-$G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults}->{priceto} = 7000;
+$G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults}->{priceto} = 6000;
 $G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults}->{sort}    = 'age';
 $G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults}->{desc}    = 0;
 $G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults}->{cy}      = 'A,D';    # A: Austria; D: Germany
@@ -38,19 +38,18 @@ $G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults}->{atype}              = 'C';
 $G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults}->{ustate}             = 'A,N,U';      #  A: balesetes; N,U: nem balesetes;
 $G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults}->{page}               = "VVPAGEVV";
 $G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults}->{size}               = 20;           # size per page
+
+$G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{Audi}->{maxAge}       = 11;
 $G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{Citroen}->{maxAge}    = 11;
 $G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{Fiat}->{maxAge}       = 11;
 $G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{Ford}->{maxAge}       = 11;
+$G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{Honda}->{maxAge}      = 11;
+$G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{Hyundai}->{maxAge}    = 11;
 $G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{Opel}->{maxAge}       = 11;
-$G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{Peugeot}->{maxAge}    = 11;
-$G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{Renault}->{maxAge}    = 11;
 $G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{SEAT}->{maxAge}       = 11;
 $G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{Skoda}->{maxAge}      = 11;
-$G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{Suzuki}->{maxAge}     = 11;
 $G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{Toyota}->{maxAge}     = 11;
-$G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{Volkswagen}->{maxAge} = 15;
-$G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{Audi}->{maxAge}       = 15;
-$G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{Honda}->{maxAge}      = 12;
+$G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{Volkswagen}->{maxAge} = 11;
 
 my %MAKERS = (
     "Audi"              => 9,
