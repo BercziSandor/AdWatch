@@ -519,10 +519,8 @@ sub collectData {
       }
       # $log->info( sprintf( "\n%2d/%d [", $i, $pageCount ) );
       # $log->debug( sprintf( "%2.0f%% (%d of %d pages)", ( 0.0 + 100 * ( $i - 1 ) / $pageCount ), $i, $pageCount ) );
-      if ( $i > 1 ) {
-        getHtml( $url, $i, $maker );
-        next unless $G_HTML_TREE;
-      }
+      getHtml( $url, $i, $maker );
+      next unless $G_HTML_TREE;
       parseItems() or next;
     } ### for ( my $i = 1 ; $i <=...)
   } ### foreach my $maker ( sort keys...)
