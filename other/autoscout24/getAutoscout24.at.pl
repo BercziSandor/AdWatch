@@ -228,9 +228,9 @@ sub getUrls {
 sub getHtml {
   my ( $url, $page, $maker ) = @_;
   $page = 1 if not defined $page;
-  $log->debug("getHtml($url, $page, $G_DATA->{downloadMethod})\n");
 
   $url =~ s/$G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults}->{page}/$page/g;
+  $log->debug("getHtml($url)\n");
 
   my $html    = '';
   my $content = '';
