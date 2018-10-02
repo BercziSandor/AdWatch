@@ -746,13 +746,13 @@ sub main {
     if ( $timeToWait < 0 ) {
       $log->warn(
         "Warning: Túl alacsony a G_WAIT_BETWEEN_FULL_PROCESS_IN_SEC változó értéke: folyamatosan fut a feldolgozás. \nA mostani futás hossza "
-          . ( time - $time );
-      } else {
-        $log->info( sprintf( "Várakozás a következő feldolgozásig: %d másodperc...\n", $timeToWait ) );
-        sleep($timeToWait);
-      }
+          . ( time - $time ) );
+    } else {
+      $log->info( sprintf( "Várakozás a következő feldolgozásig: %d másodperc...\n", $timeToWait ) );
+      sleep($timeToWait);
+    }
 
-    } ### for ( ; ; )
-  } ### sub main
+  } ### for ( ; ; )
+} ### sub main
 
-  main();
+main();
