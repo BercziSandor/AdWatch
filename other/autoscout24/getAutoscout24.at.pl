@@ -359,7 +359,8 @@ sub parseItems {
 
   # $log->debug( "TEST: title: [$tmp]\n" );
 
-  $items = $G_HTML_TREE->findnodes( $G_DATA->{AUTOSCOUT}->{XPATHS}->{XPATH_TALALATI_LISTA} );
+  $items = $G_HTML_TREE->findnodes( $G_DATA->{AUTOSCOUT}->{XPATHS}->{XPATH_TALALATI_LISTA} ) or return 1;
+  return 1 unless $items;
   foreach my $item ( $items->get_nodelist ) {
     $G_ITEMS_PROCESSED++;
     my $tmp;
@@ -505,7 +506,8 @@ sub collectData {
 
     $log->logdie("PageCount is 0") if ( $pageCount == 0 );
 
-    for ( my $i = 1 ; $i <= $pageCount ; $i++ ) {
+    # for ( my $i = 1 ; $i <= $pageCount ; $i++ ) {
+    for ( my $i = 1 ; ; $i++ ) {
       if (  $G_ITEMS_TO_PROCESS_MAX > 0
         and $G_ITEMS_PROCESSED >= $G_ITEMS_TO_PROCESS_MAX ) {
         $log->info("\nElértük a feldolgozási limitet.");
@@ -516,7 +518,7 @@ sub collectData {
       if ( $i > 1 ) {
         $html = getHtml( $url, $i, $maker );
       }
-      parseItems( \$html );
+      parseItems( \$html ) or break;
     } ### for ( my $i = 1 ; $i <=...)
   } ### foreach my $maker ( sort keys...)
 
