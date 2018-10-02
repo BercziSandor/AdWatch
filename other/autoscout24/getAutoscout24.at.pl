@@ -328,11 +328,11 @@ sub parsePageCount {
   # $value = $G_HTML_TREE->findvalue('//span[@id="resultscounter"]') or return 1;    #  @title="Utolsó oldal"
   # $value = $G_HTML_TREE->findvalue('//li[@class="next-page"]/preceding-sibling::li[1]/a/@href') or die "Check last html file."; #return 1;    #  @title="Utolsó oldal"
   $value = $G_HTML_TREE->findvalue('//span[@class=" cl-filters-summary-counter"]');
-  $log->debug("parsePageCount: [$value]\n");
 
 
+  $value =~ s/\D//g;
   $value =~ s/\.//g;
-  $log->debug("parsePageCount: $value\n");
+  $log->debug("parsePageCount: [$value]\n");
 
   my $max = ceil( $value / $G_ITEMS_PER_PAGE ) or $log->logdie("$!: $value");
   if ( $G_ITEMS_TO_PROCESS_MAX > 0 ) {
