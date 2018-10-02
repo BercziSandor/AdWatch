@@ -497,7 +497,7 @@ sub collectData {
     }
     my $html = getHtml( $url, 1, $maker );
     my $pageCount = parsePageCount( \$html );
-    $log->info("$maker, 1: \n[$html]\n") ;
+    # $log->info("$maker, 1: \n[$html]\n") ;
 
     $log->logdie("PageCount is 0") if ( $pageCount == 0 );
 
