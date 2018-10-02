@@ -27,7 +27,7 @@ use Encode;
 use List::Util qw[min max];
 use Storable;
 use Time::HiRes qw( time );
-use POSIX qw(strftime);
+use POSIX;
 use File::Basename;
 use Cwd 'abs_path';
 
@@ -42,7 +42,6 @@ my $thisYear;
 
 # my $urls;
 
-my $PAGESTRING         = "VVPAGEVV";
 my $SW_DOWNLOAD        = 'Letoltes';
 my $SW_FULL_PROCESSING = 'Teljes futás';
 my $SW_PROCESSING      = 'Feldolgozás';
@@ -231,7 +230,7 @@ sub getHtml {
   $page = 1 if not defined $page;
   $log->debug("getHtml($url, $page, $G_DATA->{downloadMethod})\n");
 
-  $url =~ s/$PAGESTRING/$page/g;
+  $url =~ s/$G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults}->{page}/$page/g;
 
   my $html    = '';
   my $content = '';
@@ -328,7 +327,6 @@ sub parsePageCount {
   $value =~ s/\.//g;
   $log->debug("parsePageCount: $value\n");
 
-  use POSIX;
   my $max = ceil( $value / $G_ITEMS_PER_PAGE ) or $log->logdie("$!: $value");
   if ( $G_ITEMS_TO_PROCESS_MAX > 0 ) {
     my $maxPagesToProcess = ceil( $G_ITEMS_TO_PROCESS_MAX / $G_ITEMS_PER_PAGE );
@@ -403,7 +401,7 @@ sub parseItems {
     my $t = time;
     if ( defined $G_DATA->{ads}->{$id} ) {
 
-      $log->debug("Updating [$title] in the database...\n");
+      # $log->debug("Updating [$title] in the database...\n");
 
       $G_DATA->{ads}->{$id}->{status} = $STATUS_EMPTY;
 
@@ -499,6 +497,8 @@ sub collectData {
     }
     my $html = getHtml( $url, 1, $maker );
     my $pageCount = parsePageCount( \$html );
+    $log->info("$maker, 1: \n[$html]\n") ;
+
     $log->logdie("PageCount is 0") if ( $pageCount == 0 );
 
     for ( my $i = 1 ; $i <= $pageCount ; $i++ ) {
@@ -742,7 +742,7 @@ sub main {
 
     process();
 
-    my $timeToWait;
+    my $timeToWait = ( $time + $G_WAIT_BETWEEN_FULL_PROCESS_IN_SEC ) - time;
     if ( $timeToWait < 0 ) {
       $log->warn(
         "Warning: Túl alacsony a G_WAIT_BETWEEN_FULL_PROCESS_IN_SEC változó értéke: folyamatosan fut a feldolgozás. \nA mostani futás hossza "
