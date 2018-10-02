@@ -229,7 +229,7 @@ sub getHtml {
   my ( $url, $page, $maker ) = @_;
   $page = 1 if not defined $page;
 
-  $G_HTML_TREE->delete();
+  $G_HTML_TREE->delete() if defined $G_HTML_TREE;
   $G_HTML_TREE = undef;
 
   $url =~ s/$G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults}->{page}/$page/g;
