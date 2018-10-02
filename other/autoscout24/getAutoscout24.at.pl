@@ -51,7 +51,7 @@ our $G_DATA;
 
 $Data::Dumper::Sortkeys = 1;
 my $offline       = 0;
-my $saveHtmlFiles = 1;
+my $saveHtmlFiles = 0;
 
 my $dataFileDate;
 my $G_ITEMS_IN_DB;
