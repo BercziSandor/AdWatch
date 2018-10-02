@@ -326,7 +326,10 @@ sub parsePageCount {
 
   my $value;
   # $value = $G_HTML_TREE->findvalue('//span[@id="resultscounter"]') or return 1;    #  @title="Utolsó oldal"
-  $value = $G_HTML_TREE->findvalue('//li[@class="next-page"]/preceding-sibling::li[1]/a/@href') or die "Check last html file."; #return 1;    #  @title="Utolsó oldal"
+  # $value = $G_HTML_TREE->findvalue('//li[@class="next-page"]/preceding-sibling::li[1]/a/@href') or die "Check last html file."; #return 1;    #  @title="Utolsó oldal"
+  $value = $G_HTML_TREE->findvalue('//span[@class=" cl-filters-summary-counter"]');
+  $log->debug("parsePageCount: [$value]\n");
+
 
   $value =~ s/\.//g;
   $log->debug("parsePageCount: $value\n");
@@ -501,11 +504,12 @@ sub collectData {
       return;
     }
     my $html = getHtml( $url, 1, $maker );
-    # pagecount is hard to parse, skipping it.
-    # my $pageCount = parsePageCount( \$html );
-    # $log->logdie("PageCount is 0") if ( $pageCount == 0 );
 
+    # pagecount is hard to parse, skipping it.
+    my $pageCount = parsePageCount( \$html );
+    # $log->logdie("PageCount is 0") if ( $pageCount == 0 );
     # for ( my $i = 1 ; $i <= $pageCount ; $i++ ) {
+
     for ( my $i = 1 ; ; $i++ ) {
       if (  $G_ITEMS_TO_PROCESS_MAX > 0
         and $G_ITEMS_PROCESSED >= $G_ITEMS_TO_PROCESS_MAX ) {
