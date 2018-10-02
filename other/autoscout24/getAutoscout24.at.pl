@@ -286,7 +286,9 @@ sub getHtml {
       $content = decode_utf8($content);
     } else {
       $log->info( "ajjjjaj: httpEngine error: " . $httpEngine->status() . "\n" );    #$httpEngine->status()
-      return undef;
+      $G_HTML_TREE = undef;
+      stopWatch::pause($SW_DOWNLOAD);
+      return;
     }
   } else {
     $log->logdie("The value of $G_DATA->{iable g_downlo}adMethod is not ok, aborting");
@@ -520,8 +522,8 @@ sub collectData {
       # $log->info( sprintf( "\n%2d/%d [", $i, $pageCount ) );
       # $log->debug( sprintf( "%2.0f%% (%d of %d pages)", ( 0.0 + 100 * ( $i - 1 ) / $pageCount ), $i, $pageCount ) );
       getHtml( $url, $i, $maker );
-      next unless $G_HTML_TREE;
-      parseItems() or next;
+      last unless $G_HTML_TREE;
+      parseItems() or last;
     } ### for ( my $i = 1 ; $i <=...)
   } ### foreach my $maker ( sort keys...)
 
