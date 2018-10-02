@@ -512,8 +512,8 @@ sub collectData {
         $log->info("\nElértük a feldolgozási limitet.");
         return;
       }
-      $log->info( sprintf( "\n%2d/%d [", $i, $pageCount ) );
-      $log->debug( sprintf( "%2.0f%% (%d of %d pages)", ( 0.0 + 100 * ( $i - 1 ) / $pageCount ), $i, $pageCount ) );
+      # $log->info( sprintf( "\n%2d/%d [", $i, $pageCount ) );
+      # $log->debug( sprintf( "%2.0f%% (%d of %d pages)", ( 0.0 + 100 * ( $i - 1 ) / $pageCount ), $i, $pageCount ) );
       if ( $i > 1 ) {
         $html = getHtml( $url, $i, $maker );
       }
