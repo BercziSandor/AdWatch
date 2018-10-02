@@ -75,7 +75,7 @@ my $STATUS_CHANGED = 'changed';
 my $STATUS_NEW     = 'new';
 
 sub ini {
-  $SCRIPTDIR = abs_path($0);
+  $SCRIPTDIR = dirname(abs_path($0));
 
   # Logging
   my $logConf = q(
