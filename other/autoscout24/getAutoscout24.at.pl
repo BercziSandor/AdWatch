@@ -742,7 +742,7 @@ sub main {
 
     process();
 
-    my $timeToWait = ( $time + $G_WAIT_BETWEEN_FULL_PROCESS_IN_SEC ) - time;
+    my $timeToWait = ( $time + $G_DATA->{G_WAIT_BETWEEN_FULL_PROCESS_IN_SEC} ) - time;
     if ( $timeToWait < 0 ) {
       $log->warn(
         "Warning: Túl alacsony a G_WAIT_BETWEEN_FULL_PROCESS_IN_SEC változó értéke: folyamatosan fut a feldolgozás. \nA mostani futás hossza "
