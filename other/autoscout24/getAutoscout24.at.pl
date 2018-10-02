@@ -285,7 +285,7 @@ sub getHtml {
       Encode::_utf8_off($content);
       $content = decode_utf8($content);
     } else {
-      $log->info( "ajjjjaj: httpEngine error: " . $httpEngine->status() . "\n" );    #$httpEngine->status()
+      # $log->info( "ajjjjaj: httpEngine error: " . $httpEngine->status() . "\n" );    #$httpEngine->status()
       $G_HTML_TREE = undef;
       stopWatch::pause($SW_DOWNLOAD);
       return;
