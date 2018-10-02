@@ -229,6 +229,9 @@ sub getHtml {
   my ( $url, $page, $maker ) = @_;
   $page = 1 if not defined $page;
 
+  $G_HTML_TREE->delete();
+  $G_HTML_TREE = undef;
+
   $url =~ s/$G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults}->{page}/$page/g;
   $log->debug("getHtml($url)\n");
 
@@ -282,7 +285,7 @@ sub getHtml {
       Encode::_utf8_off($content);
       $content = decode_utf8($content);
     } else {
-      # $log->logdie( "ajjjjaj: httpEngine error: " . $httpEngine->status() . "\n" );    #$httpEngine->status()
+      $log->info( "ajjjjaj: httpEngine error: " . $httpEngine->status() . "\n" );    #$httpEngine->status()
       return undef;
     }
   } else {
@@ -300,14 +303,10 @@ sub getHtml {
     print MYFILE encode_utf8($html);
     close(MYFILE);
   } ### if ($saveHtmlFiles)
-  $log->logdie("The content of the received html is emply.")
-    if ( length($html) == 0 );
+  $log->logdie("The content of the received html is emply.") if ( length($html) == 0 );
 
   # $G_HTML_TREE = HTML::TreeBuilder::XPath->new_from_content( $html);
-  $G_HTML_TREE->delete();
-  $G_HTML_TREE = undef;
-  $G_HTML_TREE = HTML::TreeBuilder::XPath->new_from_content($content)
-    or logdie($!);
+  $G_HTML_TREE = HTML::TreeBuilder::XPath->new_from_content($content) or logdie($!);
 
   # $log->debug( Dumper( $G_HTML_TREE ) );
   $log->debug(" \$G_HTML_TREE created.\n");
@@ -354,7 +353,7 @@ sub parsePageCount {
 } ### sub parsePageCount
 
 sub parseItems {
-  my ($html) = @_;
+  # my ($html) = @_;
   $log->debug("parseItems(): entering");
 
   stopWatch::continue($SW_PROCESSING);
@@ -504,7 +503,8 @@ sub collectData {
       $log->info("\nElértük a feldolgozási limitet.");
       return;
     }
-    my $html = getHtml( $url, 1, $maker ) or next;
+    # getHtml( $url, 1, $maker )
+    # next unless $G_HTML_TREE;
 
     # pagecount is hard to parse, skipping it.
     # my $pageCount = parsePageCount( \$html );
@@ -520,9 +520,10 @@ sub collectData {
       # $log->info( sprintf( "\n%2d/%d [", $i, $pageCount ) );
       # $log->debug( sprintf( "%2.0f%% (%d of %d pages)", ( 0.0 + 100 * ( $i - 1 ) / $pageCount ), $i, $pageCount ) );
       if ( $i > 1 ) {
-        $html = getHtml( $url, $i, $maker ) or next;
+        getHtml( $url, $i, $maker );
+        next unless $G_HTML_TREE;
       }
-      parseItems( \$html ) or next;
+      parseItems() or next;
     } ### for ( my $i = 1 ; $i <=...)
   } ### foreach my $maker ( sort keys...)
 
