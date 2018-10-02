@@ -282,7 +282,8 @@ sub getHtml {
       Encode::_utf8_off($content);
       $content = decode_utf8($content);
     } else {
-      $log->logdie( "ajjjjaj: httpEngine error: " . $httpEngine->status() . "\n" );    #$httpEngine->status()
+      # $log->logdie( "ajjjjaj: httpEngine error: " . $httpEngine->status() . "\n" );    #$httpEngine->status()
+      return undef;
     }
   } else {
     $log->logdie("The value of $G_DATA->{iable g_downlo}adMethod is not ok, aborting");
@@ -332,7 +333,7 @@ sub parsePageCount {
 
   $value =~ s/\D//g;
   $value =~ s/\.//g;
-  $log->debug("parsePageCount: [$value]\n");
+  $log->info("parsePageCount: [$value]\n");
 
   my $max = ceil( $value / $G_ITEMS_PER_PAGE ) or $log->logdie("$!: $value");
   if ( $G_ITEMS_TO_PROCESS_MAX > 0 ) {
@@ -503,10 +504,10 @@ sub collectData {
       $log->info("\nElértük a feldolgozási limitet.");
       return;
     }
-    my $html = getHtml( $url, 1, $maker );
+    my $html = getHtml( $url, 1, $maker ) or next;
 
     # pagecount is hard to parse, skipping it.
-    my $pageCount = parsePageCount( \$html );
+    # my $pageCount = parsePageCount( \$html );
     # $log->logdie("PageCount is 0") if ( $pageCount == 0 );
     # for ( my $i = 1 ; $i <= $pageCount ; $i++ ) {
 
@@ -519,7 +520,7 @@ sub collectData {
       # $log->info( sprintf( "\n%2d/%d [", $i, $pageCount ) );
       # $log->debug( sprintf( "%2.0f%% (%d of %d pages)", ( 0.0 + 100 * ( $i - 1 ) / $pageCount ), $i, $pageCount ) );
       if ( $i > 1 ) {
-        $html = getHtml( $url, $i, $maker );
+        $html = getHtml( $url, $i, $maker ) or next;
       }
       parseItems( \$html ) or next;
     } ### for ( my $i = 1 ; $i <=...)
