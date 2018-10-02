@@ -734,8 +734,8 @@ sub main {
 
   for ( ; ; ) {
     my $time = time;
-    while ( ( strftime( "%H", localtime ) > $G_DATA->{silentHours}->{from} )
-      and ( strftime( "%H", localtime ) < $G_DATA->{silentHours}->{till} ) ) {
+    while ( ( ( 0 + strftime( "%H", localtime ) ) > $G_DATA->{silentHours}->{from} )
+      and ( ( 0 + strftime( "%H", localtime ) ) < $G_DATA->{silentHours}->{till} ) ) {
       $log->info("Éjszaka nem dolgozunk, majd reggel mennek ki az ajánlatok egyben\n");
       sleep( 1 * 60 );    # wait 1 minute
     }
