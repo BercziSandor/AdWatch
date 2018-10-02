@@ -326,10 +326,7 @@ sub parsePageCount {
 
   my $value;
   # $value = $G_HTML_TREE->findvalue('//span[@id="resultscounter"]') or return 1;    #  @title="Utolsó oldal"
-  $value = $G_HTML_TREE->findvalue('//li[@class="next-page"]/preceding-sibling::li[1]/a/@href') or {
-    return 1;    #  @title="Utolsó oldal"
-  }
-
+  $value = $G_HTML_TREE->findvalue('//li[@class="next-page"]/preceding-sibling::li[1]/a/@href') or return 1;    #  @title="Utolsó oldal"
 
   $value =~ s/\.//g;
   $log->debug("parsePageCount: $value\n");
