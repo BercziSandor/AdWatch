@@ -74,7 +74,7 @@ my $STATUS_CHANGED = 'changed';
 my $STATUS_NEW     = 'new';
 
 sub ini {
-  $SCRIPTDIR = dirname(abs_path($0));
+  $SCRIPTDIR = dirname( abs_path($0) );
 
   # Logging
   my $logConf = q(
@@ -285,11 +285,12 @@ sub getHtml {
       Encode::_utf8_off($content);
       $content = decode_utf8($content);
     } else {
+
       # $log->info( "ajjjjaj: httpEngine error: " . $httpEngine->status() . "\n" );    #$httpEngine->status()
       $G_HTML_TREE = undef;
       stopWatch::pause($SW_DOWNLOAD);
       return;
-    }
+    } ### else [ if ( $httpEngine->success...)]
   } else {
     $log->logdie("The value of $G_DATA->{iable g_downlo}adMethod is not ok, aborting");
   }
@@ -325,12 +326,11 @@ sub parsePageCount {
 
   # <span class="cl-header-results-counter">2.773</span>
 
-
   my $value;
-  # $value = $G_HTML_TREE->findvalue('//span[@id="resultscounter"]') or return 1;    #  @title="Utolsó oldal"
-  # $value = $G_HTML_TREE->findvalue('//li[@class="next-page"]/preceding-sibling::li[1]/a/@href') or die "Check last html file."; #return 1;    #  @title="Utolsó oldal"
-  $value = $G_HTML_TREE->findvalue('//span[@class=" cl-filters-summary-counter"]');
 
+# $value = $G_HTML_TREE->findvalue('//span[@id="resultscounter"]') or return 1;    #  @title="Utolsó oldal"
+# $value = $G_HTML_TREE->findvalue('//li[@class="next-page"]/preceding-sibling::li[1]/a/@href') or die "Check last html file."; #return 1;    #  @title="Utolsó oldal"
+  $value = $G_HTML_TREE->findvalue('//span[@class=" cl-filters-summary-counter"]');
 
   $value =~ s/\D//g;
   $value =~ s/\.//g;
@@ -355,6 +355,7 @@ sub parsePageCount {
 } ### sub parsePageCount
 
 sub parseItems {
+
   # my ($html) = @_;
   $log->debug("parseItems(): entering");
 
@@ -505,6 +506,7 @@ sub collectData {
       $log->info("\nElértük a feldolgozási limitet.");
       return;
     }
+
     # getHtml( $url, 1, $maker )
     # next unless $G_HTML_TREE;
 
@@ -519,12 +521,13 @@ sub collectData {
         $log->info("\nElértük a feldolgozási limitet.");
         return;
       }
+
       # $log->info( sprintf( "\n%2d/%d [", $i, $pageCount ) );
       # $log->debug( sprintf( "%2.0f%% (%d of %d pages)", ( 0.0 + 100 * ( $i - 1 ) / $pageCount ), $i, $pageCount ) );
       getHtml( $url, $i, $maker );
       last unless $G_HTML_TREE;
       parseItems() or last;
-    } ### for ( my $i = 1 ; $i <=...)
+    } ### for ( my $i = 1 ; ; $i++)
   } ### foreach my $maker ( sort keys...)
 
 } ### sub collectData
@@ -579,8 +582,7 @@ sub sndMail {
 
   $log->info("Levél küldése...\n");
 
-  $G_DATA->{lastMailSendTime} = time
-    if ( not defined $G_DATA->{lastMailSendTime} );
+  $G_DATA->{lastMailSendTime} = time if ( not defined $G_DATA->{lastMailSendTime} );
   if ( not $bodyText ) {
     if ( ( time - $G_DATA->{lastMailSendTime} ) > ( 60 * 60 ) ) {
       $log->info(" Nincs változás, viszont elég régen nem küldtünk levelet, menjen egy visszajelzés.\n");
@@ -685,7 +687,6 @@ sub getMailText {
     $mailTextHtml .= getMailTextforItem($id);
 
   } ### foreach my $id ( sort keys ...)
-## perltidy -cscw 2018-10-2: ### foreach my $id ( keys %{ $G_DATA...})
 
   $mailTextHtml .= "\n";
   $mailTextHtml .= "$G_ITEMS_PROCESSED feldolgozott hirdetés\n";
@@ -695,8 +696,7 @@ sub getMailText {
     $mailTextHtml = "";
   } else {
     $mailTextHtml .= "\n_____________________\n$count_new ÚJ hirdetés\n";
-    $mailTextHtml .= "$count_changed MEGVÁLTOZOTT hirdetés\n"
-      if $count_changed;
+    $mailTextHtml .= "$count_changed MEGVÁLTOZOTT hirdetés\n" if $count_changed;
     $log->info("$mailTextHtml\n");
   } ### else [ if ( ( $count_new + $count_changed...))]
   return $mailTextHtml;

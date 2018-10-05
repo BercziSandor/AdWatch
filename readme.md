@@ -1,6 +1,7 @@
 Goal of the script: alerting about new ads via email
 
 # History
+ - 2018.10.05: új site: www.willhaben.at
  - 2018.10.02:
    - Max 6000€
    - Skoda, Seat, Volkswagen, Audi, Hyundai, Citroen, Mazda, Honda, Toyota, Nissan, Opel, Fiat, Ford.
