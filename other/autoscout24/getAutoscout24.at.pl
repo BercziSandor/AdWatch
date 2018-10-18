@@ -93,7 +93,7 @@ sub ini {
 
   Log::Log4perl::init( \$logConf );
   $log = Log::Log4perl->get_logger();
-  $log->info("ini(): entering");
+  $log->info("ini(): entering\n");
   $G_HTML_TREE = HTML::TreeBuilder::XPath->new;
 
   $thisYear = strftime "%Y", localtime;
@@ -106,6 +106,7 @@ sub ini {
     die "couldn't include $cnfFile: $!\n" unless defined $return;
     die "couldn't run $cnfFile\n" unless $return;
   } ### unless ( my $return = require...)
+  $log->info("ini(): cfg read\n");
 
   # Checking config
   if ( not defined $G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}
@@ -119,6 +120,8 @@ sub ini {
   } ### if ( not defined $G_DATA...)
 
   dataLoad();
+  $log->info("ini(): dataLoad ok\n");
+
   $dataFileDate
     = $G_DATA->{lastChange}
     ? ( strftime( "%Y.%m.%d %H:%M", localtime( $G_DATA->{lastChange} ) ) )
@@ -179,59 +182,63 @@ sub ini {
 } ### sub ini
 
 sub getUrls {
-  $log->debug("getUrls(): entering");
+  $log->info("getUrls(): entering\n");
   die "Run ini() before getUrls, aborting.\n" if ( not defined $thisYear );
+  if (0) {
 
-  # AUTOSCOUT
-  foreach my $maker ( sort keys %{ $G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0} } ) {
+    # AUTOSCOUT
+    foreach my $maker ( sort keys %{ $G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0} } ) {
 
-    $log->info("maker: [$maker]\n");
-    my $out = "https://www.autoscout24.at/ergebnisse?";
+      $log->info("maker: [$maker]\n");
+      my $out = "https://www.autoscout24.at/ergebnisse?";
 
-    # $log->info( Dumper( $G_DATA ) );
-    $out .= "mmvmk0=" . $G_DATA->{AUTOSCOUT}->{makers}->{$maker};
+      # $log->info( Dumper( $G_DATA ) );
+      $out .= "mmvmk0=" . $G_DATA->{AUTOSCOUT}->{makers}->{$maker};
 
-    # $log->info( "out=$out\n" );
+      # $log->info( "out=$out\n" );
 
-    if ( not defined $G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{$maker}->{maxAge} ) {
-      $log->logdie( $G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{$maker}->{maxAge} . " is not defined. Aborting." );
-    }
-    $out .= "&fregfrom=" . ( $thisYear - ( $G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{$maker}->{maxAge} ) );
-
-    # $log->info( "out=$out\n" );
-
-    foreach my $k ( sort keys %{ $G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults} } ) {
-      my $val;
-      $log->debug("Default: $k\n");
-      if ( defined $G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{$maker}->{$k} ) {
-        $val = $G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{$maker}->{$k};
-      } else {
-        $val = $G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults}->{$k};
+      if ( not defined $G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{$maker}->{maxAge} ) {
+        $log->logdie( $G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{$maker}->{maxAge} . " is not defined. Aborting." );
       }
-      if ( index( $val, ',' ) > 0 ) {
-        my @vals = split( ',', $val );
-        foreach my $v (@vals) {
-          $out .= "&$k=$v";
+      $out .= "&fregfrom=" . ( $thisYear - ( $G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{$maker}->{maxAge} ) );
+
+      # $log->info( "out=$out\n" );
+
+      foreach my $k ( sort keys %{ $G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults} } ) {
+        my $val;
+        $log->debug("Default: $k\n");
+        if ( defined $G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{$maker}->{$k} ) {
+          $val = $G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{$maker}->{$k};
+        } else {
+          $val = $G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults}->{$k};
+        }
+        if ( index( $val, ',' ) > 0 ) {
+          my @vals = split( ',', $val );
+          foreach my $v (@vals) {
+            $out .= "&$k=$v";
+            $log->debug("out=[$out]\n");
+          }
+        } else {
+          $out .= "&$k=$val";
           $log->debug("out=[$out]\n");
         }
-      } else {
-        $out .= "&$k=$val";
-        $log->debug("out=[$out]\n");
-      }
-    } ### foreach my $k ( sort keys %...)
+      } ### foreach my $k ( sort keys %...)
 
-    $log->debug( "\$G_DATA->{AUTOSCOUT}->{urls}->{" . $maker . "}=" . $out . "\n" );
-    $G_DATA->{AUTOSCOUT}->{urls}->{$maker} = $out;
-  } ### foreach my $maker ( sort keys...)
+      $log->debug( "\$G_DATA->{AUTOSCOUT}->{urls}->{" . $maker . "}=" . $out . "\n" );
+      $G_DATA->{AUTOSCOUT}->{urls}->{$maker} = $out;
+    } ### foreach my $maker ( sort keys...)
+  } ### if (0)
 
   # CAR_MODEL / MAKE
 
   # WillHaben
+
+  $log->info( "WillHaben!" );
   my $site        = 'WillHaben';
-  my $makerString = 'CAR_MODEL/MAxKE';
+  my $makerString = 'CAR_MODEL/MAKE';
   foreach my $maker ( sort keys %{ $G_DATA->{$site}->{searchConfig}->{$makerString} } ) {
-    next if ( not defined $G_DATA->{$site}->{searchConfig}->{$makerString}->{$maker}->{maxAge} );
     $log->info("maker: [$maker]\n");
+    next if ( not defined $G_DATA->{$site}->{searchConfig}->{$makerString}->{$maker}->{maxAge} );
     my $out = $G_DATA->{$site}->{searchUrlRoot};
 
     # $log->info( Dumper( $G_DATA ) );
@@ -259,13 +266,13 @@ sub getUrls {
       } else {
         $out .= "&$k=$val";
       }
-      $log->debug("out=[$out]\n");
+      # $log->debug("out=[$out]\n");
     } ### foreach my $k ( sort keys %...)
 
-    $log->debug( "\$G_DATA->{$site}->{urls}->{" . $maker . "}=" . $out . "\n" );
+    # $log->debug( "\$G_DATA->{$site}->{urls}->{" . $maker . "}=" . $out . "\n" );
     $G_DATA->{$site}->{urls}->{$maker} = $out;
   } ### foreach my $maker ( sort keys...)
-
+  print Dumper($G_DATA->{$site}->{urls});
 } ### sub getUrls
 
 sub getHtml {

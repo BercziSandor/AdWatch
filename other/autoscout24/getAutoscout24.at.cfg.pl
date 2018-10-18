@@ -246,14 +246,14 @@ $G_DATA->{mailRecipients} = [ '"Sanyi" <berczi.sandor@gmail.com>', '"Tillatilla1
 # WillHaben
 {
   # FIXME
-  $G_DATA->{WillDasHaben}->{XPATHS}->{XPATH_TALALATI_LISTA} = '//div[contains(concat(" ", @class, " "), " cl-list-element cl-list-element-gap ")]';
-  $G_DATA->{WillDasHaben}->{XPATHS}->{XPATH_TITLE}          = './/h2[contains(concat(" ", @class, " "), " cldt-summary-makemodel ")]';
-  $G_DATA->{WillDasHaben}->{XPATHS}->{XPATH_TITLE2}         = './/h2[contains(concat(" ", @class, " "), " cldt-summary-version ")]';
-  $G_DATA->{WillDasHaben}->{XPATHS}->{XPATH_DESC}           = './/h3[contains(concat(" ", @class, " "), " cldt-summary-subheadline ")]';
-  $G_DATA->{WillDasHaben}->{XPATHS}->{XPATH_LINK}           = './/div[contains(concat(" ", @class, " "), " cldt-summary-titles ")]/a/@href';
-  $G_DATA->{WillDasHaben}->{XPATHS}->{XPATH_PRICE}          = './/span[contains(concat(" ", @class, " "), " cldt-price ")]';
-  $G_DATA->{WillDasHaben}->{XPATHS}->{XPATH_FEATURES}       = './/div[contains(concat(" ", @class, " "), " cldt-summary-vehicle-data ")]/ul/li';
-  $G_DATA->{WillDasHaben}->{textToDelete}
+  $G_DATA->{WillHaben}->{XPATHS}->{XPATH_TALALATI_LISTA} = '//div[contains(concat(" ", @class, " "), " cl-list-element cl-list-element-gap ")]';
+  $G_DATA->{WillHaben}->{XPATHS}->{XPATH_TITLE}          = './/h2[contains(concat(" ", @class, " "), " cldt-summary-makemodel ")]';
+  $G_DATA->{WillHaben}->{XPATHS}->{XPATH_TITLE2}         = './/h2[contains(concat(" ", @class, " "), " cldt-summary-version ")]';
+  $G_DATA->{WillHaben}->{XPATHS}->{XPATH_DESC}           = './/h3[contains(concat(" ", @class, " "), " cldt-summary-subheadline ")]';
+  $G_DATA->{WillHaben}->{XPATHS}->{XPATH_LINK}           = './/div[contains(concat(" ", @class, " "), " cldt-summary-titles ")]/a/@href';
+  $G_DATA->{WillHaben}->{XPATHS}->{XPATH_PRICE}          = './/span[contains(concat(" ", @class, " "), " cldt-price ")]';
+  $G_DATA->{WillHaben}->{XPATHS}->{XPATH_FEATURES}       = './/div[contains(concat(" ", @class, " "), " cldt-summary-vehicle-data ")]/ul/li';
+  $G_DATA->{WillHaben}->{textToDelete}
     = 'Weitere Informationen zum offiziellen Kraftstoffverbrauch und den offiziellen spezifischen CO2-Emissionen neuer Personenkraftwagen können dem "Leitfaden über den Kraftstoffverbrauch, die CO2-Emissionen und den Stromverbrauch neuer Personenkraftwagen" entnommen werden, der an allen Verkaufsstellen und bei der Deutschen Automobil Treuhand GmbH unter www.dat.at unentgeltlich erhältlich ist.';
 
   #  https://www.willhaben.at/iad/gebrauchtwagen/auto/gebrauchtwagenboerse?YEAR_MODEL_FROM=2011&CAR_MODEL/MAKE=1005&PRICE_TO=12340&page=6&view=
@@ -270,7 +270,7 @@ $G_DATA->{mailRecipients} = [ '"Sanyi" <berczi.sandor@gmail.com>', '"Tillatilla1
   # &rows=100
   # &periode=0
 
-  $G_DATA->{WillHaben}->{searchUrlRoot} = 'https://www.autoscout24.at/ergebnisse?';
+  $G_DATA->{WillHaben}->{searchUrlRoot} = 'https://www.willhaben.at/iad/gebrauchtwagen/auto/gebrauchtwagenboerse?';
   my $makerString_willhaben='CAR_MODEL/MAKE';
   $G_DATA->{WillHaben}->{makerString} = $makerString_willhaben;
 
@@ -280,7 +280,7 @@ $G_DATA->{mailRecipients} = [ '"Sanyi" <berczi.sandor@gmail.com>', '"Tillatilla1
   $G_DATA->{WillHaben}->{searchConfig}->{defaults}->{MOTOR_CONDITION} = '20%3B30%3B40';
   $G_DATA->{WillHaben}->{searchConfig}->{defaults}->{YEAR_MODEL_FROM} = 2011;
 
-  $G_DATA->{WillHaben}->{searchConfig}->{defaults}->{rows} = 100;
+  $G_DATA->{WillHaben}->{searchConfig}->{defaults}->{rows} = 200;
   $G_DATA->{WillHaben}->{searchConfig}->{defaults}->{sort} = 1;
   $G_DATA->{WillHaben}->{searchConfig}->{defaults}->{page} = "VVPAGEVV";
 
