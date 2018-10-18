@@ -134,6 +134,9 @@ sub ini {
   # Specific code
   getUrls();
 
+exit 0;
+
+
   $cookieJar_HttpCookieJar->add( "http://hasznaltauto.hu", "visitor_telepules=3148 Path=/; Domain=.hasznaltauto.hu" )
     or die "$!";
   $cookieJar_HttpCookieJarLWP->add( "http://hasznaltauto.hu", "visitor_telepules=3148 Path=/; Domain=.hasznaltauto.hu" )
@@ -221,6 +224,49 @@ sub getUrls {
     $log->debug( "\$G_DATA->{AUTOSCOUT}->{urls}->{" . $maker . "}=" . $out . "\n" );
     $G_DATA->{AUTOSCOUT}->{urls}->{$maker} = $out;
   } ### foreach my $maker ( sort keys...)
+
+  CAR_MODEL / MAKE
+
+    # WillHaben
+    my $site      = 'WillHaben';
+  my $makerString = 'CAR_MODEL/MAxKE';
+  foreach my $maker ( sort keys %{ $G_DATA->{$site}->{searchConfig}->{$makerString} } ) {
+    next if ( not defined $G_DATA->{$site}->{searchConfig}->{$makerString}->{$maker}->{maxAge} );
+    $log->info("maker: [$maker]\n");
+    my $out = $G_DATA->{$site}->{searchUrlRoot};
+
+    # $log->info( Dumper( $G_DATA ) );
+    die "Define G_DATA->{$site}->{makers}->{$maker}, it isn't, aborting." if not defined $G_DATA->{$site}->{makers}->{$maker};
+    $out .= "$makerString=" . $G_DATA->{$site}->{makers}->{$maker};
+
+    # $log->info( "out=$out\n" );
+    $out .= "&YEAR_MODEL_FROM=" . ( $thisYear - ( $G_DATA->{$site}->{searchConfig}->{$makerString}->{$maker}->{maxAge} ) );
+
+    # $log->info( "out=$out\n" );
+
+    foreach my $k ( sort keys %{ $G_DATA->{$site}->{searchConfig}->{defaults} } ) {
+      my $val;
+      $log->debug("Default: $k\n");
+      if ( defined $G_DATA->{$site}->{searchConfig}->{$makerString}->{$maker}->{$k} ) {
+        $val = $G_DATA->{$site}->{searchConfig}->{$makerString}->{$maker}->{$k};
+      } else {
+        $val = $G_DATA->{$site}->{searchConfig}->{defaults}->{$k};
+      }
+      if ( index( $val, ',' ) > 0 ) {
+        my @vals = split( ',', $val );
+        foreach my $v (@vals) {
+          $out .= "&$k=$v";
+        }
+      } else {
+        $out .= "&$k=$val";
+      }
+      $log->debug("out=[$out]\n");
+    } ### foreach my $k ( sort keys %...)
+
+    $log->debug( "\$G_DATA->{$site}->{urls}->{" . $maker . "}=" . $out . "\n" );
+    $G_DATA->{$site}->{urls}->{$maker} = $out;
+  } ### foreach my $maker ( sort keys...)
+
 } ### sub getUrls
 
 sub getHtml {
@@ -696,7 +742,7 @@ sub getMailText {
     $mailTextHtml .= "\n_____________________\n$count_new ÚJ hirdetés\n";
     $mailTextHtml .= "$count_changed MEGVÁLTOZOTT hirdetés\n" if $count_changed;
     $log->info("$mailTextHtml\n");
-  } ### else [ if ( ( $count_new + $count_changed...))]
+  }
   return $mailTextHtml;
 } ### sub getMailText
 
