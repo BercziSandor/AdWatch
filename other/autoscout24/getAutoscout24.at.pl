@@ -36,8 +36,6 @@ use Email::Simple::Creator;
 
 require stopWatch;
 
-# our %MAKERS;
-# our $G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults};
 my $thisYear;
 
 # my $urls;

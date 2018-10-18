@@ -256,6 +256,10 @@ $G_DATA->{mailRecipients} = [ '"Sanyi" <berczi.sandor@gmail.com>', '"Tillatilla1
 
   # mmvmk0=9&mmvco=1&fregfrom=2013&fregto=2015&pricefrom=0&priceto=8000&fuel=B&kmfrom=10000&powertype=kw&atype=C&ustate=N%2CU&sort=standard&desc=0
 
+  # https://www.willhaben.at/iad/gebrauchtwagen/auto/gebrauchtwagenboerse?CAR_MODEL/MAKE=1005&PRICE_TO=12340&YEAR_MODEL_FROM=2011
+  # https://www.willhaben.at/iad/gebrauchtwagen/auto/gebrauchtwagenboerse?
+  # CAR_MODEL/MAKE=1005&PRICE_FROM=12340&PRICE_TO=12340&YEAR_MODEL_FROM=2011
+
   # ustate=N%2CU&     N,U: nem balesetes; A: balesetes;
   $G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults}->{pricefrom} = 500;
   $G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults}->{priceto}   = 6000;
