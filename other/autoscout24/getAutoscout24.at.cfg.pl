@@ -243,12 +243,7 @@ $G_DATA->{mailRecipients} = [ '"Sanyi" <berczi.sandor@gmail.com>', '"Tillatilla1
   $G_DATA->{AUTOSCOUT}->{makers}->{"Sonstige"}          = 16328;
 }
 
-<<<<<<< Updated upstream
-
-# WillDasHaben
-=======
 # WillHaben
->>>>>>> Stashed changes
 {
   # FIXME
   $G_DATA->{WillDasHaben}->{XPATHS}->{XPATH_TALALATI_LISTA} = '//div[contains(concat(" ", @class, " "), " cl-list-element cl-list-element-gap ")]';
@@ -280,33 +275,6 @@ $G_DATA->{mailRecipients} = [ '"Sanyi" <berczi.sandor@gmail.com>', '"Tillatilla1
   $G_DATA->{WillHaben}->{makerString} = $makerString_willhaben;
 
   # ustate=N%2CU&     N,U: nem balesetes; A: balesetes;
-<<<<<<< Updated upstream
-  $G_DATA->{WillDasHaben}->{searchConfig}->{defaults}->{pricefrom} = 500;
-  $G_DATA->{WillDasHaben}->{searchConfig}->{defaults}->{priceto}   = 6000;
-  $G_DATA->{WillDasHaben}->{searchConfig}->{defaults}->{sort}      = 'age';
-  $G_DATA->{WillDasHaben}->{searchConfig}->{defaults}->{desc}      = 0;
-  $G_DATA->{WillDasHaben}->{searchConfig}->{defaults}->{cy}        = 'A,D';    # A: Austria; D: Germany
-  $G_DATA->{WillDasHaben}->{searchConfig}->{defaults}->{offer}
-    = 'D,J,O,S,U';    # D: Vorführfahrzeug, J: Jahreswagen, N: Neu, O: Oldtimer, S: Tageszulassung, U: Gebraucht
-  $G_DATA->{WillDasHaben}->{searchConfig}->{defaults}->{mmvco}     = 1;
-  $G_DATA->{WillDasHaben}->{searchConfig}->{defaults}->{powertype} = 'kw';
-  $G_DATA->{WillDasHaben}->{searchConfig}->{defaults}->{atype}     = 'C';
-  $G_DATA->{WillDasHaben}->{searchConfig}->{defaults}->{ustate}    = 'A,N,U';      #  A: balesetes; N,U: nem balesetes;
-  $G_DATA->{WillDasHaben}->{searchConfig}->{defaults}->{page}      = "VVPAGEVV";
-  $G_DATA->{WillDasHaben}->{searchConfig}->{defaults}->{size}      = 20;           # size per page
-
-  $G_DATA->{WillDasHaben}->{searchConfig}->{mmvmk0}->{Audi}->{maxAge}       = 11;
-  $G_DATA->{WillDasHaben}->{searchConfig}->{mmvmk0}->{Citroen}->{maxAge}    = 11;
-  $G_DATA->{WillDasHaben}->{searchConfig}->{mmvmk0}->{Fiat}->{maxAge}       = 11;
-  $G_DATA->{WillDasHaben}->{searchConfig}->{mmvmk0}->{Ford}->{maxAge}       = 11;
-  $G_DATA->{WillDasHaben}->{searchConfig}->{mmvmk0}->{Honda}->{maxAge}      = 11;
-  $G_DATA->{WillDasHaben}->{searchConfig}->{mmvmk0}->{Hyundai}->{maxAge}    = 11;
-  $G_DATA->{WillDasHaben}->{searchConfig}->{mmvmk0}->{Opel}->{maxAge}       = 11;
-  $G_DATA->{WillDasHaben}->{searchConfig}->{mmvmk0}->{SEAT}->{maxAge}       = 11;
-  $G_DATA->{WillDasHaben}->{searchConfig}->{mmvmk0}->{Skoda}->{maxAge}      = 11;
-  $G_DATA->{WillDasHaben}->{searchConfig}->{mmvmk0}->{Toyota}->{maxAge}     = 11;
-  $G_DATA->{WillDasHaben}->{searchConfig}->{mmvmk0}->{Volkswagen}->{maxAge} = 11;
-=======
   $G_DATA->{WillHaben}->{searchConfig}->{defaults}->{PRICE_FROM}      = 500;
   $G_DATA->{WillHaben}->{searchConfig}->{defaults}->{PRICE_TO}        = 6000;
   $G_DATA->{WillHaben}->{searchConfig}->{defaults}->{MOTOR_CONDITION} = '20%3B30%3B40';
@@ -315,7 +283,6 @@ $G_DATA->{mailRecipients} = [ '"Sanyi" <berczi.sandor@gmail.com>', '"Tillatilla1
   $G_DATA->{WillHaben}->{searchConfig}->{defaults}->{rows} = 100;
   $G_DATA->{WillHaben}->{searchConfig}->{defaults}->{sort} = 1;
   $G_DATA->{WillHaben}->{searchConfig}->{defaults}->{page} = "VVPAGEVV";
->>>>>>> Stashed changes
 
   $G_DATA->{WillHaben}->{searchConfig}->{$makerString_willhaben}->{Audi}->{maxAge}    = $default_maxAge;
   $G_DATA->{WillHaben}->{searchConfig}->{$makerString_willhaben}->{Citroen}->{maxAge} = $default_maxAge;
