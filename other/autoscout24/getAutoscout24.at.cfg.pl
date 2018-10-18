@@ -244,14 +244,14 @@ $G_DATA->{mailRecipients} = [ '"Sanyi" <berczi.sandor@gmail.com>', '"Tillatilla1
 # WillDasHaben
 {
   # FIXME
-  $G_DATA->{AUTOSCOUT}->{XPATHS}->{XPATH_TALALATI_LISTA} = '//div[contains(concat(" ", @class, " "), " cl-list-element cl-list-element-gap ")]';
-  $G_DATA->{AUTOSCOUT}->{XPATHS}->{XPATH_TITLE}          = './/h2[contains(concat(" ", @class, " "), " cldt-summary-makemodel ")]';
-  $G_DATA->{AUTOSCOUT}->{XPATHS}->{XPATH_TITLE2}         = './/h2[contains(concat(" ", @class, " "), " cldt-summary-version ")]';
-  $G_DATA->{AUTOSCOUT}->{XPATHS}->{XPATH_DESC}           = './/h3[contains(concat(" ", @class, " "), " cldt-summary-subheadline ")]';
-  $G_DATA->{AUTOSCOUT}->{XPATHS}->{XPATH_LINK}           = './/div[contains(concat(" ", @class, " "), " cldt-summary-titles ")]/a/@href';
-  $G_DATA->{AUTOSCOUT}->{XPATHS}->{XPATH_PRICE}          = './/span[contains(concat(" ", @class, " "), " cldt-price ")]';
-  $G_DATA->{AUTOSCOUT}->{XPATHS}->{XPATH_FEATURES}       = './/div[contains(concat(" ", @class, " "), " cldt-summary-vehicle-data ")]/ul/li';
-  $G_DATA->{AUTOSCOUT}->{textToDelete}
+  $G_DATA->{WillDasHaben}->{XPATHS}->{XPATH_TALALATI_LISTA} = '//div[contains(concat(" ", @class, " "), " cl-list-element cl-list-element-gap ")]';
+  $G_DATA->{WillDasHaben}->{XPATHS}->{XPATH_TITLE}          = './/h2[contains(concat(" ", @class, " "), " cldt-summary-makemodel ")]';
+  $G_DATA->{WillDasHaben}->{XPATHS}->{XPATH_TITLE2}         = './/h2[contains(concat(" ", @class, " "), " cldt-summary-version ")]';
+  $G_DATA->{WillDasHaben}->{XPATHS}->{XPATH_DESC}           = './/h3[contains(concat(" ", @class, " "), " cldt-summary-subheadline ")]';
+  $G_DATA->{WillDasHaben}->{XPATHS}->{XPATH_LINK}           = './/div[contains(concat(" ", @class, " "), " cldt-summary-titles ")]/a/@href';
+  $G_DATA->{WillDasHaben}->{XPATHS}->{XPATH_PRICE}          = './/span[contains(concat(" ", @class, " "), " cldt-price ")]';
+  $G_DATA->{WillDasHaben}->{XPATHS}->{XPATH_FEATURES}       = './/div[contains(concat(" ", @class, " "), " cldt-summary-vehicle-data ")]/ul/li';
+  $G_DATA->{WillDasHaben}->{textToDelete}
     = 'Weitere Informationen zum offiziellen Kraftstoffverbrauch und den offiziellen spezifischen CO2-Emissionen neuer Personenkraftwagen können dem "Leitfaden über den Kraftstoffverbrauch, die CO2-Emissionen und den Stromverbrauch neuer Personenkraftwagen" entnommen werden, der an allen Verkaufsstellen und bei der Deutschen Automobil Treuhand GmbH unter www.dat.at unentgeltlich erhältlich ist.';
 
   # mmvmk0=9&mmvco=1&fregfrom=2013&fregto=2015&pricefrom=0&priceto=8000&fuel=B&kmfrom=10000&powertype=kw&atype=C&ustate=N%2CU&sort=standard&desc=0
@@ -261,31 +261,31 @@ $G_DATA->{mailRecipients} = [ '"Sanyi" <berczi.sandor@gmail.com>', '"Tillatilla1
   # CAR_MODEL/MAKE=1005&PRICE_FROM=12340&PRICE_TO=12340&YEAR_MODEL_FROM=2011
 
   # ustate=N%2CU&     N,U: nem balesetes; A: balesetes;
-  $G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults}->{pricefrom} = 500;
-  $G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults}->{priceto}   = 6000;
-  $G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults}->{sort}      = 'age';
-  $G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults}->{desc}      = 0;
-  $G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults}->{cy}        = 'A,D';    # A: Austria; D: Germany
-  $G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults}->{offer}
+  $G_DATA->{WillDasHaben}->{searchConfig}->{defaults}->{pricefrom} = 500;
+  $G_DATA->{WillDasHaben}->{searchConfig}->{defaults}->{priceto}   = 6000;
+  $G_DATA->{WillDasHaben}->{searchConfig}->{defaults}->{sort}      = 'age';
+  $G_DATA->{WillDasHaben}->{searchConfig}->{defaults}->{desc}      = 0;
+  $G_DATA->{WillDasHaben}->{searchConfig}->{defaults}->{cy}        = 'A,D';    # A: Austria; D: Germany
+  $G_DATA->{WillDasHaben}->{searchConfig}->{defaults}->{offer}
     = 'D,J,O,S,U';    # D: Vorführfahrzeug, J: Jahreswagen, N: Neu, O: Oldtimer, S: Tageszulassung, U: Gebraucht
-  $G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults}->{mmvco}     = 1;
-  $G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults}->{powertype} = 'kw';
-  $G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults}->{atype}     = 'C';
-  $G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults}->{ustate}    = 'A,N,U';      #  A: balesetes; N,U: nem balesetes;
-  $G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults}->{page}      = "VVPAGEVV";
-  $G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults}->{size}      = 20;           # size per page
+  $G_DATA->{WillDasHaben}->{searchConfig}->{defaults}->{mmvco}     = 1;
+  $G_DATA->{WillDasHaben}->{searchConfig}->{defaults}->{powertype} = 'kw';
+  $G_DATA->{WillDasHaben}->{searchConfig}->{defaults}->{atype}     = 'C';
+  $G_DATA->{WillDasHaben}->{searchConfig}->{defaults}->{ustate}    = 'A,N,U';      #  A: balesetes; N,U: nem balesetes;
+  $G_DATA->{WillDasHaben}->{searchConfig}->{defaults}->{page}      = "VVPAGEVV";
+  $G_DATA->{WillDasHaben}->{searchConfig}->{defaults}->{size}      = 20;           # size per page
 
-  $G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{Audi}->{maxAge}       = 11;
-  $G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{Citroen}->{maxAge}    = 11;
-  $G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{Fiat}->{maxAge}       = 11;
-  $G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{Ford}->{maxAge}       = 11;
-  $G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{Honda}->{maxAge}      = 11;
-  $G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{Hyundai}->{maxAge}    = 11;
-  $G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{Opel}->{maxAge}       = 11;
-  $G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{SEAT}->{maxAge}       = 11;
-  $G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{Skoda}->{maxAge}      = 11;
-  $G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{Toyota}->{maxAge}     = 11;
-  $G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{Volkswagen}->{maxAge} = 11;
+  $G_DATA->{WillDasHaben}->{searchConfig}->{mmvmk0}->{Audi}->{maxAge}       = 11;
+  $G_DATA->{WillDasHaben}->{searchConfig}->{mmvmk0}->{Citroen}->{maxAge}    = 11;
+  $G_DATA->{WillDasHaben}->{searchConfig}->{mmvmk0}->{Fiat}->{maxAge}       = 11;
+  $G_DATA->{WillDasHaben}->{searchConfig}->{mmvmk0}->{Ford}->{maxAge}       = 11;
+  $G_DATA->{WillDasHaben}->{searchConfig}->{mmvmk0}->{Honda}->{maxAge}      = 11;
+  $G_DATA->{WillDasHaben}->{searchConfig}->{mmvmk0}->{Hyundai}->{maxAge}    = 11;
+  $G_DATA->{WillDasHaben}->{searchConfig}->{mmvmk0}->{Opel}->{maxAge}       = 11;
+  $G_DATA->{WillDasHaben}->{searchConfig}->{mmvmk0}->{SEAT}->{maxAge}       = 11;
+  $G_DATA->{WillDasHaben}->{searchConfig}->{mmvmk0}->{Skoda}->{maxAge}      = 11;
+  $G_DATA->{WillDasHaben}->{searchConfig}->{mmvmk0}->{Toyota}->{maxAge}     = 11;
+  $G_DATA->{WillDasHaben}->{searchConfig}->{mmvmk0}->{Volkswagen}->{maxAge} = 11;
 
 
   $G_DATA->{WillDasHaben}->{makers}->{"Alfa Romeo"}         = 1000;
