@@ -241,6 +241,7 @@ $G_DATA->{mailRecipients} = [ '"Sanyi" <berczi.sandor@gmail.com>', '"Tillatilla1
   $G_DATA->{AUTOSCOUT}->{makers}->{"Sonstige"}          = 16328;
 }
 
+
 # WillDasHaben
 {
   # FIXME
