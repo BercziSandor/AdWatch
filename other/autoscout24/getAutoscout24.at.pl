@@ -88,7 +88,7 @@ sub ini {
             log4perl.appender.Screen.stderr                     = 0
             log4perl.appender.Screen.layout                     = Log::Log4perl::Layout::PatternLayout
             log4perl.appender.Screen.layout.ConversionPattern   = %m
-            log4perl.appender.Screen.Threshold                  = INFO
+            log4perl.appender.Screen.Threshold                  = DEBUG
           );
 
   Log::Log4perl::init( \$logConf );
@@ -134,8 +134,7 @@ sub ini {
   # Specific code
   getUrls();
 
-exit 0;
-
+  exit 0;
 
   $cookieJar_HttpCookieJar->add( "http://hasznaltauto.hu", "visitor_telepules=3148 Path=/; Domain=.hasznaltauto.hu" )
     or die "$!";
@@ -225,10 +224,10 @@ sub getUrls {
     $G_DATA->{AUTOSCOUT}->{urls}->{$maker} = $out;
   } ### foreach my $maker ( sort keys...)
 
-  CAR_MODEL / MAKE
+  # CAR_MODEL / MAKE
 
-    # WillHaben
-    my $site      = 'WillHaben';
+  # WillHaben
+  my $site        = 'WillHaben';
   my $makerString = 'CAR_MODEL/MAxKE';
   foreach my $maker ( sort keys %{ $G_DATA->{$site}->{searchConfig}->{$makerString} } ) {
     next if ( not defined $G_DATA->{$site}->{searchConfig}->{$makerString}->{$maker}->{maxAge} );
