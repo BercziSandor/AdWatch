@@ -48,6 +48,7 @@ my $SW_PROCESSING      = 'Feldolgozás';
 our $G_DATA;
 
 $Data::Dumper::Sortkeys = 1;
+my $site;
 my $offline       = 0;
 my $saveHtmlFiles = 0;
 
@@ -108,16 +109,16 @@ sub ini {
   } ### unless ( my $return = require...)
   $log->info("ini(): cfg read\n");
 
-  if (not defined $G_DATA->{$site}->{searchConfig}->{defaults}->{page} ){
+  if (not defined $G_DATA->{sites}->{$site}->{searchConfig}->{defaults}->{page} ){
     $log->logdie("A G_DATA->{$site}->{searchConfig}->{defaults}->{page} nincs definiálva.\n");
   }
 
   # Checking config
   if (
-       not defined $G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}
+       not defined $G_DATA->{sites}->{AUTOSCOUT}->{searchConfig}->{mmvmk0}
     or not defined $G_DATA->{CONSTANTS}->{DOWNLOADMETHODS}
-    or not defined $G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults}
-    or not defined $G_DATA->{AUTOSCOUT}->{XPATHS}
+    or not defined $G_DATA->{sites}->{AUTOSCOUT}->{searchConfig}->{defaults}
+    or not defined $G_DATA->{sites}->{AUTOSCOUT}->{XPATHS}
     or not defined $G_DATA->{sendMail}
     or not defined $G_DATA->{mailRecipients}
     or not defined $G_DATA->{downloadMethod} ) {
@@ -196,28 +197,28 @@ sub getUrls {
   if (0) {
 
     # AUTOSCOUT
-    foreach my $maker ( sort keys %{ $G_DATA->{$site}->{searchConfig}->{mmvmk0} } ) {
+    foreach my $maker ( sort keys %{ $G_DATA->{sites}->{$site}->{searchConfig}->{mmvmk0} } ) {
       $log->info("maker: [$maker]\n");
       my $out = "https://www.autoscout24.at/ergebnisse?";
       # $log->info( Dumper( $G_DATA ) );
-      $out .= "mmvmk0=" . $G_DATA->{$site}->{makers}->{$maker};
+      $out .= "mmvmk0=" . $G_DATA->{sites}->{$site}->{makers}->{$maker};
 
       # $log->info( "out=$out\n" );
 
-      if ( not defined $G_DATA->{$site}->{searchConfig}->{mmvmk0}->{$maker}->{maxAge} ) {
-        $log->logdie( $G_DATA->{$site}->{searchConfig}->{mmvmk0}->{$maker}->{maxAge} . " is not defined. Aborting." );
+      if ( not defined $G_DATA->{sites}->{$site}->{searchConfig}->{mmvmk0}->{$maker}->{maxAge} ) {
+        $log->logdie( $G_DATA->{sites}->{$site}->{searchConfig}->{mmvmk0}->{$maker}->{maxAge} . " is not defined. Aborting." );
       }
-      $out .= "&fregfrom=" . ( $thisYear - ( $G_DATA->{$site}->{searchConfig}->{mmvmk0}->{$maker}->{maxAge} ) );
+      $out .= "&fregfrom=" . ( $thisYear - ( $G_DATA->{sites}->{$site}->{searchConfig}->{mmvmk0}->{$maker}->{maxAge} ) );
 
       # $log->info( "out=$out\n" );
 
-      foreach my $k ( sort keys %{ $G_DATA->{$site}->{searchConfig}->{defaults} } ) {
+      foreach my $k ( sort keys %{ $G_DATA->{sites}->{$site}->{searchConfig}->{defaults} } ) {
         my $val;
         $log->debug("Default: $k\n");
-        if ( defined $G_DATA->{$site}->{searchConfig}->{mmvmk0}->{$maker}->{$k} ) {
-          $val = $G_DATA->{$site}->{searchConfig}->{mmvmk0}->{$maker}->{$k};
+        if ( defined $G_DATA->{sites}->{$site}->{searchConfig}->{mmvmk0}->{$maker}->{$k} ) {
+          $val = $G_DATA->{sites}->{$site}->{searchConfig}->{mmvmk0}->{$maker}->{$k};
         } else {
-          $val = $G_DATA->{$site}->{searchConfig}->{defaults}->{$k};
+          $val = $G_DATA->{sites}->{$site}->{searchConfig}->{defaults}->{$k};
         }
         if ( index( $val, ',' ) > 0 ) {
           my @vals = split( ',', $val );
@@ -231,8 +232,8 @@ sub getUrls {
         }
       } ### foreach my $k ( sort keys %...)
 
-      $log->debug( "\$G_DATA->{$site}->{urls}->{" . $maker . "}=" . $out . "\n" );
-      $G_DATA->{$site}->{urls}->{$maker} = $out;
+      $log->debug( "\$G_DATA->{sites}->{$site}->{urls}->{" . $maker . "}=" . $out . "\n" );
+      $G_DATA->{sites}->{$site}->{urls}->{$maker} = $out;
     } ### foreach my $maker ( sort keys...)
   } ### if (0)
 
@@ -240,27 +241,27 @@ sub getUrls {
   $site = 'WillHaben';
   $log->info("getUrls -> ${site}\n");
   my $makerString = 'CAR_MODEL/MAKE';
-  foreach my $maker ( sort keys %{ $G_DATA->{$site}->{searchConfig}->{$makerString} } ) {
+  foreach my $maker ( sort keys %{ $G_DATA->{sites}->{$site}->{searchConfig}->{$makerString} } ) {
     $log->info("maker: [$maker]\n");
-    next if ( not defined $G_DATA->{$site}->{searchConfig}->{$makerString}->{$maker}->{maxAge} );
-    my $out = $G_DATA->{$site}->{searchUrlRoot};
+    next if ( not defined $G_DATA->{sites}->{$site}->{searchConfig}->{$makerString}->{$maker}->{maxAge} );
+    my $out = $G_DATA->{sites}->{$site}->{searchUrlRoot};
 
     # $log->info( Dumper( $G_DATA ) );
-    die "Define G_DATA->{$site}->{makers}->{$maker}, it isn't, aborting." if not defined $G_DATA->{$site}->{makers}->{$maker};
-    $out .= "$makerString=" . $G_DATA->{$site}->{makers}->{$maker};
+    die "Define G_DATA->{$site}->{makers}->{$maker}, it isn't, aborting." if not defined $G_DATA->{sites}->{$site}->{makers}->{$maker};
+    $out .= "$makerString=" . $G_DATA->{sites}->{$site}->{makers}->{$maker};
 
     # $log->info( "out=$out\n" );
-    $out .= "&YEAR_MODEL_FROM=" . ( $thisYear - ( $G_DATA->{$site}->{searchConfig}->{$makerString}->{$maker}->{maxAge} ) );
+    $out .= "&YEAR_MODEL_FROM=" . ( $thisYear - ( $G_DATA->{sites}->{$site}->{searchConfig}->{$makerString}->{$maker}->{maxAge} ) );
 
     # $log->info( "out=$out\n" );
 
-    foreach my $k ( sort keys %{ $G_DATA->{$site}->{searchConfig}->{defaults} } ) {
+    foreach my $k ( sort keys %{ $G_DATA->{sites}->{$site}->{searchConfig}->{defaults} } ) {
       my $val;
       $log->debug("Default: $k\n");
-      if ( defined $G_DATA->{$site}->{searchConfig}->{$makerString}->{$maker}->{$k} ) {
-        $val = $G_DATA->{$site}->{searchConfig}->{$makerString}->{$maker}->{$k};
+      if ( defined $G_DATA->{sites}->{$site}->{searchConfig}->{$makerString}->{$maker}->{$k} ) {
+        $val = $G_DATA->{sites}->{$site}->{searchConfig}->{$makerString}->{$maker}->{$k};
       } else {
-        $val = $G_DATA->{$site}->{searchConfig}->{defaults}->{$k};
+        $val = $G_DATA->{sites}->{$site}->{searchConfig}->{defaults}->{$k};
       }
       if ( index( $val, ',' ) > 0 ) {
         my @vals = split( ',', $val );
@@ -274,11 +275,11 @@ sub getUrls {
       # $log->debug("out=[$out]\n");
     } ### foreach my $k ( sort keys %...)
 
-    # $log->debug( "\$G_DATA->{$site}->{urls}->{" . $maker . "}=" . $out . "\n" );
-    $G_DATA->{$site}->{urls}->{$maker} = $out;
+    # $log->debug( "\$G_DATA->{sites}->{$site}->{urls}->{" . $maker . "}=" . $out . "\n" );
+    $G_DATA->{sites}->{$site}->{urls}->{$maker} = $out;
   } ### foreach my $maker ( sort keys...)
 
-  print Dumper( $G_DATA->{$site}->{urls} );
+  print Dumper( $G_DATA->{sites}->{$site}->{urls} );
 
 } ### sub getUrls
 
@@ -290,7 +291,7 @@ sub getHtml {
   $G_HTML_TREE = undef;
 
 
-  $url =~ s/$G_DATA->{$site}->{searchConfig}->{defaults}->{page}/$page/g;
+  $url =~ s/$G_DATA->{sites}->{$site}->{searchConfig}->{defaults}->{page}/$page/g;
   $log->debug("getHtml($url)\n");
 
   my $html    = '';
@@ -418,32 +419,32 @@ sub parseItems {
 
   # $log->debug( "TEST: title: [$tmp]\n" );
 
-  $items = $G_HTML_TREE->findnodes( $G_DATA->{AUTOSCOUT}->{XPATHS}->{XPATH_TALALATI_LISTA} ) or return 1;
+  $items = $G_HTML_TREE->findnodes( $G_DATA->{sites}->{AUTOSCOUT}->{XPATHS}->{XPATH_TALALATI_LISTA} ) or return 1;
   return 1 unless $items;
   foreach my $item ( $items->get_nodelist ) {
     $G_ITEMS_PROCESSED++;
     my $tmp;
-    my $title = $item->findvalue( $G_DATA->{AUTOSCOUT}->{XPATHS}->{XPATH_TITLE} );
-    $tmp = $item->findvalue( $G_DATA->{AUTOSCOUT}->{XPATHS}->{XPATH_TITLE2} );
+    my $title = $item->findvalue( $G_DATA->{sites}->{AUTOSCOUT}->{XPATHS}->{XPATH_TITLE} );
+    $tmp = $item->findvalue( $G_DATA->{sites}->{AUTOSCOUT}->{XPATHS}->{XPATH_TITLE2} );
     $title .= " - " . $tmp if $tmp;
     $title = encode_utf8($title);
-    my $desc = $item->findvalue( $G_DATA->{AUTOSCOUT}->{XPATHS}->{XPATH_DESC} );
+    my $desc = $item->findvalue( $G_DATA->{sites}->{AUTOSCOUT}->{XPATHS}->{XPATH_DESC} );
 
-    my $link = $item->findvalue( $G_DATA->{AUTOSCOUT}->{XPATHS}->{XPATH_LINK} );
+    my $link = $item->findvalue( $G_DATA->{sites}->{AUTOSCOUT}->{XPATHS}->{XPATH_LINK} );
     my $id   = $link;
     $link = "https://www.autoscout24.at${link}";
 
     # /angebote/audi-a3-2-0-tdi-ambition-klimaauto-dpf-alu-6-gang-diesel-schwarz-99d1f527-0d81-ed66-e053-e250040a9fc2
     $id =~ s/^.*-(.{36})$/$1/g;
 
-    my $priceStr = encode_utf8( $item->findvalue( $G_DATA->{AUTOSCOUT}->{XPATHS}->{XPATH_PRICE} ) );
+    my $priceStr = encode_utf8( $item->findvalue( $G_DATA->{sites}->{AUTOSCOUT}->{XPATHS}->{XPATH_PRICE} ) );
     $priceStr = "?" unless $priceStr;
     my $priceNr = $priceStr;
     $priceNr =~ s/\D//g;
     $priceNr = 0 unless $priceStr;
 
-    my $features = encode_utf8( join( '#', $item->findvalues( $G_DATA->{AUTOSCOUT}->{XPATHS}->{XPATH_FEATURES} ) ) );
-    $features =~ s/$G_DATA->{AUTOSCOUT}->{textToDelete}//g;
+    my $features = encode_utf8( join( '#', $item->findvalues( $G_DATA->{sites}->{AUTOSCOUT}->{XPATHS}->{XPATH_FEATURES} ) ) );
+    $features =~ s/$G_DATA->{sites}->{AUTOSCOUT}->{textToDelete}//g;
     $features =~ s/^ //;
     $features =~ s/ $//;
     $features =~ s/ # /#/g;
@@ -550,8 +551,8 @@ sub collectData {
   $G_ITEMS_PROCESSED = 0;
 
   # AUTOSCOUT
-  foreach my $maker ( sort keys %{ $G_DATA->{AUTOSCOUT}->{urls} } ) {
-    my $url = $G_DATA->{AUTOSCOUT}->{urls}->{$maker};
+  foreach my $maker ( sort keys %{ $G_DATA->{sites}->{AUTOSCOUT}->{urls} } ) {
+    my $url = $G_DATA->{sites}->{AUTOSCOUT}->{urls}->{$maker};
     $log->info("\n\n** $maker **\n");
     if (  $G_ITEMS_TO_PROCESS_MAX > 0
       and $G_ITEMS_PROCESSED >= $G_ITEMS_TO_PROCESS_MAX ) {
