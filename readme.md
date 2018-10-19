@@ -1,12 +1,14 @@
 Goal of the script: alerting about new ads via email
 
 # History
- - 2018.10.05: új site: www.willhaben.at
+ - 2018.10.18: mobile.de: meg kell vizsgálni, mennyi idő elkészíteni
+ - 2018.10.18: www.willhaben.at KELL - kb 8 óra
+ - 2018.10.05: willhaben.at: meg kell vizsgálni, mennyi idő elkészíteni
  - 2018.10.02:
    - Max 6000€
    - Skoda, Seat, Volkswagen, Audi, Hyundai, Citroen, Mazda, Honda, Toyota, Nissan, Opel, Fiat, Ford.
    - 2007-
- - 2018.09.17: filter on mobile.de: 2006-; 500-7000€
+ - 2018.09.17: szűrő: 2006-; 500-7000€
 
 # TODO, open issues
 see [issues https://github.com/BercziSandor/hasznaltAutoWatcher/issues]
