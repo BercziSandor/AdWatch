@@ -108,8 +108,13 @@ sub ini {
   } ### unless ( my $return = require...)
   $log->info("ini(): cfg read\n");
 
+  if (not defined $G_DATA->{$site}->{searchConfig}->{defaults}->{page} ){
+    $log->logdie("A G_DATA->{$site}->{searchConfig}->{defaults}->{page} nincs definiálva.\n");
+  }
+
   # Checking config
-  if ( not defined $G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}
+  if (
+       not defined $G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}
     or not defined $G_DATA->{CONSTANTS}->{DOWNLOADMETHODS}
     or not defined $G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults}
     or not defined $G_DATA->{AUTOSCOUT}->{XPATHS}
@@ -182,35 +187,37 @@ sub ini {
 } ### sub ini
 
 sub getUrls {
+
   $log->info("getUrls(): entering\n");
   die "Run ini() before getUrls, aborting.\n" if ( not defined $thisYear );
+
+  my $site = 'AUTOSCOUT';
+  $log->info("getUrls -> ${site}\n");
   if (0) {
 
     # AUTOSCOUT
-    foreach my $maker ( sort keys %{ $G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0} } ) {
-
+    foreach my $maker ( sort keys %{ $G_DATA->{$site}->{searchConfig}->{mmvmk0} } ) {
       $log->info("maker: [$maker]\n");
       my $out = "https://www.autoscout24.at/ergebnisse?";
-
       # $log->info( Dumper( $G_DATA ) );
-      $out .= "mmvmk0=" . $G_DATA->{AUTOSCOUT}->{makers}->{$maker};
+      $out .= "mmvmk0=" . $G_DATA->{$site}->{makers}->{$maker};
 
       # $log->info( "out=$out\n" );
 
-      if ( not defined $G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{$maker}->{maxAge} ) {
-        $log->logdie( $G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{$maker}->{maxAge} . " is not defined. Aborting." );
+      if ( not defined $G_DATA->{$site}->{searchConfig}->{mmvmk0}->{$maker}->{maxAge} ) {
+        $log->logdie( $G_DATA->{$site}->{searchConfig}->{mmvmk0}->{$maker}->{maxAge} . " is not defined. Aborting." );
       }
-      $out .= "&fregfrom=" . ( $thisYear - ( $G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{$maker}->{maxAge} ) );
+      $out .= "&fregfrom=" . ( $thisYear - ( $G_DATA->{$site}->{searchConfig}->{mmvmk0}->{$maker}->{maxAge} ) );
 
       # $log->info( "out=$out\n" );
 
-      foreach my $k ( sort keys %{ $G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults} } ) {
+      foreach my $k ( sort keys %{ $G_DATA->{$site}->{searchConfig}->{defaults} } ) {
         my $val;
         $log->debug("Default: $k\n");
-        if ( defined $G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{$maker}->{$k} ) {
-          $val = $G_DATA->{AUTOSCOUT}->{searchConfig}->{mmvmk0}->{$maker}->{$k};
+        if ( defined $G_DATA->{$site}->{searchConfig}->{mmvmk0}->{$maker}->{$k} ) {
+          $val = $G_DATA->{$site}->{searchConfig}->{mmvmk0}->{$maker}->{$k};
         } else {
-          $val = $G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults}->{$k};
+          $val = $G_DATA->{$site}->{searchConfig}->{defaults}->{$k};
         }
         if ( index( $val, ',' ) > 0 ) {
           my @vals = split( ',', $val );
@@ -224,17 +231,14 @@ sub getUrls {
         }
       } ### foreach my $k ( sort keys %...)
 
-      $log->debug( "\$G_DATA->{AUTOSCOUT}->{urls}->{" . $maker . "}=" . $out . "\n" );
-      $G_DATA->{AUTOSCOUT}->{urls}->{$maker} = $out;
+      $log->debug( "\$G_DATA->{$site}->{urls}->{" . $maker . "}=" . $out . "\n" );
+      $G_DATA->{$site}->{urls}->{$maker} = $out;
     } ### foreach my $maker ( sort keys...)
   } ### if (0)
 
-  # CAR_MODEL / MAKE
-
   # WillHaben
-
-  $log->info( "WillHaben!" );
-  my $site        = 'WillHaben';
+  $site = 'WillHaben';
+  $log->info("getUrls -> ${site}\n");
   my $makerString = 'CAR_MODEL/MAKE';
   foreach my $maker ( sort keys %{ $G_DATA->{$site}->{searchConfig}->{$makerString} } ) {
     $log->info("maker: [$maker]\n");
@@ -266,13 +270,16 @@ sub getUrls {
       } else {
         $out .= "&$k=$val";
       }
+
       # $log->debug("out=[$out]\n");
     } ### foreach my $k ( sort keys %...)
 
     # $log->debug( "\$G_DATA->{$site}->{urls}->{" . $maker . "}=" . $out . "\n" );
     $G_DATA->{$site}->{urls}->{$maker} = $out;
   } ### foreach my $maker ( sort keys...)
-  print Dumper($G_DATA->{$site}->{urls});
+
+  print Dumper( $G_DATA->{$site}->{urls} );
+
 } ### sub getUrls
 
 sub getHtml {
@@ -282,15 +289,15 @@ sub getHtml {
   $G_HTML_TREE->delete() if defined $G_HTML_TREE;
   $G_HTML_TREE = undef;
 
-  $url =~ s/$G_DATA->{AUTOSCOUT}->{searchConfig}->{defaults}->{page}/$page/g;
+
+  $url =~ s/$G_DATA->{$site}->{searchConfig}->{defaults}->{page}/$page/g;
   $log->debug("getHtml($url)\n");
 
   my $html    = '';
   my $content = '';
 
   # Specific code
-  if ( $url =~ m|autoscout24| ) {
-  } else {
+  if ( $url !~ m|autoscout24|i ) {
     $log->logdie("Mi ez az url?? [$url]");
   }
 
@@ -358,14 +365,10 @@ sub getHtml {
   } ### if ($saveHtmlFiles)
   $log->logdie("The content of the received html is emply.") if ( length($html) == 0 );
 
-  # $G_HTML_TREE = HTML::TreeBuilder::XPath->new_from_content( $html);
   $G_HTML_TREE = HTML::TreeBuilder::XPath->new_from_content($content) or logdie($!);
-
-  # $log->debug( Dumper( $G_HTML_TREE ) );
   $log->debug(" \$G_HTML_TREE created.\n");
   $log->debug("getHtml returning\n");
   return $html;
-
 } ### sub getHtml
 
 sub parsePageCount {
@@ -548,7 +551,6 @@ sub collectData {
 
   # AUTOSCOUT
   foreach my $maker ( sort keys %{ $G_DATA->{AUTOSCOUT}->{urls} } ) {
-
     my $url = $G_DATA->{AUTOSCOUT}->{urls}->{$maker};
     $log->info("\n\n** $maker **\n");
     if (  $G_ITEMS_TO_PROCESS_MAX > 0
@@ -556,7 +558,6 @@ sub collectData {
       $log->info("\nElértük a feldolgozási limitet.");
       return;
     }
-
     # getHtml( $url, 1, $maker )
     # next unless $G_HTML_TREE;
 

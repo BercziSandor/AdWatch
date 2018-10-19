@@ -8,7 +8,7 @@ $G_DATA->{CONSTANTS}->{DOWNLOADMETHODS}->{wwwMech}  = 'wwwMech';
 
 $G_DATA->{downloadMethod} = $G_DATA->{CONSTANTS}->{DOWNLOADMETHODS}->{wwwMech};
 
-$G_DATA->{sendMail}                           = 1;
+$G_DATA->{sendMail}                           = 0;
 $G_DATA->{G_WAIT_BETWEEN_FULL_PROCESS_IN_SEC} = 8 * 60;
 
 $G_DATA->{silentHours}->{from} = 20;
@@ -23,7 +23,6 @@ $G_DATA->{mailRecipients} = [ '"Sanyi" <berczi.sandor@gmail.com>', '"Tillatilla1
 # Autoscout
 # ************************************************************
 {
-
   $G_DATA->{AUTOSCOUT}->{XPATHS}->{XPATH_TALALATI_LISTA} = '//div[contains(concat(" ", @class, " "), " cl-list-element cl-list-element-gap ")]';
   $G_DATA->{AUTOSCOUT}->{XPATHS}->{XPATH_TITLE}          = './/h2[contains(concat(" ", @class, " "), " cldt-summary-makemodel ")]';
   $G_DATA->{AUTOSCOUT}->{XPATHS}->{XPATH_TITLE2}         = './/h2[contains(concat(" ", @class, " "), " cldt-summary-version ")]';
@@ -245,7 +244,16 @@ $G_DATA->{mailRecipients} = [ '"Sanyi" <berczi.sandor@gmail.com>', '"Tillatilla1
 
 # WillHaben
 {
-  # FIXME
+  $G_DATA->{WillHaben}->{searchUrlRoot} = 'https://www.willhaben.at/iad/gebrauchtwagen/auto/gebrauchtwagenboerse?';
+
+   #  '//*[@id="main_nagyoldal_felcserelve"]//div[contains(concat(" ", @class, " "), " talalati_lista ")]';
+  # list: //*[@id="resultlist"]
+
+  # item: //*[@id="resultlist"]/article[2]
+  #   item: <article itemscope="" itemtype="http://schema.org/Product" class="search-result-entry  ">
+
+  # title: //*[@id="resultlist"]/article[2]/section[class="content-section"]/div[1]
+
   $G_DATA->{WillHaben}->{XPATHS}->{XPATH_TALALATI_LISTA} = '//div[contains(concat(" ", @class, " "), " cl-list-element cl-list-element-gap ")]';
   $G_DATA->{WillHaben}->{XPATHS}->{XPATH_TITLE}          = './/h2[contains(concat(" ", @class, " "), " cldt-summary-makemodel ")]';
   $G_DATA->{WillHaben}->{XPATHS}->{XPATH_TITLE2}         = './/h2[contains(concat(" ", @class, " "), " cldt-summary-version ")]';
@@ -270,7 +278,6 @@ $G_DATA->{mailRecipients} = [ '"Sanyi" <berczi.sandor@gmail.com>', '"Tillatilla1
   # &rows=100
   # &periode=0
 
-  $G_DATA->{WillHaben}->{searchUrlRoot} = 'https://www.willhaben.at/iad/gebrauchtwagen/auto/gebrauchtwagenboerse?';
   my $makerString_willhaben='CAR_MODEL/MAKE';
   $G_DATA->{WillHaben}->{makerString} = $makerString_willhaben;
 
