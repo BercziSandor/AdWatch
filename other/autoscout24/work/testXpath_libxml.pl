@@ -22,7 +22,7 @@ my $result;
 $xpath = '//div[@id="resultlist"]';
 my $resultList=$dom->findnodes('//div[@id="resultlist"]');
 for my $article ( $resultList->get_nodelist ) {
-  my $content = $article->findnodes('./section[@class="content-section"]');
+  my $contents = $article->findnodes('./section[@class="content-section"]');
   foreach my $c ( $contents->get_nodelist ) {
     say "title: " . $c->findvalue('./span[@itemprop="name"]');
 
