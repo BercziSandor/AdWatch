@@ -23,14 +23,14 @@ my $articles = $dom->findnodes('//div[@id="resultlist"]/article');
 say "articles is a " . ref($articles) . ", size: " . $articles->size;
 
 for my $article ( $articles->get_nodelist ) {
-  say 'article is a ', ref($article);
+  say ' article is a ', ref($article);
 
   my $contents = $article->findnodes('./section[@class="content-section"]');
-  say "contents is a " . ref($contents) . ", size: " . $contents->size;
+  say "  contents is a " . ref($contents) . ", size: " . $contents->size;
   next unless $contents->size;
 
   my $name = $article->findvalue('./section[@class="content-section"]/span[@itemprop="name"]');
-  say "title: [$name]";
+  say "   title: [$name]";
 
 } ### for my $article ( $articles...)
 exit 0;
