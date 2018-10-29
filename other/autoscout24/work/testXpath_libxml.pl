@@ -20,14 +20,24 @@ my $xpath;
 my $result;
 
 $xpath='//div[@id="resultlist"]';
-$result=$dom->findnodes($xpath);
+for my $resultListElement ( $dom->findnodes( $xpath ) ) {
+    foreach my $elementChild ( $resultListElement->getChildnodes ) {
+        if ( $elementChild->nodeType() == XML_ELEMENT_NODE ) {
+            say $elementChild->textContent(), " ";
+        }
+    }
+}
+
+say 'xxxxxxxxxxxxxxxxxxxxxxxx';
+
 $result=$result->childNodes;
 say '$result is a ', ref($result);
 my $i = 1;
 foreach my $i (1..$result->size) {
     my $node = $result->get_node($i);
-    say $node->nodeName if $node->nodeType == XML_ELEMENT_NODE;
+    say "X: " . $node->nodeName if $node->nodeType == XML_ELEMENT_NODE;
 }
+
 exit 0;
 
 
@@ -38,6 +48,3 @@ $result=$dom->findnodes($xpath);
 foreach my $content ($result) {
     say $content->findvalue('./span[@itemprop="name"]');
 }
-
-
-
