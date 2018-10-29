@@ -20,14 +20,13 @@ my $xpath;
 my $result;
 
 $xpath = '//div[@id="resultlist"]';
-my $resultList = $dom->findnodes('//div[@id="resultlist"]');
-for my $article ( $resultList->get_nodelist ) {
+my $articles = $dom->findnodes('//div[@id="resultlist"]');
+for my $article ( $articles->get_nodelist ) {
   my $contents = $article->findnodes('./section[@class="content-section"]');
-  foreach my $c ( $contents->get_nodelist ) {
-    say "title: " . $c->findvalue('./span[@itemprop="name"]');
-
+  foreach my $content ( $contents->get_nodelist ) {
+    say "title: " . $content->findvalue('./span[@itemprop="name"]');
   }
-} ### for my $article ( $resultList...)
+} ### for my $article ( $articles...)
 exit 0;
 
 say 'xxxxxxxxxxxxxxxxxxxxxxxx';
