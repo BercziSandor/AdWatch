@@ -20,19 +20,14 @@ my $xpath;
 my $result;
 
 $xpath = '//div[@id="resultlist"]';
-my $resultList=$dom->findnodes('//div[@id="resultlist"]');
+my $resultList = $dom->findnodes('//div[@id="resultlist"]');
 for my $article ( $resultList->get_nodelist ) {
   my $contents = $article->findnodes('./section[@class="content-section"]');
   foreach my $c ( $contents->get_nodelist ) {
     say "title: " . $c->findvalue('./span[@itemprop="name"]');
 
   }
-  # if ( $article->nodeType() == XML_ELEMENT_NODE ) {
-  #   say $article->nodeName . ": [" . $article->textContent() . "]";
-  # }
-
-  } ### foreach my $article ( $resultListElement...)
-} ### for my $resultListElement...
+} ### for my $article ( $resultList...)
 exit 0;
 
 say 'xxxxxxxxxxxxxxxxxxxxxxxx';
@@ -45,7 +40,6 @@ foreach my $i ( 1 .. $result->size ) {
   say '$node is a ', ref($node);
   say "X: " . $node->nodeName if $node->nodeType == XML_ELEMENT_NODE;
 }
-
 
 $xpath = '//div[@id="resultlist"]/article[@itemtype="http://schema.org/Product"]/section[@class="content-section"]';
 
