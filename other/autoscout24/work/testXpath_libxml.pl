@@ -35,6 +35,7 @@ say '$result is a ', ref($result);
 my $i = 1;
 foreach my $i (1..$result->size) {
     my $node = $result->get_node($i);
+    say '$node is a ', ref($node);
     say "X: " . $node->nodeName if $node->nodeType == XML_ELEMENT_NODE;
 }
 
