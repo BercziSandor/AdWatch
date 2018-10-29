@@ -30,7 +30,7 @@ for my $resultListElement ( $dom->findnodes( $xpath ) ) {
 
 say 'xxxxxxxxxxxxxxxxxxxxxxxx';
 
-$result=$result->childNodes;
+$result=$dom->findnodes( $xpath );
 say '$result is a ', ref($result);
 my $i = 1;
 foreach my $i (1..$result->size) {
