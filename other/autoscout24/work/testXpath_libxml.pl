@@ -19,8 +19,7 @@ my $dom = XML::LibXML->load_html(
 my $xpath;
 my $result;
 
-$xpath = '//div[@id="resultlist"]';
-my $articles = $dom->findnodes('//div[@id="resultlist"]');
+my $articles = $dom->findnodes('//div[@id="resultlist"]/article');
 say "articles is a " . ref($articles) . ", size: " . $articles->size;
 
 for my $article ( $articles->get_nodelist ) {
