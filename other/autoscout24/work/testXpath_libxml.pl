@@ -21,11 +21,14 @@ my $result;
 
 $xpath = '//div[@id="resultlist"]';
 my $articles = $dom->findnodes('//div[@id="resultlist"]');
-# for my $article ( $articles->get_nodelist ) {
-for my $article ( $articles ) {
+say 'articles is a ', ref($articles);
+
+for my $article ( $articles->get_nodelist ) {
+  say 'article is a ', ref($article);
   my $contents = $article->findnodes('./section[@class="content-section"]');
-  # foreach my $content ( $contents->get_nodelist ) {
-  foreach my $content ( $contents ) {
+  say 'contents is a ', ref($contents);
+  foreach my $content ( $contents->get_nodelist ) {
+    say '$content is a ', ref($content);
     say "title: " . $content->findvalue('./span[@itemprop="name"]');
   }
 } ### for my $article ( $articles...)
