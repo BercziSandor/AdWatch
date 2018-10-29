@@ -22,9 +22,11 @@ my $result;
 $xpath = '//div[@id="resultlist"]';
 for my $resultListElement ( $dom->findnodes($xpath) ) {
   foreach my $article ( $resultListElement->getChildnodes ) {
-    my $content = $article->findnodes('./section[@class="content-section"]');
-    say "title: " . $content->findvalue('./span[@itemprop="name"]');
+    my $contents = $article->findnodes('./section[@class="content-section"]');
+    foreach my $c ( $contents->getChildnodes ) {
+      say "title: " . $c->findvalue('./span[@itemprop="name"]');
 
+    }
     # if ( $article->nodeType() == XML_ELEMENT_NODE ) {
     #   say $article->nodeName . ": [" . $article->textContent() . "]";
     # }
