@@ -20,16 +20,16 @@ my $xpath;
 my $result;
 
 $xpath = '//div[@id="resultlist"]';
-for my $resultListElement ( $dom->findnodes($xpath) ) {
-  foreach my $article ( $resultListElement->getChildnodes ) {
-    my $contents = $article->findnodes('./section[@class="content-section"]');
-    foreach my $c ( $contents->getChildnodes ) {
-      say "title: " . $c->findvalue('./span[@itemprop="name"]');
+my $resultList=$dom->findnodes('//div[@id="resultlist"]');
+for my $article ( $resultList->get_nodelist ) {
+  my $content = $article->findnodes('./section[@class="content-section"]');
+  foreach my $c ( $contents->get_nodelist ) {
+    say "title: " . $c->findvalue('./span[@itemprop="name"]');
 
-    }
-    # if ( $article->nodeType() == XML_ELEMENT_NODE ) {
-    #   say $article->nodeName . ": [" . $article->textContent() . "]";
-    # }
+  }
+  # if ( $article->nodeType() == XML_ELEMENT_NODE ) {
+  #   say $article->nodeName . ": [" . $article->textContent() . "]";
+  # }
 
   } ### foreach my $article ( $resultListElement...)
 } ### for my $resultListElement...
