@@ -26,9 +26,11 @@ for my $article ( $articles->get_nodelist ) {
   say 'article is a ', ref($article);
   my $contents = $article->findnodes('./section[@class="content-section"]');
   say "contents is a " . ref($contents) . ", size: " . $contents->size;
+  next unless $contents->size;
+
   foreach my $content ( $contents->get_nodelist ) {
-    say '$content is a ', ref($content);
-    say "title: " . $content->findvalue('./span[@itemprop="name"]');
+    say 'content is a ', ref($content);
+    say "title: [" . $content->findvalue('./span[@itemprop="name"]') . "]";
   }
 } ### for my $article ( $articles...)
 exit 0;
