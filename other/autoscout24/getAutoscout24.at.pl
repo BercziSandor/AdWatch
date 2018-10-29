@@ -14,6 +14,7 @@ use lib "$FindBin::Bin/lib";
 use HTTP::Tiny;
 use WWW::Mechanize;
 use LWP::UserAgent;
+use LWP::Protocol::https;
 
 # Cookie stuff
 use HTTP::Cookies;
@@ -50,7 +51,7 @@ our $G_DATA;
 $Data::Dumper::Sortkeys = 1;
 my $site;
 my $offline       = 0;
-my $saveHtmlFiles = 0;
+my $saveHtmlFiles = 1;
 
 my $dataFileDate;
 my $G_ITEMS_IN_DB;
@@ -109,13 +110,12 @@ sub ini {
   } ### unless ( my $return = require...)
   $log->info("ini(): cfg read\n");
 
-  if (not defined $G_DATA->{sites}->{$site}->{searchConfig}->{defaults}->{page} ){
+  if ( not defined $G_DATA->{sites}->{$site}->{searchConfig}->{defaults}->{page} ) {
     $log->logdie("A G_DATA->{$site}->{searchConfig}->{defaults}->{page} nincs definiálva.\n");
   }
 
   # Checking config
-  if (
-       not defined $G_DATA->{sites}->{AUTOSCOUT}->{searchConfig}->{mmvmk0}
+  if ( not defined $G_DATA->{sites}->{AUTOSCOUT}->{searchConfig}->{mmvmk0}
     or not defined $G_DATA->{CONSTANTS}->{DOWNLOADMETHODS}
     or not defined $G_DATA->{sites}->{AUTOSCOUT}->{searchConfig}->{defaults}
     or not defined $G_DATA->{sites}->{AUTOSCOUT}->{XPATHS}
@@ -143,18 +143,19 @@ sub ini {
   # Specific code
   getUrls();
 
-  exit 0;
-
-  $cookieJar_HttpCookieJar->add( "http://hasznaltauto.hu", "visitor_telepules=3148 Path=/; Domain=.hasznaltauto.hu" )
-    or die "$!";
-  $cookieJar_HttpCookieJarLWP->add( "http://hasznaltauto.hu", "visitor_telepules=3148 Path=/; Domain=.hasznaltauto.hu" )
-    or die "$!";
+  if ( "$site" eq "hasznaltauto.hu" ) {
+    $cookieJar_HttpCookieJar->add( "http://hasznaltauto.hu", "visitor_telepules=3148 Path=/; Domain=.hasznaltauto.hu" )
+      or die "$!";
+    $cookieJar_HttpCookieJarLWP->add( "http://hasznaltauto.hu", "visitor_telepules=3148 Path=/; Domain=.hasznaltauto.hu" )
+      or die "$!";
+  } ### if ( "$site" eq "hasznaltauto.hu")
 
   # Generic
   $G_ITEMS_IN_DB = ( $G_DATA->{ads} ? scalar( keys %{ $G_DATA->{ads} } ) : 0 );
   if ($G_DATA) {
     $log->info( Dumper($G_DATA) );
   }
+
   $log->info( "Ini: Eddig beolvasott hirdetések száma: " . $G_ITEMS_IN_DB . "\n" );
 
   $log->info("Ini: Http motor: $G_DATA->{downloadMethod}\n");
@@ -165,16 +166,11 @@ sub ini {
       agent      => $agent
     ) or $log->logdie($!);
   } elsif ( $G_DATA->{downloadMethod} eq $G_DATA->{CONSTANTS}->{DOWNLOADMETHODS}->{lwp} ) {
-
     $httpEngine = LWP::UserAgent->new(
       timeout    => 30,
       cookie_jar => $cookieJar_HttpCookieJarLWP,
       agent      => $agent
     ) or $log->logdie("zzz: $!");
-
-    # $httpEngine->cookie_jar( $cookieJar_HttpCookieJarLWP );
-
-    # $httpEngine->cookie_jar( $cookieJar );
   } elsif ( $G_DATA->{downloadMethod} eq $G_DATA->{CONSTANTS}->{DOWNLOADMETHODS}->{wwwMech} ) {
     $httpEngine = WWW::Mechanize->new(
       timeout    => 30,
@@ -200,6 +196,7 @@ sub getUrls {
     foreach my $maker ( sort keys %{ $G_DATA->{sites}->{$site}->{searchConfig}->{mmvmk0} } ) {
       $log->info("maker: [$maker]\n");
       my $out = "https://www.autoscout24.at/ergebnisse?";
+
       # $log->info( Dumper( $G_DATA ) );
       $out .= "mmvmk0=" . $G_DATA->{sites}->{$site}->{makers}->{$maker};
 
@@ -290,15 +287,14 @@ sub getHtml {
   $G_HTML_TREE->delete() if defined $G_HTML_TREE;
   $G_HTML_TREE = undef;
 
-
   $url =~ s/$G_DATA->{sites}->{$site}->{searchConfig}->{defaults}->{page}/$page/g;
-  $log->debug("getHtml($url)\n");
+  $log->debug("getHtml($url, $page, $maker)\n");
 
   my $html    = '';
   my $content = '';
 
   # Specific code
-  if ( $url !~ m|autoscout24|i ) {
+  if ( $url !~ m|$site|i ) {
     $log->logdie("Mi ez az url?? [$url]");
   }
 
@@ -359,7 +355,7 @@ sub getHtml {
   if ($saveHtmlFiles) {
     my $fileName = $url;
     $fileName = int(time) . ".${maker}.${page}.html";
-    $log->debug("fileName: $fileName");
+    $log->debug("fileName: $fileName\n");
     open( MYFILE, ">$fileName" ) or die "$fileName: $!";
     print MYFILE encode_utf8($html);
     close(MYFILE);
@@ -411,40 +407,50 @@ sub parsePageCount {
 sub parseItems {
 
   # my ($html) = @_;
-  $log->debug("parseItems(): entering");
-
+  $log->debug("parseItems(): entering\n");
   stopWatch::continue($SW_PROCESSING);
 
   my $items;
-
-  # $log->debug( "TEST: title: [$tmp]\n" );
-
-  $items = $G_HTML_TREE->findnodes( $G_DATA->{sites}->{AUTOSCOUT}->{XPATHS}->{XPATH_TALALATI_LISTA} ) or return 1;
+  my $xpath;
+  $xpath=$G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_TALALATI_LISTA};
+  $log->debug("Evaluating0 [$xpath]\n");
+  $items = $G_HTML_TREE->findnodes( $xpath ) or return 1;
+  $log->debug( " There are " . scalar($items->get_nodelist) . " 'talalati_lista' items\n" );
   return 1 unless $items;
   foreach my $item ( $items->get_nodelist ) {
-    $G_ITEMS_PROCESSED++;
-    my $tmp;
-    my $title = $item->findvalue( $G_DATA->{sites}->{AUTOSCOUT}->{XPATHS}->{XPATH_TITLE} );
-    $tmp = $item->findvalue( $G_DATA->{sites}->{AUTOSCOUT}->{XPATHS}->{XPATH_TITLE2} );
-    $title .= " - " . $tmp if $tmp;
-    $title = encode_utf8($title);
-    my $desc = $item->findvalue( $G_DATA->{sites}->{AUTOSCOUT}->{XPATHS}->{XPATH_DESC} );
 
-    my $link = $item->findvalue( $G_DATA->{sites}->{AUTOSCOUT}->{XPATHS}->{XPATH_LINK} );
+    $xpath = $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_TITLE};
+    $log->debug("Evaluating1 [$xpath]\n");
+    my $title = $item->findvalue($xpath);
+
+    $xpath = $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_TITLE2};
+    $log->debug("Evaluating2 [$xpath]\n");
+    my $title2 = $item->findvalue($xpath) if $xpath;
+    $title .= " - " . $title2 if $title2;
+
+    $title = encode_utf8($title);
+    $log->debug("parseItems(): title: [$title]\n");
+    next unless $title;
+    $G_ITEMS_PROCESSED++;
+    exit 1; # FIXME
+
+
+    my $desc = $item->findvalue( $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_DESC} );
+    my $link = $item->findvalue( $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_LINK} );
     my $id   = $link;
     $link = "https://www.autoscout24.at${link}";
 
     # /angebote/audi-a3-2-0-tdi-ambition-klimaauto-dpf-alu-6-gang-diesel-schwarz-99d1f527-0d81-ed66-e053-e250040a9fc2
     $id =~ s/^.*-(.{36})$/$1/g;
 
-    my $priceStr = encode_utf8( $item->findvalue( $G_DATA->{sites}->{AUTOSCOUT}->{XPATHS}->{XPATH_PRICE} ) );
+    my $priceStr = encode_utf8( $item->findvalue( $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_PRICE} ) );
     $priceStr = "?" unless $priceStr;
     my $priceNr = $priceStr;
     $priceNr =~ s/\D//g;
     $priceNr = 0 unless $priceStr;
 
-    my $features = encode_utf8( join( '#', $item->findvalues( $G_DATA->{sites}->{AUTOSCOUT}->{XPATHS}->{XPATH_FEATURES} ) ) );
-    $features =~ s/$G_DATA->{sites}->{AUTOSCOUT}->{textToDelete}//g;
+    my $features = encode_utf8( join( '#', $item->findvalues( $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_FEATURES} ) ) );
+    $features =~ s/$G_DATA->{sites}->{$site}->{textToDelete}//g;
     $features =~ s/^ //;
     $features =~ s/ $//;
     $features =~ s/ # /#/g;
@@ -538,8 +544,6 @@ sub parseItems {
     $log->info( sprintf( "] %4d", $G_ITEMS_PROCESSED ) );
   }
 
-  # or die "findnodes error: $!\n";
-  $log->debug( " There are " . scalar(@$items) . " 'talalati_lista' items\n" );
 
   # $log->logwarn( "parseItems(): No items, aborting\n" ) unless $items;
 } ### sub parseItems
@@ -551,14 +555,15 @@ sub collectData {
   $G_ITEMS_PROCESSED = 0;
 
   # AUTOSCOUT
-  foreach my $maker ( sort keys %{ $G_DATA->{sites}->{AUTOSCOUT}->{urls} } ) {
-    my $url = $G_DATA->{sites}->{AUTOSCOUT}->{urls}->{$maker};
+  foreach my $maker ( sort keys %{ $G_DATA->{sites}->{$site}->{urls} } ) {
+    my $url = $G_DATA->{sites}->{$site}->{urls}->{$maker};
     $log->info("\n\n** $maker **\n");
     if (  $G_ITEMS_TO_PROCESS_MAX > 0
       and $G_ITEMS_PROCESSED >= $G_ITEMS_TO_PROCESS_MAX ) {
       $log->info("\nElértük a feldolgozási limitet.");
       return;
     }
+
     # getHtml( $url, 1, $maker )
     # next unless $G_HTML_TREE;
 
@@ -818,4 +823,5 @@ sub main {
   } ### for ( ; ; )
 } ### sub main
 
+$site = 'WillHaben';
 main();

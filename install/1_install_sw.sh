@@ -52,4 +52,9 @@ cpanm --sudo install LWP::Protocol::https
 cpanm --sudo install WWW::Mechanize
 cpanm --sudo install Email::Sender::Simple
 
+sudo apt install libxml-libxml-perl libxml2-dev
+cpanm --sudo install XML::LibXML
+
+
+
 sudo apt -y upgrade

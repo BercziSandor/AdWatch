@@ -1,6 +1,11 @@
 # debug options for the developer;
 
-my $default_maxAge = 11;
+my $default_maxAge     = 11;
+my $default_price_from = 500;
+my $default_price_to   = 6000;
+my $default_year_from  = 2011;
+
+$default_price_to = 1000;    # FIXME
 
 $G_DATA->{CONSTANTS}->{DOWNLOADMETHODS}->{lwp}      = 'lwp';
 $G_DATA->{CONSTANTS}->{DOWNLOADMETHODS}->{httpTiny} = 'httpTiny';
@@ -18,18 +23,170 @@ $G_DATA->{silentHours}->{till} = 06;
 $G_DATA->{mailRecipients} = [ '"Sanyi" <berczi.sandor@gmail.com>' ];
 $G_DATA->{mailRecipients} = [ '"Sanyi" <berczi.sandor@gmail.com>', '"Tillatilla1966" <tillatilla.1966@gmail.com>' ];
 
+# WillHaben
+{
+  $G_DATA->{sites}->{WillHaben}->{searchUrlRoot} = 'https://www.willhaben.at/iad/gebrauchtwagen/auto/gebrauchtwagenboerse?';
+
+  #  '//*[@id="main_nagyoldal_felcserelve"]//div[contains(concat(" ", @class, " "), " talalati_lista ")]';
+  # list: //*[@id="resultlist"]
+
+  # item: //*[@id="resultlist"]/article[2]
+  #   item: <article itemscope="" itemtype="http://schema.org/Product" class="search-result-entry  ">
+
+  # title: //*[@id="resultlist"]/article[2]/section[class="content-section"]/div[1]
+#resultlist > article:nth-child(5) > section.content-section > div.header.w-brk > a > span
+
+
+
+  $G_DATA->{sites}->{WillHaben}->{XPATHS}->{XPATH_TALALATI_LISTA} = '//div[@id="resultlist"]';
+  $G_DATA->{sites}->{WillHaben}->{XPATHS}->{XPATH_TITLE}    = './/section[class="content-section"]/div[1]/a/span';
+  $G_DATA->{sites}->{WillHaben}->{XPATHS}->{XPATH_TITLE2}   = './/h2[contains(concat(" ", @class, " "), " cldt-summary-version ")]';
+  $G_DATA->{sites}->{WillHaben}->{XPATHS}->{XPATH_DESC}     = './/h3[contains(concat(" ", @class, " "), " cldt-summary-subheadline ")]';
+  $G_DATA->{sites}->{WillHaben}->{XPATHS}->{XPATH_LINK}     = './/div[contains(concat(" ", @class, " "), " cldt-summary-titles ")]/a/@href';
+  $G_DATA->{sites}->{WillHaben}->{XPATHS}->{XPATH_PRICE}    = './/span[contains(concat(" ", @class, " "), " cldt-price ")]';
+  $G_DATA->{sites}->{WillHaben}->{XPATHS}->{XPATH_FEATURES} = './/div[contains(concat(" ", @class, " "), " cldt-summary-vehicle-data ")]/ul/li';
+  $G_DATA->{sites}->{WillHaben}->{textToDelete}
+    = 'Weitere Informationen zum offiziellen Kraftstoffverbrauch und den offiziellen spezifischen CO2-Emissionen neuer Personenkraftwagen können dem "Leitfaden über den Kraftstoffverbrauch, die CO2-Emissionen und den Stromverbrauch neuer Personenkraftwagen" entnommen werden, der an allen Verkaufsstellen und bei der Deutschen Automobil Treuhand GmbH unter www.dat.at unentgeltlich erhältlich ist.';
+
+  #  https://www.willhaben.at/iad/gebrauchtwagen/auto/gebrauchtwagenboerse?YEAR_MODEL_FROM=2011&CAR_MODEL/MAKE=1005&PRICE_TO=12340&page=6&view=
+  # https://www.willhaben.at/iad/gebrauchtwagen/auto/gebrauchtwagenboerse?CAR_MODEL/MAKE=1005&PRICE_TO=12340&YEAR_MODEL_FROM=2011
+  # https://www.willhaben.at/iad/gebrauchtwagen/auto/gebrauchtwagenboerse?
+  # CAR_MODEL/MAKE=1005&PRICE_FROM=12340&PRICE_TO=12340&YEAR_MODEL_FROM=2011
+
+  # PRICE_FROM=2000
+  # &PRICE_TO=17499.99
+  # &MOTOR_CONDITION=20%3B30%3B40
+  # &YEAR_MODEL_FROM=2011
+  # &sort=1
+  # &CAR_MODEL/MAKE=1005
+  # &rows=100
+  # &periode=0
+
+  my $makerString_willhaben = 'CAR_MODEL/MAKE';
+  $G_DATA->{sites}->{WillHaben}->{makerString} = $makerString_willhaben;
+
+  # ustate=N%2CU&     N,U: nem balesetes; A: balesetes;
+  $G_DATA->{sites}->{WillHaben}->{searchConfig}->{defaults}->{PRICE_FROM}      = $default_price_from;
+  $G_DATA->{sites}->{WillHaben}->{searchConfig}->{defaults}->{PRICE_TO}        = $default_price_to;
+  $G_DATA->{sites}->{WillHaben}->{searchConfig}->{defaults}->{MOTOR_CONDITION} = '20%3B30%3B40';
+  $G_DATA->{sites}->{WillHaben}->{searchConfig}->{defaults}->{YEAR_MODEL_FROM} = $default_year_from;
+
+  $G_DATA->{sites}->{WillHaben}->{searchConfig}->{defaults}->{rows} = 200;
+  $G_DATA->{sites}->{WillHaben}->{searchConfig}->{defaults}->{sort} = 1;
+  $G_DATA->{sites}->{WillHaben}->{searchConfig}->{defaults}->{page} = "VVPAGEVV";
+
+  $G_DATA->{sites}->{WillHaben}->{searchConfig}->{$makerString_willhaben}->{Audi}->{maxAge}    = $default_maxAge;
+  $G_DATA->{sites}->{WillHaben}->{searchConfig}->{$makerString_willhaben}->{Citroen}->{maxAge} = $default_maxAge;
+  $G_DATA->{sites}->{WillHaben}->{searchConfig}->{$makerString_willhaben}->{Fiat}->{maxAge}    = $default_maxAge;
+  $G_DATA->{sites}->{WillHaben}->{searchConfig}->{$makerString_willhaben}->{Ford}->{maxAge}    = $default_maxAge;
+  $G_DATA->{sites}->{WillHaben}->{searchConfig}->{$makerString_willhaben}->{Honda}->{maxAge}   = $default_maxAge;
+  $G_DATA->{sites}->{WillHaben}->{searchConfig}->{$makerString_willhaben}->{Hyundai}->{maxAge} = $default_maxAge;
+  $G_DATA->{sites}->{WillHaben}->{searchConfig}->{$makerString_willhaben}->{Mazda}->{maxAge}   = $default_maxAge;
+  $G_DATA->{sites}->{WillHaben}->{searchConfig}->{$makerString_willhaben}->{Nissan}->{maxAge}  = $default_maxAge;
+  $G_DATA->{sites}->{WillHaben}->{searchConfig}->{$makerString_willhaben}->{Opel}->{maxAge}    = $default_maxAge;
+  $G_DATA->{sites}->{WillHaben}->{searchConfig}->{$makerString_willhaben}->{Seat}->{maxAge}    = $default_maxAge;
+  $G_DATA->{sites}->{WillHaben}->{searchConfig}->{$makerString_willhaben}->{Skoda}->{maxAge}   = $default_maxAge;
+  $G_DATA->{sites}->{WillHaben}->{searchConfig}->{$makerString_willhaben}->{Toyota}->{maxAge}  = $default_maxAge;
+  $G_DATA->{sites}->{WillHaben}->{searchConfig}->{$makerString_willhaben}->{VW}->{maxAge}      = $default_maxAge;
+
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Abarth"}             = 10004;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Aixam"}              = 10012;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Alfa Romeo"}         = 1000;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Aston Martin"}       = 1002;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Audi"}               = 1003;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Austin"}             = 1734;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Bentley"}            = 1004;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"BMW"}                = 1005;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"British Leyland"}    = 1069;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Buick"}              = 1006;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Cadillac"}           = 1007;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Casalini"}           = 10017;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Caterham"}           = 10001;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Chevrolet / Daewoo"} = 1012;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Chevrolet"}          = 1008;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Chrysler"}           = 1009;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Citroen"}            = 1010;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Corvette"}           = 10018;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Dacia"}              = 1011;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Daihatsu"}           = 1013;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Dodge"}              = 1014;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"DS Automobiles"}     = 10019;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Ferrari"}            = 1015;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Fiat"}               = 1016;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Ford"}               = 1017;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Graf Carello"}       = 10016;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Honda"}              = 1018;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Hummer"}             = 1019;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Hyundai"}            = 1020;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Infiniti"}           = 10009;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Isuzu"}              = 1021;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"IVECO"}              = 1022;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Jaguar"}             = 1023;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Jeep"}               = 1024;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"KIA"}                = 1025;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"KTM"}                = 10005;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Lada"}               = 1026;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Lamborghini"}        = 1027;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Lancia"}             = 1028;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Land Rover"}         = 1029;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Lexus"}              = 1030;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Ligier"}             = 10014;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Lincoln"}            = 1031;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Lotus"}              = 1032;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Mahindra"}           = 10003;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Maserati"}           = 1033;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Maybach"}            = 1034;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Mazda"}              = 1035;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"McLaren"}            = 10020;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Mercedes-Benz"}      = 1036;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Mercury"}            = 1037;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"MG"}                 = 1038;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Microcar"}           = 10013;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"MINI"}               = 1039;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Mitsubishi"}         = 1040;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Morgan"}             = 1041;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Nissan"}             = 1042;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Opel"}               = 1043;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Peugeot"}            = 1045;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Pontiac"}            = 1047;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Porsche"}            = 1048;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Puch"}               = 1049;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Renault"}            = 1051;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Rolls-Royce"}        = 1052;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Rover"}              = 1053;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Saab"}               = 1054;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Seat"}               = 1056;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Skoda"}              = 1057;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Smart"}              = 1058;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Sonstige"}           = 9999;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"SsangYong"}          = 1059;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Subaru"}             = 1060;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Suzuki"}             = 1061;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Talbot"}             = 1073;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Tata"}               = 10002;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Tazzari"}            = 10010;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Tesla"}              = 10008;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Think"}              = 10007;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Toyota"}             = 1062;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Triumph"}            = 10015;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Volvo"}              = 1064;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"VW"}                 = 1065;
+  $G_DATA->{sites}->{WillHaben}->{makers}->{"Wiesmann"}           = 1066;
+}
+
 # ************************************************************
 # ************************************************************
 # Autoscout
 # ************************************************************
 {
-  $G_DATA->{sites}->{AUTOSCOUT}->{XPATHS}->{XPATH_TALALATI_LISTA} = '//div[contains(concat(" ", @class, " "), " cl-list-element cl-list-element-gap ")]';
-  $G_DATA->{sites}->{AUTOSCOUT}->{XPATHS}->{XPATH_TITLE}          = './/h2[contains(concat(" ", @class, " "), " cldt-summary-makemodel ")]';
-  $G_DATA->{sites}->{AUTOSCOUT}->{XPATHS}->{XPATH_TITLE2}         = './/h2[contains(concat(" ", @class, " "), " cldt-summary-version ")]';
-  $G_DATA->{sites}->{AUTOSCOUT}->{XPATHS}->{XPATH_DESC}           = './/h3[contains(concat(" ", @class, " "), " cldt-summary-subheadline ")]';
-  $G_DATA->{sites}->{AUTOSCOUT}->{XPATHS}->{XPATH_LINK}           = './/div[contains(concat(" ", @class, " "), " cldt-summary-titles ")]/a/@href';
-  $G_DATA->{sites}->{AUTOSCOUT}->{XPATHS}->{XPATH_PRICE}          = './/span[contains(concat(" ", @class, " "), " cldt-price ")]';
-  $G_DATA->{sites}->{AUTOSCOUT}->{XPATHS}->{XPATH_FEATURES}       = './/div[contains(concat(" ", @class, " "), " cldt-summary-vehicle-data ")]/ul/li';
+  $G_DATA->{sites}->{AUTOSCOUT}->{XPATHS}->{XPATH_TALALATI_LISTA}
+    = '//div[contains(concat(" ", @class, " "), " cl-list-element cl-list-element-gap ")]';
+  $G_DATA->{sites}->{AUTOSCOUT}->{XPATHS}->{XPATH_TITLE}    = './/h2[contains(concat(" ", @class, " "), " cldt-summary-makemodel ")]';
+  $G_DATA->{sites}->{AUTOSCOUT}->{XPATHS}->{XPATH_TITLE2}   = './/h2[contains(concat(" ", @class, " "), " cldt-summary-version ")]';
+  $G_DATA->{sites}->{AUTOSCOUT}->{XPATHS}->{XPATH_DESC}     = './/h3[contains(concat(" ", @class, " "), " cldt-summary-subheadline ")]';
+  $G_DATA->{sites}->{AUTOSCOUT}->{XPATHS}->{XPATH_LINK}     = './/div[contains(concat(" ", @class, " "), " cldt-summary-titles ")]/a/@href';
+  $G_DATA->{sites}->{AUTOSCOUT}->{XPATHS}->{XPATH_PRICE}    = './/span[contains(concat(" ", @class, " "), " cldt-price ")]';
+  $G_DATA->{sites}->{AUTOSCOUT}->{XPATHS}->{XPATH_FEATURES} = './/div[contains(concat(" ", @class, " "), " cldt-summary-vehicle-data ")]/ul/li';
   $G_DATA->{sites}->{AUTOSCOUT}->{textToDelete}
     = 'Weitere Informationen zum offiziellen Kraftstoffverbrauch und den offiziellen spezifischen CO2-Emissionen neuer Personenkraftwagen können dem "Leitfaden über den Kraftstoffverbrauch, die CO2-Emissionen und den Stromverbrauch neuer Personenkraftwagen" entnommen werden, der an allen Verkaufsstellen und bei der Deutschen Automobil Treuhand GmbH unter www.dat.at unentgeltlich erhältlich ist.';
 
@@ -240,152 +397,4 @@ $G_DATA->{mailRecipients} = [ '"Sanyi" <berczi.sandor@gmail.com>', '"Tillatilla1
   $G_DATA->{sites}->{AUTOSCOUT}->{makers}->{"Zastava"}           = 16408;
   $G_DATA->{sites}->{AUTOSCOUT}->{makers}->{"ZAZ"}               = 16394;
   $G_DATA->{sites}->{AUTOSCOUT}->{makers}->{"Sonstige"}          = 16328;
-}
-
-# WillHaben
-{
-  $G_DATA->{sites}->{WillHaben}->{searchUrlRoot} = 'https://www.willhaben.at/iad/gebrauchtwagen/auto/gebrauchtwagenboerse?';
-
-   #  '//*[@id="main_nagyoldal_felcserelve"]//div[contains(concat(" ", @class, " "), " talalati_lista ")]';
-  # list: //*[@id="resultlist"]
-
-  # item: //*[@id="resultlist"]/article[2]
-  #   item: <article itemscope="" itemtype="http://schema.org/Product" class="search-result-entry  ">
-
-  # title: //*[@id="resultlist"]/article[2]/section[class="content-section"]/div[1]
-
-  $G_DATA->{sites}->{WillHaben}->{XPATHS}->{XPATH_TALALATI_LISTA} = '//div[contains(concat(" ", @class, " "), " cl-list-element cl-list-element-gap ")]';
-  $G_DATA->{sites}->{WillHaben}->{XPATHS}->{XPATH_TITLE}          = './/h2[contains(concat(" ", @class, " "), " cldt-summary-makemodel ")]';
-  $G_DATA->{sites}->{WillHaben}->{XPATHS}->{XPATH_TITLE2}         = './/h2[contains(concat(" ", @class, " "), " cldt-summary-version ")]';
-  $G_DATA->{sites}->{WillHaben}->{XPATHS}->{XPATH_DESC}           = './/h3[contains(concat(" ", @class, " "), " cldt-summary-subheadline ")]';
-  $G_DATA->{sites}->{WillHaben}->{XPATHS}->{XPATH_LINK}           = './/div[contains(concat(" ", @class, " "), " cldt-summary-titles ")]/a/@href';
-  $G_DATA->{sites}->{WillHaben}->{XPATHS}->{XPATH_PRICE}          = './/span[contains(concat(" ", @class, " "), " cldt-price ")]';
-  $G_DATA->{sites}->{WillHaben}->{XPATHS}->{XPATH_FEATURES}       = './/div[contains(concat(" ", @class, " "), " cldt-summary-vehicle-data ")]/ul/li';
-  $G_DATA->{sites}->{WillHaben}->{textToDelete}
-    = 'Weitere Informationen zum offiziellen Kraftstoffverbrauch und den offiziellen spezifischen CO2-Emissionen neuer Personenkraftwagen können dem "Leitfaden über den Kraftstoffverbrauch, die CO2-Emissionen und den Stromverbrauch neuer Personenkraftwagen" entnommen werden, der an allen Verkaufsstellen und bei der Deutschen Automobil Treuhand GmbH unter www.dat.at unentgeltlich erhältlich ist.';
-
-  #  https://www.willhaben.at/iad/gebrauchtwagen/auto/gebrauchtwagenboerse?YEAR_MODEL_FROM=2011&CAR_MODEL/MAKE=1005&PRICE_TO=12340&page=6&view=
-  # https://www.willhaben.at/iad/gebrauchtwagen/auto/gebrauchtwagenboerse?CAR_MODEL/MAKE=1005&PRICE_TO=12340&YEAR_MODEL_FROM=2011
-  # https://www.willhaben.at/iad/gebrauchtwagen/auto/gebrauchtwagenboerse?
-  # CAR_MODEL/MAKE=1005&PRICE_FROM=12340&PRICE_TO=12340&YEAR_MODEL_FROM=2011
-
-  # PRICE_FROM=2000
-  # &PRICE_TO=17499.99
-  # &MOTOR_CONDITION=20%3B30%3B40
-  # &YEAR_MODEL_FROM=2011
-  # &sort=1
-  # &CAR_MODEL/MAKE=1005
-  # &rows=100
-  # &periode=0
-
-  my $makerString_willhaben='CAR_MODEL/MAKE';
-  $G_DATA->{sites}->{WillHaben}->{makerString} = $makerString_willhaben;
-
-  # ustate=N%2CU&     N,U: nem balesetes; A: balesetes;
-  $G_DATA->{sites}->{WillHaben}->{searchConfig}->{defaults}->{PRICE_FROM}      = 500;
-  $G_DATA->{sites}->{WillHaben}->{searchConfig}->{defaults}->{PRICE_TO}        = 6000;
-  $G_DATA->{sites}->{WillHaben}->{searchConfig}->{defaults}->{MOTOR_CONDITION} = '20%3B30%3B40';
-  $G_DATA->{sites}->{WillHaben}->{searchConfig}->{defaults}->{YEAR_MODEL_FROM} = 2011;
-
-  $G_DATA->{sites}->{WillHaben}->{searchConfig}->{defaults}->{rows} = 200;
-  $G_DATA->{sites}->{WillHaben}->{searchConfig}->{defaults}->{sort} = 1;
-  $G_DATA->{sites}->{WillHaben}->{searchConfig}->{defaults}->{page} = "VVPAGEVV";
-
-  $G_DATA->{sites}->{WillHaben}->{searchConfig}->{$makerString_willhaben}->{Audi}->{maxAge}    = $default_maxAge;
-  $G_DATA->{sites}->{WillHaben}->{searchConfig}->{$makerString_willhaben}->{Citroen}->{maxAge} = $default_maxAge;
-  $G_DATA->{sites}->{WillHaben}->{searchConfig}->{$makerString_willhaben}->{Fiat}->{maxAge}    = $default_maxAge;
-  $G_DATA->{sites}->{WillHaben}->{searchConfig}->{$makerString_willhaben}->{Ford}->{maxAge}    = $default_maxAge;
-  $G_DATA->{sites}->{WillHaben}->{searchConfig}->{$makerString_willhaben}->{Honda}->{maxAge}   = $default_maxAge;
-  $G_DATA->{sites}->{WillHaben}->{searchConfig}->{$makerString_willhaben}->{Hyundai}->{maxAge} = $default_maxAge;
-  $G_DATA->{sites}->{WillHaben}->{searchConfig}->{$makerString_willhaben}->{Mazda}->{maxAge}   = $default_maxAge;
-  $G_DATA->{sites}->{WillHaben}->{searchConfig}->{$makerString_willhaben}->{Nissan}->{maxAge}  = $default_maxAge;
-  $G_DATA->{sites}->{WillHaben}->{searchConfig}->{$makerString_willhaben}->{Opel}->{maxAge}    = $default_maxAge;
-  $G_DATA->{sites}->{WillHaben}->{searchConfig}->{$makerString_willhaben}->{Seat}->{maxAge}    = $default_maxAge;
-  $G_DATA->{sites}->{WillHaben}->{searchConfig}->{$makerString_willhaben}->{Skoda}->{maxAge}   = $default_maxAge;
-  $G_DATA->{sites}->{WillHaben}->{searchConfig}->{$makerString_willhaben}->{Toyota}->{maxAge}  = $default_maxAge;
-  $G_DATA->{sites}->{WillHaben}->{searchConfig}->{$makerString_willhaben}->{VW}->{maxAge}      = $default_maxAge;
-
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Abarth"}             = 10004;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Aixam"}              = 10012;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Alfa Romeo"}         = 1000;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Aston Martin"}       = 1002;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Audi"}               = 1003;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Austin"}             = 1734;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Bentley"}            = 1004;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"BMW"}                = 1005;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"British Leyland"}    = 1069;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Buick"}              = 1006;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Cadillac"}           = 1007;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Casalini"}           = 10017;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Caterham"}           = 10001;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Chevrolet / Daewoo"} = 1012;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Chevrolet"}          = 1008;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Chrysler"}           = 1009;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Citroen"}            = 1010;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Corvette"}           = 10018;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Dacia"}              = 1011;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Daihatsu"}           = 1013;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Dodge"}              = 1014;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"DS Automobiles"}     = 10019;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Ferrari"}            = 1015;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Fiat"}               = 1016;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Ford"}               = 1017;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Graf Carello"}       = 10016;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Honda"}              = 1018;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Hummer"}             = 1019;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Hyundai"}            = 1020;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Infiniti"}           = 10009;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Isuzu"}              = 1021;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"IVECO"}              = 1022;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Jaguar"}             = 1023;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Jeep"}               = 1024;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"KIA"}                = 1025;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"KTM"}                = 10005;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Lada"}               = 1026;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Lamborghini"}        = 1027;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Lancia"}             = 1028;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Land Rover"}         = 1029;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Lexus"}              = 1030;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Ligier"}             = 10014;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Lincoln"}            = 1031;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Lotus"}              = 1032;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Mahindra"}           = 10003;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Maserati"}           = 1033;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Maybach"}            = 1034;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Mazda"}              = 1035;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"McLaren"}            = 10020;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Mercedes-Benz"}      = 1036;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Mercury"}            = 1037;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"MG"}                 = 1038;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Microcar"}           = 10013;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"MINI"}               = 1039;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Mitsubishi"}         = 1040;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Morgan"}             = 1041;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Nissan"}             = 1042;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Opel"}               = 1043;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Peugeot"}            = 1045;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Pontiac"}            = 1047;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Porsche"}            = 1048;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Puch"}               = 1049;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Renault"}            = 1051;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Rolls-Royce"}        = 1052;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Rover"}              = 1053;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Saab"}               = 1054;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Seat"}               = 1056;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Skoda"}              = 1057;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Smart"}              = 1058;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Sonstige"}           = 9999;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"SsangYong"}          = 1059;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Subaru"}             = 1060;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Suzuki"}             = 1061;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Talbot"}             = 1073;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Tata"}               = 10002;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Tazzari"}            = 10010;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Tesla"}              = 10008;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Think"}              = 10007;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Toyota"}             = 1062;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Triumph"}            = 10015;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Volvo"}              = 1064;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"VW"}                 = 1065;
-  $G_DATA->{sites}->{WillHaben}->{makers}->{"Wiesmann"}           = 1066;
 }
