@@ -58,19 +58,11 @@ for my $article (@$articles) {
     say " title: [$name]";
 
     my $desc = u_cleanString( $xpc->findvalue( './/div[@itemprop="description"]', $content ) );
+    my $yearKm = u_cleanString( $xpc->findvalue( './/span[@class="desc-left"]', $content ) );
+    my $price = u_cleanString( $xpc->findvalue( './/span[@class="pull-right"]', $content ) );
+    $price =~ s/,-/ €/;
 
-    # say " desc: [$desc]";
-
-    my $info = u_cleanString( $xpc->findvalue( './/span[@class="desc-left"]', $content ) );
-
-    # say " info: [$info]";
-
-    my $info2 = u_cleanString( $xpc->findvalue( './/span[@class="pull-right"]', $content ) );
-    $info2 =~ s/,-/ €/;
-
-    # say " info2: [$info2]";
-
-    my $text = " - $desc\n - $info\n - $info2";
+    my $text = "\n - $desc\n - $yearKm\n - $price";
     $text =~ s/bleifrei//g;
     $text = u_clearSpaces($text);
     say " text: [$text]";
