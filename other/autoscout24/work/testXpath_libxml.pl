@@ -33,15 +33,23 @@ my $result;
 my $articles = $dom->findnodes('//div[@id="resultlist"]/article');
 say "articles is a " . ref($articles) . ", size: " . $articles->size;
 
+my $index_a;
+my $index_cs;
+my $index_c;
 for my $article ( $articles->get_nodelist ) {
-  say ' article is a ', ref($article);
+  $index_a++;
+  say " article #${index_a} is a ", ref($article);
 
   my $contents = $article->findnodes('./section[@class="content-section"]');
-  say "  contents is a " . ref($contents) . ", size: " . $contents->size;
+  $index_cs++;
+  say "  contents $index_cs is a " . ref($contents) . ", size: " . $contents->size;
   next unless $contents->size;
 
   for my $content ( $contents->get_nodelist ) {
     my $name;
+    $index_c++;
+    say "c: $index_c";
+    
     $name = $dom->findvalue( './span[@itemprop="name"]', $content );
     $name = u_clearSpaces($name);
     say "   title1: [$name]";
