@@ -29,8 +29,17 @@ for my $article ( $articles->get_nodelist ) {
   say "  contents is a " . ref($contents) . ", size: " . $contents->size;
   next unless $contents->size;
 
-  my $name = $dom->findvalue('./section[@class="content-section"]/span[@itemprop="name"]', $article);
-  say "   title: [$name]";
+  my $name;
+  $name = $dom->findvalue('./section[@class="content-section"]/span[@itemprop="name"]', $article);
+  say "   title1: [$name]";
+
+  $name = $dom->findvalue('./section/span[@itemprop="name"]', $article);
+  say "   title2: [$name]";
+
+  $name = $dom->findvalue('.//span[@itemprop="name"]', $article);
+  say "   title3: [$name]";
+
+
 
 } ### for my $article ( $articles...)
 exit 0;
