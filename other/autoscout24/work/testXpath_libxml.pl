@@ -47,21 +47,14 @@ for my $article ( @$articles ) {
   next unless $contents->size;
 
   for my $content ( @$contents ) {
-    my $name;
     $index_c++;
     say "c: $index_c";
 
-    $name = $xpc->findvalue( './span[@itemprop="name"]', $content );
-    $name = u_clearSpaces($name);
-    say "   title1: [$name]";
+    my $name = u_clearSpaces($xpc->findvalue( './/span[@itemprop="name"]', $content ));
+    say "   title: [$name]";
 
-    $name = $xpc->findvalue( './/span[@itemprop="name"]', $content );
-    $name = u_clearSpaces($name);
-    say "   title2: [$name]";
-
-    $name = $xpc->findvalue( './/span[@itemprop="name"]', $article );
-    $name = u_clearSpaces($name);
-    say "   title3: [$name]";
+    my $desc = u_clearSpaces($xpc->findvalue( './/div[@itemprop="description"]', $content ));
+    say "   desc: [$desc]";
 
   } ### for my $content ( $contents...)
 
