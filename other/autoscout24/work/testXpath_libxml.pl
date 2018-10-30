@@ -65,34 +65,13 @@ for my $article (@$articles) {
     say "   info: [$info]";
 
     my $info2 = u_clearSpaces( $xpc->findvalue( './/span[@class="pull-right"]', $content ) );
-    $info2 =~ s/,-/€/;
+    $info2 =~ s/,-/ €/;
     say "   info2: [$info2]";
 
     my $link = $xpc->findvalue( './/div[contains(@class, "header")]/a/@href', $content );
     say "   link: [$link]";
 
   } ### for my $content (@$contents)
-## perltidy -cscw 2018-10-30: ### for my $content ( $contents...)
 
 } ### for my $article (@$articles)
-## perltidy -cscw 2018-10-30: ### for my $article ( $articles...)
 exit 0;
-
-say 'xxxxxxxxxxxxxxxxxxxxxxxx';
-
-$result = $xpc->findnodes($xpath);
-say '$result is a ', ref($result);
-my $i = 1;
-foreach my $i ( 1 .. $result->size ) {
-  my $node = $result->get_node($i);
-  say '$node is a ', ref($node);
-  say "X: " . $node->nodeName if $node->nodeType == XML_ELEMENT_NODE;
-}
-
-$xpath = '//div[@id="resultlist"]/article[@itemtype="http://schema.org/Product"]/section[@class="content-section"]';
-
-$result = $xpc->findnodes($xpath);
-
-foreach my $content ($result) {
-  say $content->findvalue('./span[@itemprop="name"]');
-}
