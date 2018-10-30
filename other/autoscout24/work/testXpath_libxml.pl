@@ -13,8 +13,9 @@ my $dom = XML::LibXML->load_html(
   recover         => 1,
   suppress_errors => 1,
 );
+my $xpc = 'XML::LibXML::XPathContext'->new($dom);
 
-# say $dom->toStringHTML();
+# say $xpc->toStringHTML();
 
 sub u_clearSpaces {
   my ($input) = @_;
@@ -30,13 +31,13 @@ sub u_clearSpaces {
 my $xpath;
 my $result;
 
-my $articles = $dom->findnodes('//div[@id="resultlist"]/article');
+my $articles = $xpc->findnodes('//div[@id="resultlist"]/article');
 say "articles is a " . ref($articles) . ", size: " . $articles->size;
 
 my $index_a;
 my $index_cs;
 my $index_c;
-for my $article ( $articles->get_nodelist ) {
+for my $article ( @$articles ) {
   $index_a++;
   say " article #${index_a} is a ", ref($article);
 
@@ -45,20 +46,20 @@ for my $article ( $articles->get_nodelist ) {
   say "  contents $index_cs is a " . ref($contents) . ", size: " . $contents->size;
   next unless $contents->size;
 
-  for my $content ( $contents->get_nodelist ) {
+  for my $content ( @$contents ) {
     my $name;
     $index_c++;
     say "c: $index_c";
-    
-    $name = $dom->findvalue( './span[@itemprop="name"]', $content );
+
+    $name = $xpc->findvalue( './span[@itemprop="name"]', $content );
     $name = u_clearSpaces($name);
     say "   title1: [$name]";
 
-    $name = $dom->findvalue( './/span[@itemprop="name"]', $content );
+    $name = $xpc->findvalue( './/span[@itemprop="name"]', $content );
     $name = u_clearSpaces($name);
     say "   title2: [$name]";
 
-    $name = $dom->findvalue( './/span[@itemprop="name"]', $article );
+    $name = $xpc->findvalue( './/span[@itemprop="name"]', $article );
     $name = u_clearSpaces($name);
     say "   title3: [$name]";
 
@@ -69,7 +70,7 @@ exit 0;
 
 say 'xxxxxxxxxxxxxxxxxxxxxxxx';
 
-$result = $dom->findnodes($xpath);
+$result = $xpc->findnodes($xpath);
 say '$result is a ', ref($result);
 my $i = 1;
 foreach my $i ( 1 .. $result->size ) {
@@ -80,7 +81,7 @@ foreach my $i ( 1 .. $result->size ) {
 
 $xpath = '//div[@id="resultlist"]/article[@itemtype="http://schema.org/Product"]/section[@class="content-section"]';
 
-$result = $dom->findnodes($xpath);
+$result = $xpc->findnodes($xpath);
 
 foreach my $content ($result) {
   say $content->findvalue('./span[@itemprop="name"]');
