@@ -63,13 +63,14 @@ for my $article (@$articles) {
     # 2008 75.000 km
     my $year = $yearKm;
     $year =~ s/^(\d*) .*/$1/;
-    my $km = $yearKm;
+    my $age = 2018 - $year;
+    my $km  = $yearKm;
     $km =~ s/^\d* (.*)/$1/;
 
     my $price = u_cleanString( $xpc->findvalue( './/span[@class="pull-right"]', $content ) );
     $price =~ s/,-/ €/;
 
-    my $text = "\n - $price\n - $year\n - $km\n - $desc\n";
+    my $text = "\n - $price\n - Alter: $age Jahre\n - $km\n - $desc\n";
     $text =~ s/bleifrei//g;
     $text = u_clearSpaces($text);
     say " text: [$text]";
