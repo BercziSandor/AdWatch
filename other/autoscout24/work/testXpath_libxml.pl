@@ -16,6 +16,17 @@ my $dom = XML::LibXML->load_html(
 
 # say $dom->toStringHTML();
 
+sub u_clearSpaces {
+  my ($input) = @_;
+  my $retval = $input;
+  $retval =~ s/^\s*//;
+  $retval =~ s/\s*$//;
+  $retval =~ s/\s{2,}/ /;
+  return $retval;
+
+  # body...
+} ### sub u_clearSpaces
+
 my $xpath;
 my $result;
 
@@ -29,24 +40,21 @@ for my $article ( $articles->get_nodelist ) {
   say "  contents is a " . ref($contents) . ", size: " . $contents->size;
   next unless $contents->size;
 
-  my $name;
-  $name = $dom->findvalue( './section[@class="content-section"]/span[@itemprop="name"]', $article );
-  $name =~ s/^\s*//;
-  $name =~ s/\s*$//;
-  $name =~ s/\s{2,}/ /;
-  say "   title1: [$name]";
+  for my $content ( $contents->get_nodelist ) {
+    my $name;
+    $name = $dom->findvalue( './span[@itemprop="name"]', $content );
+    $name = u_clearSpaces($name);
+    say "   title1: [$name]";
 
-  $name = $dom->findvalue( './section/span[@itemprop="name"]', $article );
-  $name =~ s/^\s*//;
-  $name =~ s/\s*$//;
-  $name =~ s/\s{2,}/ /;
-  say "   title2: [$name]";
+    $name = $dom->findvalue( './/span[@itemprop="name"]', $content );
+    $name = u_clearSpaces($name);
+    say "   title2: [$name]";
 
-  $name = $dom->findvalue( './/span[@itemprop="name"]', $article );
-  $name =~ s/^\s*//;
-  $name =~ s/\s*$//;
-  $name =~ s/\s{2,}/ /;
-  say "   title3: [$name]";
+    $name = $dom->findvalue( './/span[@itemprop="name"]', $article );
+    $name = u_clearSpaces($name);
+    say "   title3: [$name]";
+
+  } ### for my $content ( $contents...)
 
 } ### for my $article ( $articles...)
 exit 0;
