@@ -31,11 +31,11 @@ sub u_clearNewLines {
 sub u_clearSpaces {
   my ($input) = @_;
   my $retval = $input;
-  $retval =~ s/^\s*//;
-  $retval =~ s/\s*$//;
-  $retval =~ s/\s{2,}/ /g;
-  $retval =~ s/\s{2,}/ /g;
-  $retval =~ s/\s{2,}/ /g;
+  $retval =~ s/^[ \t]*//;
+  $retval =~ s/[ \t]*$//;
+  $retval =~ s/[ \t]{2,}/ /g;
+  $retval =~ s/[ \t]{2,}/ /g;
+  $retval =~ s/[ \t]{2,}/ /g;
   return $retval;
 } ### sub u_clearSpaces
 
