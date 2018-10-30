@@ -37,24 +37,12 @@ my $xpath;
 my $result;
 
 my $articles = $xpc->findnodes('//div[@id="resultlist"]/article');
-say "articles is a " . ref($articles) . ", size: " . $articles->size;
 
-my $index_a;
-my $index_cs;
-my $index_c;
 for my $article (@$articles) {
-  $index_a++;
-  say " article #${index_a} is a ", ref($article);
-
   my $contents = $article->findnodes('./section[@class="content-section"]');
-  $index_cs++;
-  say "  contents $index_cs is a " . ref($contents) . ", size: " . $contents->size;
   next unless $contents->size;
 
   for my $content (@$contents) {
-    $index_c++;
-    say "c: $index_c";
-
     my $name = u_clearSpaces( $xpc->findvalue( './/span[@itemprop="name"]', $content ) );
     say "   title: [$name]";
 
@@ -68,7 +56,9 @@ for my $article (@$articles) {
     $info2 =~ s/,-/ €/;
     # say "   info2: [$info2]";
 
-    my $text = u_clearSpaces("$desc $info $info2");
+    my $text = "$desc $info $info2";
+    $text =~ s/bleifrei//g;
+    $text = u_clearSpaces($text);
     say "   text: [$text]";
 
     my $link = $xpc->findvalue( './/div[contains(@class, "header")]/a/@href', $content );
