@@ -33,16 +33,19 @@ for my $article ( $articles->get_nodelist ) {
   $name = $dom->findvalue( './section[@class="content-section"]/span[@itemprop="name"]', $article );
   $name =~ s/^\s*//;
   $name =~ s/\s*$//;
+  $name =~ s/\s{2+}/ /;
   say "   title1: [$name]";
 
   $name = $dom->findvalue( './section/span[@itemprop="name"]', $article );
   $name =~ s/^\s*//;
   $name =~ s/\s*$//;
+  $name =~ s/\s{2+}/ /;
   say "   title2: [$name]";
 
   $name = $dom->findvalue( './/span[@itemprop="name"]', $article );
   $name =~ s/^\s*//;
   $name =~ s/\s*$//;
+  $name =~ s/\s{2+}/ /;
   say "   title3: [$name]";
 
 } ### for my $article ( $articles...)
