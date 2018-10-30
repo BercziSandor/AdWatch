@@ -6,7 +6,8 @@ use warnings;
 
 use XML::LibXML;
 
-my $filename $filename = '1540465883__.html';
+my $filename;
+$filename = '1540465883__.html';
 $filename = '1540465883.html';
 
 my $dom = XML::LibXML->load_html(
