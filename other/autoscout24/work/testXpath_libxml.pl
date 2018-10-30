@@ -56,7 +56,8 @@ for my $article ( @$articles ) {
     my $desc = u_clearSpaces($xpc->findvalue( './/div[@itemprop="description"]', $content ));
     say "   desc: [$desc]";
 
-    my $info = u_clearSpaces($xpc->findvalue( './/div[@class="info"]', $content ));
+    my $info = u_clearSpaces($xpc->findvalue( './/div[@class="desc-left"]', $content ));
+    $info = "$info " . u_clearSpaces($xpc->findvalue( './/div[@class="pull-right"]', $content ));
     say "   info: [$info]";
   } ### for my $content ( $contents...)
 
