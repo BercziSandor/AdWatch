@@ -62,7 +62,7 @@ for my $article (@$articles) {
     my $info2 = u_clearSpaces( $xpc->findvalue( './/span[@class="pull-right"]', $content ) );
     say "   info2: [$info2]";
 
-    my $link = $xpc->findvalue( './/div[contains(@class, "header")]', $content ) );
+    my $link = $xpc->findvalue( './/div[contains(@class, "header")]', $content );
     say "   link: [$link]";
 
 
