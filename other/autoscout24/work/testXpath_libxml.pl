@@ -44,6 +44,7 @@ for my $article (@$articles) {
 
   for my $content (@$contents) {
     my $name = u_clearSpaces( $xpc->findvalue( './/span[@itemprop="name"]', $content ) );
+    say "\n**************";
     say "   title: [$name]";
 
     my $desc = u_clearSpaces( $xpc->findvalue( './/div[@itemprop="description"]', $content ) );
