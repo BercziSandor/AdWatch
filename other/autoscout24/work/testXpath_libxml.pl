@@ -53,7 +53,7 @@ for my $article (@$articles) {
   next unless $contents->size;
 
   for my $content (@$contents) {
-    my $name = u_clearSpaces( $xpc->findvalue( './/span[@itemprop="name"]', $content ) );
+    my $name = u_cleanString( $xpc->findvalue( './/span[@itemprop="name"]', $content ) );
     say "\n**************";
     say " title: [$name]";
 
