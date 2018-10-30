@@ -6,8 +6,7 @@ use warnings;
 
 use XML::LibXML;
 
-my $filename
-$filename = '1540465883__.html';
+my $filename $filename = '1540465883__.html';
 $filename = '1540465883.html';
 
 my $dom = XML::LibXML->load_html(
@@ -61,15 +60,15 @@ for my $article (@$articles) {
     my $desc = u_clearSpaces( $xpc->findvalue( './/div[@itemprop="description"]', $content ) );
     say "   desc: [$desc]";
 
-    my $info  = u_clearSpaces( $xpc->findvalue( './/span[@class="desc-left"]',  $content ) );
+    my $info = u_clearSpaces( $xpc->findvalue( './/span[@class="desc-left"]', $content ) );
     say "   info: [$info]";
 
     my $info2 = u_clearSpaces( $xpc->findvalue( './/span[@class="pull-right"]', $content ) );
+    $info2 =~ s/,-/€/;
     say "   info2: [$info2]";
 
     my $link = $xpc->findvalue( './/div[contains(@class, "header")]/a/@href', $content );
     say "   link: [$link]";
-
 
   } ### for my $content (@$contents)
 ## perltidy -cscw 2018-10-30: ### for my $content ( $contents...)
