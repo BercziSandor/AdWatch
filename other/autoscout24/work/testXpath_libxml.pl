@@ -59,14 +59,17 @@ for my $article (@$articles) {
     say "   title: [$name]";
 
     my $desc = u_clearSpaces( $xpc->findvalue( './/div[@itemprop="description"]', $content ) );
-    say "   desc: [$desc]";
+    # say "   desc: [$desc]";
 
     my $info = u_clearSpaces( $xpc->findvalue( './/span[@class="desc-left"]', $content ) );
-    say "   info: [$info]";
+    # say "   info: [$info]";
 
     my $info2 = u_clearSpaces( $xpc->findvalue( './/span[@class="pull-right"]', $content ) );
     $info2 =~ s/,-/ €/;
-    say "   info2: [$info2]";
+    # say "   info2: [$info2]";
+
+    my $text = u_clearSpaces("$desc $info $info2");
+    say "   text: [$text]";
 
     my $link = $xpc->findvalue( './/div[contains(@class, "header")]/a/@href', $content );
     say "   link: [$link]";
