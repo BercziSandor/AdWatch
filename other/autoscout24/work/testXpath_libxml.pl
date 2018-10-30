@@ -21,8 +21,11 @@ sub u_clearSpaces {
   my ($input) = @_;
   my $retval = $input;
   $retval =~ s/^\s*//;
+  $retval =~ s/\n//g;
   $retval =~ s/\s*$//;
-  $retval =~ s/\s{2,}/ /;
+  $retval =~ s/\s{2,}/ /g;
+  $retval =~ s/\s{2,}/ /g;
+  $retval =~ s/\s{2,}/ /g;
   return $retval;
 
   # body...
