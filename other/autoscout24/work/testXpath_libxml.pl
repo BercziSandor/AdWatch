@@ -37,7 +37,7 @@ say "articles is a " . ref($articles) . ", size: " . $articles->size;
 my $index_a;
 my $index_cs;
 my $index_c;
-for my $article ( @$articles ) {
+for my $article (@$articles) {
   $index_a++;
   say " article #${index_a} is a ", ref($article);
 
@@ -46,22 +46,27 @@ for my $article ( @$articles ) {
   say "  contents $index_cs is a " . ref($contents) . ", size: " . $contents->size;
   next unless $contents->size;
 
-  for my $content ( @$contents ) {
+  for my $content (@$contents) {
     $index_c++;
     say "c: $index_c";
 
-    my $name = u_clearSpaces($xpc->findvalue( './/span[@itemprop="name"]', $content ));
+    my $name = u_clearSpaces( $xpc->findvalue( './/span[@itemprop="name"]', $content ) );
     say "   title: [$name]";
 
-    my $desc = u_clearSpaces($xpc->findvalue( './/div[@itemprop="description"]', $content ));
+    my $desc = u_clearSpaces( $xpc->findvalue( './/div[@itemprop="description"]', $content ) );
     say "   desc: [$desc]";
 
-    my $info = u_clearSpaces($xpc->findvalue( './/div[@class="desc-left"]', $content ));
-    $info = "$info " . u_clearSpaces($xpc->findvalue( './/div[@class="pull-right"]', $content ));
+    my $info  = u_clearSpaces( $xpc->findvalue( './/div[@class="desc-left"]',  $content ) );
     say "   info: [$info]";
-  } ### for my $content ( $contents...)
 
-} ### for my $article ( $articles...)
+    my $info2 = u_clearSpaces( $xpc->findvalue( './/div[@class="pull-right"]', $content ) );
+    say "   info2: [$info2]";
+
+  } ### for my $content (@$contents)
+## perltidy -cscw 2018-10-30: ### for my $content ( $contents...)
+
+} ### for my $article (@$articles)
+## perltidy -cscw 2018-10-30: ### for my $article ( $articles...)
 exit 0;
 
 say 'xxxxxxxxxxxxxxxxxxxxxxxx';
