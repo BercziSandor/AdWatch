@@ -70,7 +70,7 @@ for my $article (@$articles) {
     my $price = u_cleanString( $xpc->findvalue( './/span[@class="pull-right"]', $content ) );
     $price =~ s/,-/ €/;
 
-    my $text = "\n - $price\n - Alter: $age Jahre\n - $km\n - $desc\n";
+    my $text = "\n - $price\n - Alter: $age Jahre($year)\n - $km\n - $desc\n";
     $text =~ s/bleifrei//g;
     $text = u_clearSpaces($text);
     say " text: [$text]";
