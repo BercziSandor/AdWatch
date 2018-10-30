@@ -30,16 +30,20 @@ for my $article ( $articles->get_nodelist ) {
   next unless $contents->size;
 
   my $name;
-  $name = $dom->findvalue('./section[@class="content-section"]/span[@itemprop="name"]', $article);
+  $name = $dom->findvalue( './section[@class="content-section"]/span[@itemprop="name"]', $article );
+  $name =~ s/^\s*//;
+  $name =~ s/\s*$//;
   say "   title1: [$name]";
 
-  $name = $dom->findvalue('./section/span[@itemprop="name"]', $article);
+  $name = $dom->findvalue( './section/span[@itemprop="name"]', $article );
+  $name =~ s/^\s*//;
+  $name =~ s/\s*$//;
   say "   title2: [$name]";
 
-  $name = $dom->findvalue('.//span[@itemprop="name"]', $article);
+  $name = $dom->findvalue( './/span[@itemprop="name"]', $article );
+  $name =~ s/^\s*//;
+  $name =~ s/\s*$//;
   say "   title3: [$name]";
-
-
 
 } ### for my $article ( $articles...)
 exit 0;
