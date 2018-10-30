@@ -19,23 +19,33 @@ my $xpc = 'XML::LibXML::XPathContext'->new($dom);
 
 # say $xpc->toStringHTML();
 
+sub u_clearNewLines {
+  my ($input) = @_;
+  my $retval = $input;
+  $retval =~ s/\n//g;
+  $retval =~ s/\r//g;
+  return $retval;
+} ### sub u_clearNewLines
+## perltidy -cscw 2018-10-30: ### sub u_clearSpaces
+
 sub u_clearSpaces {
   my ($input) = @_;
   my $retval = $input;
   $retval =~ s/^\s*//;
-  $retval =~ s/\n//g;
   $retval =~ s/\s*$//;
   $retval =~ s/\s{2,}/ /g;
   $retval =~ s/\s{2,}/ /g;
   $retval =~ s/\s{2,}/ /g;
   return $retval;
-
-  # body...
 } ### sub u_clearSpaces
+
+sub u_cleanString {
+  my ($input) = @_;
+  return ( u_clearSpaces( u_clearNewLines($input) ) );
+}
 
 my $xpath;
 my $result;
-
 my $articles = $xpc->findnodes('//div[@id="resultlist"]/article');
 
 for my $article (@$articles) {
@@ -47,17 +57,20 @@ for my $article (@$articles) {
     say "\n**************";
     say " title: [$name]";
 
-    my $desc = u_clearSpaces( $xpc->findvalue( './/div[@itemprop="description"]', $content ) );
+    my $desc = u_cleanString( $xpc->findvalue( './/div[@itemprop="description"]', $content ) );
+
     # say " desc: [$desc]";
 
-    my $info = u_clearSpaces( $xpc->findvalue( './/span[@class="desc-left"]', $content ) );
+    my $info = u_cleanString( $xpc->findvalue( './/span[@class="desc-left"]', $content ) );
+
     # say " info: [$info]";
 
-    my $info2 = u_clearSpaces( $xpc->findvalue( './/span[@class="pull-right"]', $content ) );
+    my $info2 = u_cleanString( $xpc->findvalue( './/span[@class="pull-right"]', $content ) );
     $info2 =~ s/,-/ €/;
+
     # say " info2: [$info2]";
 
-    my $text = "$desc $info $info2";
+    my $text = " - $desc\n - $info\n - $info2";
     $text =~ s/bleifrei//g;
     $text = u_clearSpaces($text);
     say " text: [$text]";
