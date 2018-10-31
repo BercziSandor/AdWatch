@@ -362,7 +362,14 @@ sub getHtml {
   } ### if ($saveHtmlFiles)
   $log->logdie("The content of the received html is emply.") if ( length($html) == 0 );
 
-  $G_HTML_TREE = HTML::TreeBuilder::XPath->new_from_content($content) or logdie($!);
+  my $dom = XML::LibXML->load_html(
+    string          => $content,
+    recover         => 1,
+    suppress_errors => 1,
+  );
+  $G_HTML_TREE = 'XML::LibXML::XPathContext'->new($dom);
+
+  # $G_HTML_TREE = HTML::TreeBuilder::XPath->new_from_content($content) or logdie($!);
   $log->debug(" \$G_HTML_TREE created.\n");
   $log->debug("getHtml returning\n");
   return $html;
@@ -412,10 +419,10 @@ sub parseItems {
 
   my $items;
   my $xpath;
-  $xpath=$G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_TALALATI_LISTA};
+  $xpath = $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_TALALATI_LISTA};
   $log->debug("Evaluating0 [$xpath]\n");
-  $items = $G_HTML_TREE->findnodes( $xpath ) or return 1;
-  $log->debug( " There are " . scalar($items->get_nodelist) . " 'talalati_lista' items\n" );
+  $items = $G_HTML_TREE->findnodes($xpath) or return 1;
+  $log->debug( " There are " . scalar( $items->get_nodelist ) . " 'talalati_lista' items\n" );
   return 1 unless $items;
   foreach my $item ( $items->get_nodelist ) {
 
@@ -432,8 +439,7 @@ sub parseItems {
     $log->debug("parseItems(): title: [$title]\n");
     next unless $title;
     $G_ITEMS_PROCESSED++;
-    exit 1; # FIXME
-
+    exit 1;    # FIXME
 
     my $desc = $item->findvalue( $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_DESC} );
     my $link = $item->findvalue( $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_LINK} );
@@ -471,13 +477,21 @@ sub parseItems {
         $log->debug(" Updating history\n");
       }
 
-      # already defined. Is it changed?
-      if ( $G_DATA->{ads}->{$site}->{$id}->{title} ne $title ) {
+      $title;
+      $desc;
+      $priceNr;
+      $priceStr;
+      @fs;    # features
+      $link;
+      $info
+
+        # already defined. Is it changed?
+        if ( $G_DATA->{ads}->{$site}->{$id}->{title} ne $title ) {
         $G_DATA->{ads}->{$site}->{$id}->{history}->{$t} .= "Cím: [" . $G_DATA->{ads}->{$site}->{$id}->{title} . "] -> [$title]; ";
         $G_DATA->{ads}->{$site}->{$id}->{title}  = $title;
         $G_DATA->{ads}->{$site}->{$id}->{status} = $STATUS_CHANGED;
         $log->debug(" Updating title\n");
-      } ### if ( $G_DATA->{ads}->{$site}->{...})
+      } ### if
 
       if (
         (
@@ -491,7 +505,7 @@ sub parseItems {
         $G_DATA->{ads}->{$site}->{$id}->{priceStr} = $priceStr;
         $G_DATA->{ads}->{$site}->{$id}->{status}   = $STATUS_CHANGED;
         $log->debug(" Updating price\n");
-      } ### if ( ( $G_DATA->{ads}->{$site}->...))
+      } ### if ( ( $G_DATA->{ads}->...))
 
     } else {
 
@@ -501,13 +515,10 @@ sub parseItems {
       $G_DATA->{ads}->{$site}->{$id}->{title}         = $title;
       $G_DATA->{ads}->{$site}->{$id}->{link}          = $link;
       $G_DATA->{ads}->{$site}->{$id}->{info}          = \@fs;
-
-      # $G_DATA->{ads}->{$site}->{$id}->{category}      = $category;
-      # $G_DATA->{ads}->{$site}->{$id}->{info}          = \@infos;
-      $G_DATA->{ads}->{$site}->{$id}->{desc}     = $desc;
-      $G_DATA->{ads}->{$site}->{$id}->{priceStr} = $priceStr;
-      $G_DATA->{ads}->{$site}->{$id}->{priceNr}  = $priceNr;
-      $G_DATA->{ads}->{$site}->{$id}->{status}   = $STATUS_NEW;
+      $G_DATA->{ads}->{$site}->{$id}->{desc}          = $desc;
+      $G_DATA->{ads}->{$site}->{$id}->{priceStr}      = $priceStr;
+      $G_DATA->{ads}->{$site}->{$id}->{priceNr}       = $priceNr;
+      $G_DATA->{ads}->{$site}->{$id}->{status}        = $STATUS_NEW;
     } ### else [ if ( defined $G_DATA->...)]
 
     $G_DATA->{lastChange} = time;
@@ -533,7 +544,6 @@ sub parseItems {
   } else {
     $log->info( sprintf( "] %4d", $G_ITEMS_PROCESSED ) );
   }
-
 
   # $log->logwarn( "parseItems(): No items, aborting\n" ) unless $items;
 } ### sub parseItems
