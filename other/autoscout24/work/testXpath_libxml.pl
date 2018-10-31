@@ -46,6 +46,7 @@ my $xpath;
 
 $xpath='//div[@id="resultlist"]/article';
 my $items = $G_HTML_TREE->findnodes( $xpath ) or return 1;
+my $index;
 foreach my $item ( $items->get_nodelist ) {
   $index++;
   $xpath = './section[@class="content-section"]//span[@itemprop="name"]';
