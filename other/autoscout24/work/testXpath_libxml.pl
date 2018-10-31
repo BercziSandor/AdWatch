@@ -69,7 +69,7 @@ foreach my $item ( $items->get_nodelist ) {
   $text = u_clearSpaces($text);
   say " text: [$text]";
 
-  my $link = $item->findvalue( './section[@class="content-section"]//div[contains(@class, "header")]/a/@href', $content );
+  my $link = $item->findvalue( './section[@class="content-section"]//div[contains(@class, "header")]/a/@href' );
   say " link: [$link]";
 }
 
