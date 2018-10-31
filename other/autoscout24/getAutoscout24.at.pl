@@ -22,8 +22,9 @@ use HTTP::CookieJar;
 use HTTP::CookieJar::LWP;
 
 # http://search.cpan.org/~mirod/HTML-TreeBuilder-XPath-0.14/lib/HTML/TreeBuilder/XPath.pm
-use HTML::TreeBuilder::XPath;
-use HTML::Entities;
+use XML::LibXML;
+#use HTML::TreeBuilder::XPath;
+#use HTML::Entities;
 use Encode;
 use List::Util qw[min max];
 use Storable;
@@ -96,7 +97,7 @@ sub ini {
   Log::Log4perl::init( \$logConf );
   $log = Log::Log4perl->get_logger();
   $log->info("ini(): entering\n");
-  $G_HTML_TREE = HTML::TreeBuilder::XPath->new;
+  # $G_HTML_TREE = HTML::TreeBuilder::XPath->new;
 
   $thisYear = strftime "%Y", localtime;
   my ( $name, $path, $suffix ) = fileparse( $0, qr{\.[^.]*$} );
@@ -134,7 +135,10 @@ sub ini {
     : "";
 
   my $cnt = `ps -aef | grep -v grep | grep -c "$name.pl"`;
-  if ( $cnt > 1 ) { die "Már fut másik $name folyamat, ez leállítva.\n"; }
+  if ( $cnt > 1 ) { 
+	  warn "Már fut másik $name folyamat, ez leállítva.\n"; 
+  	# FIXME
+  }
 
   my $cookieJar_HttpCookieJar    = HTTP::CookieJar->new;
   my $cookieJar_HttpCookieJarLWP = HTTP::CookieJar::LWP->new;
@@ -284,7 +288,7 @@ sub getHtml {
   my ( $url, $page, $maker ) = @_;
   $page = 1 if not defined $page;
 
-  $G_HTML_TREE->delete() if defined $G_HTML_TREE;
+  # $G_HTML_TREE->delete() if defined $G_HTML_TREE;
   $G_HTML_TREE = undef;
 
   $url =~ s/$G_DATA->{sites}->{$site}->{searchConfig}->{defaults}->{page}/$page/g;
@@ -411,6 +415,33 @@ sub parsePageCount {
 
 } ### sub parsePageCount
 
+sub u_clearNewLines {
+  my ($input) = @_;
+  my $retval = $input;
+  $retval =~ s/\n//g;
+  $retval =~ s/\r//g;
+  return $retval;
+} ### sub u_clearNewLines
+
+sub u_clearSpaces {
+  my ($input) = @_;
+  my $retval = $input;
+  $retval =~ s/^[ \t]*//;
+  $retval =~ s/[ \t]*$//;
+  $retval =~ s/[ \t]{2,}/ /g;
+  $retval =~ s/[ \t]{2,}/ /g;
+  $retval =~ s/[ \t]{2,}/ /g;
+  return $retval;
+} ### sub u_clearSpaces
+
+sub u_cleanString {
+  my ($input) = @_;
+  return ( u_clearSpaces( u_clearNewLines($input) ) );
+}
+
+
+
+
 sub parseItems {
 
   # my ($html) = @_;
@@ -436,7 +467,7 @@ sub parseItems {
     $title .= " - " . $title2 if $title2;
 
     $title = encode_utf8($title);
-    $log->debug("parseItems(): title: [$title]\n");
+    $log->info("parseItems(): title: [$title]\n");
     next unless $title;
     $G_ITEMS_PROCESSED++;
     exit 1;    # FIXME
@@ -477,13 +508,13 @@ sub parseItems {
         $log->debug(" Updating history\n");
       }
 
-      $title;
-      $desc;
-      $priceNr;
-      $priceStr;
-      @fs;    # features
-      $link;
-      $info
+      # $title;
+      # $desc;
+      # $priceNr;
+      #  $priceStr;
+      #  @fs;    # features
+      #  $link;
+      # $info
 
         # already defined. Is it changed?
         if ( $G_DATA->{ads}->{$site}->{$id}->{title} ne $title ) {
