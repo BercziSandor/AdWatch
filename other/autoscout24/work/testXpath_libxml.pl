@@ -45,9 +45,8 @@ sub u_cleanString {
 my $xpath;
 
 $xpath='//div[@id="resultlist"]/article';
-$items = $G_HTML_TREE->findnodes( $xpath ) or return 1;
+my $items = $G_HTML_TREE->findnodes( $xpath ) or return 1;
 foreach my $item ( $items->get_nodelist ) {
-
   $xpath = './section[@class="content-section"]//span[@itemprop="name"]';
   my $title = u_cleanString($item->findvalue($xpath));
   say " title: [$title]";
