@@ -415,6 +415,8 @@ sub parsePageCount {
 
 } ### sub parsePageCount
 
+
+
 sub u_clearNewLines {
   my ($input) = @_;
   my $retval = $input;
@@ -441,7 +443,6 @@ sub u_cleanString {
 
 
 
-
 sub parseItems {
 
   # my ($html) = @_;
@@ -459,7 +460,7 @@ sub parseItems {
 
     $xpath = $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_TITLE};
     $log->debug("Evaluating1 [$xpath]\n");
-    my $title = $item->findvalue($xpath);
+    my $title = u_cleanString($item->findvalue($xpath));
 
     $xpath = $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_TITLE2};
     $log->debug("Evaluating2 [$xpath]\n");
