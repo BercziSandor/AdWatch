@@ -17,7 +17,6 @@ my $dom = XML::LibXML->load_html(
 );
 my $G_HTML_TREE = 'XML::LibXML::XPathContext'->new($dom);
 
-
 sub u_clearNewLines {
   my ($input) = @_;
   my $retval = $input;
@@ -44,18 +43,19 @@ sub u_cleanString {
 
 my $xpath;
 
-$xpath='//div[@id="resultlist"]/article';
-my $items = $G_HTML_TREE->findnodes( $xpath ) or return 1;
+$xpath = '//div[@id="resultlist"]/article';
+my $items = $G_HTML_TREE->findnodes($xpath) or return 1;
 my $index;
 foreach my $item ( $items->get_nodelist ) {
   $index++;
   $xpath = './section[@class="content-section"]//span[@itemprop="name"]';
-  my $title = u_cleanString($item->findvalue($xpath));
+  my $title = u_cleanString( $item->findvalue($xpath) );
+  next unless $title;
   say "########\n$index";
   say " title: [$title]";
 
-  my $desc   = u_cleanString( $item->findvalue( './section[@class="content-section"]//div[@itemprop="description"]' ) );
-  my $yearKm = u_cleanString( $item->findvalue( './section[@class="content-section"]//span[@class="desc-left"]' ) );
+  my $desc   = u_cleanString( $item->findvalue('./section[@class="content-section"]//div[@itemprop="description"]') );
+  my $yearKm = u_cleanString( $item->findvalue('./section[@class="content-section"]//span[@class="desc-left"]') );
 
   # 2008 75.000 km
   my $year = $yearKm;
@@ -64,7 +64,7 @@ foreach my $item ( $items->get_nodelist ) {
   my $km  = $yearKm;
   $km =~ s/^\d* (.*)/$1/;
 
-  my $price = u_cleanString( $item->findvalue( './section[@class="content-section"]//span[@class="pull-right"]' ) );
+  my $price = u_cleanString( $item->findvalue('./section[@class="content-section"]//span[@class="pull-right"]') );
   $price =~ s/,-/ €/;
 
   my $text = "\n - $price\n - $year($age)\n - $km\n - $desc\n";
@@ -72,6 +72,6 @@ foreach my $item ( $items->get_nodelist ) {
   $text = u_clearSpaces($text);
   say " text: [$text]";
 
-  my $link = $item->findvalue( './section[@class="content-section"]//div[contains(@class, "header")]/a/@href' );
+  my $link = $item->findvalue('./section[@class="content-section"]//div[contains(@class, "header")]/a/@href');
   say " link: [$link]";
-}
+} ### foreach my $item ( $items->...)
