@@ -15,9 +15,8 @@ my $dom = XML::LibXML->load_html(
   recover         => 1,
   suppress_errors => 1,
 );
-my $xpc = 'XML::LibXML::XPathContext'->new($dom);
+my $G_HTML_TREE = 'XML::LibXML::XPathContext'->new($dom);
 
-# say $xpc->toStringHTML();
 
 sub u_clearNewLines {
   my ($input) = @_;
@@ -26,7 +25,6 @@ sub u_clearNewLines {
   $retval =~ s/\r//g;
   return $retval;
 } ### sub u_clearNewLines
-## perltidy -cscw 2018-10-30: ### sub u_clearSpaces
 
 sub u_clearSpaces {
   my ($input) = @_;
@@ -45,20 +43,54 @@ sub u_cleanString {
 }
 
 my $xpath;
+
+$xpath='//div[@id="resultlist"]/article';
+$items = $G_HTML_TREE->findnodes( $xpath ) or return 1;
+foreach my $item ( $items->get_nodelist ) {
+
+  $xpath = './section[@class="content-section"]//span[@itemprop="name"]';
+  my $title = u_cleanString($item->findvalue($xpath));
+  say " title: [$title]";
+
+  my $desc   = u_cleanString( $G_HTML_TREE->findvalue( './section[@class="content-section"]//div[@itemprop="description"]', $content ) );
+  my $yearKm = u_cleanString( $G_HTML_TREE->findvalue( './section[@class="content-section"]//span[@class="desc-left"]',     $content ) );
+
+  # 2008 75.000 km
+  my $year = $yearKm;
+  $year =~ s/^(\d*) .*/$1/;
+  my $age = 2018 - $year;
+  my $km  = $yearKm;
+  $km =~ s/^\d* (.*)/$1/;
+
+  my $price = u_cleanString( $G_HTML_TREE->findvalue( './section[@class="content-section"]//span[@class="pull-right"]', $content ) );
+  $price =~ s/,-/ €/;
+
+  my $text = "\n - $price\n - $year($age)\n - $km\n - $desc\n";
+  $text =~ s/bleifrei//g;
+  $text = u_clearSpaces($text);
+  say " text: [$text]";
+
+  my $link = $G_HTML_TREE->findvalue( './section[@class="content-section"]//div[contains(@class, "header")]/a/@href', $content );
+  say " link: [$link]";
+}
+
+exit 0;
+
+
 my $result;
-my $articles = $xpc->findnodes('//div[@id="resultlist"]/article');
+my $articles = $G_HTML_TREE->findnodes('//div[@id="resultlist"]/article');
 
 for my $article (@$articles) {
   my $contents = $article->findnodes('./section[@class="content-section"]');
   next unless $contents->size;
 
   for my $content (@$contents) {
-    my $name = u_cleanString( $xpc->findvalue( './/span[@itemprop="name"]', $content ) );
+    my $name = u_cleanString( $G_HTML_TREE->findvalue( './/span[@itemprop="name"]', $content ) );
     say "\n**************";
     say " title: [$name]";
 
-    my $desc   = u_cleanString( $xpc->findvalue( './/div[@itemprop="description"]', $content ) );
-    my $yearKm = u_cleanString( $xpc->findvalue( './/span[@class="desc-left"]',     $content ) );
+    my $desc   = u_cleanString( $G_HTML_TREE->findvalue( './/div[@itemprop="description"]', $content ) );
+    my $yearKm = u_cleanString( $G_HTML_TREE->findvalue( './/span[@class="desc-left"]',     $content ) );
 
     # 2008 75.000 km
     my $year = $yearKm;
@@ -67,7 +99,7 @@ for my $article (@$articles) {
     my $km  = $yearKm;
     $km =~ s/^\d* (.*)/$1/;
 
-    my $price = u_cleanString( $xpc->findvalue( './/span[@class="pull-right"]', $content ) );
+    my $price = u_cleanString( $G_HTML_TREE->findvalue( './/span[@class="pull-right"]', $content ) );
     $price =~ s/,-/ €/;
 
     my $text = "\n - $price\n - $year($age)\n - $km\n - $desc\n";
@@ -75,7 +107,7 @@ for my $article (@$articles) {
     $text = u_clearSpaces($text);
     say " text: [$text]";
 
-    my $link = $xpc->findvalue( './/div[contains(@class, "header")]/a/@href', $content );
+    my $link = $G_HTML_TREE->findvalue( './/div[contains(@class, "header")]/a/@href', $content );
     say " link: [$link]";
 
   } ### for my $content (@$contents)
