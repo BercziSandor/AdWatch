@@ -51,8 +51,8 @@ foreach my $item ( $items->get_nodelist ) {
   my $title = u_cleanString($item->findvalue($xpath));
   say " title: [$title]";
 
-  my $desc   = u_cleanString( $G_HTML_TREE->findvalue( './section[@class="content-section"]//div[@itemprop="description"]', $content ) );
-  my $yearKm = u_cleanString( $G_HTML_TREE->findvalue( './section[@class="content-section"]//span[@class="desc-left"]',     $content ) );
+  my $desc   = u_cleanString( $item->findvalue( './section[@class="content-section"]//div[@itemprop="description"]' ) );
+  my $yearKm = u_cleanString( $item->findvalue( './section[@class="content-section"]//span[@class="desc-left"]' ) );
 
   # 2008 75.000 km
   my $year = $yearKm;
@@ -61,7 +61,7 @@ foreach my $item ( $items->get_nodelist ) {
   my $km  = $yearKm;
   $km =~ s/^\d* (.*)/$1/;
 
-  my $price = u_cleanString( $G_HTML_TREE->findvalue( './section[@class="content-section"]//span[@class="pull-right"]', $content ) );
+  my $price = u_cleanString( $item->findvalue( './section[@class="content-section"]//span[@class="pull-right"]' ) );
   $price =~ s/,-/ €/;
 
   my $text = "\n - $price\n - $year($age)\n - $km\n - $desc\n";
@@ -69,7 +69,7 @@ foreach my $item ( $items->get_nodelist ) {
   $text = u_clearSpaces($text);
   say " text: [$text]";
 
-  my $link = $G_HTML_TREE->findvalue( './section[@class="content-section"]//div[contains(@class, "header")]/a/@href', $content );
+  my $link = $item->findvalue( './section[@class="content-section"]//div[contains(@class, "header")]/a/@href', $content );
   say " link: [$link]";
 }
 
