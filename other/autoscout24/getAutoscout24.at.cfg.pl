@@ -38,8 +38,8 @@ $G_DATA->{mailRecipients} = [ '"Sanyi" <berczi.sandor@gmail.com>', '"Tillatilla1
 
 
 
-  $G_DATA->{sites}->{WillHaben}->{XPATHS}->{XPATH_TALALATI_LISTA} = '//div[@id="resultlist"]';
-  $G_DATA->{sites}->{WillHaben}->{XPATHS}->{XPATH_TITLE}    = './/section[class="content-section"]/div[1]/a/span';
+  $G_DATA->{sites}->{WillHaben}->{XPATHS}->{XPATH_TALALATI_LISTA} = '//div[@id="resultlist"]/article';
+  $G_DATA->{sites}->{WillHaben}->{XPATHS}->{XPATH_TITLE}    = './section[@class="content-section"]//span[@itemprop="name"]';
   $G_DATA->{sites}->{WillHaben}->{XPATHS}->{XPATH_TITLE2}   = './/h2[contains(concat(" ", @class, " "), " cldt-summary-version ")]';
   $G_DATA->{sites}->{WillHaben}->{XPATHS}->{XPATH_DESC}     = './/h3[contains(concat(" ", @class, " "), " cldt-summary-subheadline ")]';
   $G_DATA->{sites}->{WillHaben}->{XPATHS}->{XPATH_LINK}     = './/div[contains(concat(" ", @class, " "), " cldt-summary-titles ")]/a/@href';
