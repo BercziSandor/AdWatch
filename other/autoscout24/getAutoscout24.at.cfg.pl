@@ -34,19 +34,16 @@ $G_DATA->{mailRecipients} = [ '"Sanyi" <berczi.sandor@gmail.com>', '"Tillatilla1
   #   item: <article itemscope="" itemtype="http://schema.org/Product" class="search-result-entry  ">
 
   # title: //*[@id="resultlist"]/article[2]/section[class="content-section"]/div[1]
-#resultlist > article:nth-child(5) > section.content-section > div.header.w-brk > a > span
-
-
+  #resultlist > article:nth-child(5) > section.content-section > div.header.w-brk > a > span
 
   $G_DATA->{sites}->{WillHaben}->{XPATHS}->{XPATH_TALALATI_LISTA} = '//div[@id="resultlist"]/article';
-  $G_DATA->{sites}->{WillHaben}->{XPATHS}->{XPATH_TITLE}    = './section[@class="content-section"]//span[@itemprop="name"]';
-  $G_DATA->{sites}->{WillHaben}->{XPATHS}->{XPATH_TITLE2}   = './/h2[contains(concat(" ", @class, " "), " cldt-summary-version ")]';
-  $G_DATA->{sites}->{WillHaben}->{XPATHS}->{XPATH_DESC}     = './/h3[contains(concat(" ", @class, " "), " cldt-summary-subheadline ")]';
-  $G_DATA->{sites}->{WillHaben}->{XPATHS}->{XPATH_LINK}     = './/div[contains(concat(" ", @class, " "), " cldt-summary-titles ")]/a/@href';
-  $G_DATA->{sites}->{WillHaben}->{XPATHS}->{XPATH_PRICE}    = './/span[contains(concat(" ", @class, " "), " cldt-price ")]';
-  $G_DATA->{sites}->{WillHaben}->{XPATHS}->{XPATH_FEATURES} = './/div[contains(concat(" ", @class, " "), " cldt-summary-vehicle-data ")]/ul/li';
-  $G_DATA->{sites}->{WillHaben}->{textToDelete}
-    = 'Weitere Informationen zum offiziellen Kraftstoffverbrauch und den offiziellen spezifischen CO2-Emissionen neuer Personenkraftwagen können dem "Leitfaden über den Kraftstoffverbrauch, die CO2-Emissionen und den Stromverbrauch neuer Personenkraftwagen" entnommen werden, der an allen Verkaufsstellen und bei der Deutschen Automobil Treuhand GmbH unter www.dat.at unentgeltlich erhältlich ist.';
+  $G_DATA->{sites}->{WillHaben}->{XPATHS}->{XPATH_TITLE}          = './section[@class="content-section"]//span[@itemprop="name"]';
+  $G_DATA->{sites}->{WillHaben}->{XPATHS}->{XPATH_LINK}           = './section[@class="content-section"]//div[contains(@class, "header")]/a/@href';
+  $G_DATA->{sites}->{WillHaben}->{XPATHS}->{XPATH_PRICE}          = './section[@class="content-section"]//span[@class="pull-right"]';
+  $G_DATA->{sites}->{WillHaben}->{XPATHS}->{XPATH_TITLE2}         = '';
+  $G_DATA->{sites}->{WillHaben}->{XPATHS}->{XPATH_DESC}           = './section[@class="content-section"]//div[@itemprop="description"]';
+  $G_DATA->{sites}->{WillHaben}->{XPATHS}->{XPATH_FEATURES}       = '';
+  $G_DATA->{sites}->{WillHaben}->{textToDelete}                   = '';
 
   #  https://www.willhaben.at/iad/gebrauchtwagen/auto/gebrauchtwagenboerse?YEAR_MODEL_FROM=2011&CAR_MODEL/MAKE=1005&PRICE_TO=12340&page=6&view=
   # https://www.willhaben.at/iad/gebrauchtwagen/auto/gebrauchtwagenboerse?CAR_MODEL/MAKE=1005&PRICE_TO=12340&YEAR_MODEL_FROM=2011
