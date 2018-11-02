@@ -539,9 +539,6 @@ sub parseItems {
       @fs = split( '#', $features );
     } ### if ( $site eq 'autoscout24')
 
-    say Dumper(@fs);
-    exit 1;    # FIXME
-
     ######################################################################################################
     # Storing data
     my $t = time;
@@ -615,7 +612,6 @@ sub parseItems {
     print "$sign";
 
   } ### foreach my $item ( $items->...)
-## perltidy -cscw 2018-11-2: ### if ( $site eq 'WillHaben')
 
   if ($G_ITEMS_IN_DB) {
     my $val = ( ( 0.0 + 100 * ( $G_ITEMS_PROCESSED ? $G_ITEMS_PROCESSED : 100 ) ) / $G_ITEMS_IN_DB );
@@ -626,8 +622,6 @@ sub parseItems {
 
   # $log->logwarn( "parseItems(): No items, aborting\n" ) unless $items;
 } ### sub parseItems
-## perltidy -cscw 2018-11-2: ### foreach my $item ( $items->...)
-## perltidy -cscw 2018-11-2: ### sub parseItems
 
 sub collectData {
   $log->info("collectData(): entering");
