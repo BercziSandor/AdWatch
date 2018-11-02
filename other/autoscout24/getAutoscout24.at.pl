@@ -489,8 +489,8 @@ sub parseItems {
       } ### if ( $site eq 'autoscout24')
 
       my $priceStr = u_cleanString( encode_utf8( $item->findvalue( $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_PRICE} ) ) );
-      $price =~ s/,-/ €/;
       $priceStr = "?" unless $priceStr;
+      $priceStr =~ s/,-/ €/;
       my $priceNr = $priceStr;
       $priceNr =~ s/\D//g;
       $priceNr = 0 unless $priceStr;
