@@ -481,413 +481,428 @@ sub parseItems {
     $desc =~ s/bleifrei//g;
 
     # if ( $site eq 'WillHaben' ) {
-      if ( $site eq 'autoscout24' ) {
-        $link = "https://www.autoscout24.at${link}";
+    if ( $site eq 'autoscout24' ) {
+      $link = "https://www.autoscout24.at${link}";
 
-        # /angebote/audi-a3-2-0-tdi-ambition-klimaauto-dpf-alu-6-gang-diesel-schwarz-99d1f527-0d81-ed66-e053-e250040a9fc2
-        $id =~ s/^.*-(.{36})$/$1/g;
-      } ### if ( $site eq 'autoscout24')
+      # /angebote/audi-a3-2-0-tdi-ambition-klimaauto-dpf-alu-6-gang-diesel-schwarz-99d1f527-0d81-ed66-e053-e250040a9fc2
+      $id =~ s/^.*-(.{36})$/$1/g;
+    } ### if ( $site eq 'autoscout24')
 
-      my $priceStr = u_cleanString( encode_utf8( $item->findvalue( $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_PRICE} ) ) );
-      $priceStr = "?" unless $priceStr;
-      $priceStr =~ s/,-/ €/;
-      my $priceNr = $priceStr;
-      $priceNr =~ s/\D//g;
-      $priceNr = 0 unless $priceStr;
+    my $priceStr = u_cleanString( encode_utf8( $item->findvalue( $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_PRICE} ) ) );
+    $priceStr = "?" unless $priceStr;
+    $priceStr =~ s/,-/ €/;
+    my $priceNr = $priceStr;
+    $priceNr =~ s/\D//g;
+    $priceNr = 0 unless $priceStr;
 
-      my @fs;
-      if ( $site eq 'WillHaben' ) {
+    my @fs;
+    if ( $site eq 'WillHaben' ) {
 
-        # 2008 75.000 km
-        my $yearKm = u_cleanString( $item->findvalue('./section[@class="content-section"]//span[@class="desc-left"]') );
-        my $year   = $yearKm;
-        $year =~ s/^(\d*) .*/$1/;
-        my $age = $thisYear - $year;
-        my $km  = $yearKm;
-        $km =~ s/^\d* (.*)/$1/;
+      # '
+      #         340.000 kW (462.060 PS)
+      #  Diesel
+      #  Limousine
+      #     '
 
-        push( @fs, "$year($age)" );
-        push( @fs, "$km" );
-        push( @fs, "$desc" );
 
-        my $text = "\n - $priceStr\n - $year($age)\n - $km\n - $desc\n";
-        $text = u_clearSpaces($text);
-      } ### if ( $site eq 'WillHaben')
+      # 2008 75.000 km
+      my $yearKm = u_cleanString( $item->findvalue('./section[@class="content-section"]//span[@class="desc-left"]') );
+      my $year   = $yearKm;
+      $year =~ s/^(\d*) .*/$1/;
+      my $age = $thisYear - $year;
+      my $km  = $yearKm;
+      $km =~ s/^\d* (.*)/$1/;
 
-      # FEATURES
+      push( @fs, "$year($age)" );
+      push( @fs, "$km" );
 
-      if ( $site eq 'autoscout24' ) {
-        my $features = encode_utf8( join( '#', $item->findvalues( $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_FEATURES} ) ) );
-        $features =~ s/$G_DATA->{sites}->{$site}->{textToDelete}//g;
-        $features =~ s/^ //;
-        $features =~ s/ $//;
-        $features =~ s/ # /#/g;
-        $features =~ s/  / /g;
-        @fs = split( '#', $features );
-      } ### if ( $site eq 'autoscout24')
+      $desc=~ s/[ ]+/ /g;
+      $desc=~ s/^[ ]//g;
+      $desc=~ s/^$//g;
+      $desc=~ s/\n/#/g;
+      $desc=~ s/# $//g;
+      push( @fs, split('# ', $desc) );
 
-      say Dumper(@fs);
-      exit 1;    # FIXME
-
-      ######################################################################################################
-      # Storing data
-      my $t = time;
-      if ( defined $G_DATA->{ads}->{$site}->{$id} ) {
-
-        # $log->debug("Updating [$title] in the database...\n");
-        $G_DATA->{ads}->{$site}->{$id}->{status} = $STATUS_EMPTY;
-
-        if ( not defined $G_DATA->{ads}->{$site}->{$id}->{history} ) {
-          $G_DATA->{ads}->{$site}->{$id}->{history}->{$t} .= "Adatbázisba került; ";
-          $log->debug(" Updating history\n");
-        }
-
-        # $title;
-        # $desc;
-        # $priceNr;
-        #  $priceStr;
-        #  @fs;    # features
-        #  $link;
-        # $info
-
-        # already defined. Is it changed?
-        if ( $G_DATA->{ads}->{$site}->{$id}->{title} ne $title ) {
-          $G_DATA->{ads}->{$site}->{$id}->{history}->{$t} .= "Cím: [" . $G_DATA->{ads}->{$site}->{$id}->{title} . "] -> [$title]; ";
-          $G_DATA->{ads}->{$site}->{$id}->{title}  = $title;
-          $G_DATA->{ads}->{$site}->{$id}->{status} = $STATUS_CHANGED;
-          $log->debug(" Updating title\n");
-        } ### if ( $G_DATA->{ads}->{...})
-
-        if (
-          (
-              $G_DATA->{ads}->{$site}->{$id}->{priceNr}
-            ? $G_DATA->{ads}->{$site}->{$id}->{priceNr}
-            : 0
-          ) != $priceNr
-          ) {
-          $G_DATA->{ads}->{$site}->{$id}->{history}->{$t} .= " Ár: " . $G_DATA->{ads}->{$site}->{$id}->{priceStr} . " -> $priceStr; ";
-          $G_DATA->{ads}->{$site}->{$id}->{priceNr}  = $priceNr;
-          $G_DATA->{ads}->{$site}->{$id}->{priceStr} = $priceStr;
-          $G_DATA->{ads}->{$site}->{$id}->{status}   = $STATUS_CHANGED;
-          $log->debug(" Updating price\n");
-        } ### if ( ( $G_DATA->{ads}->...))
-
-      } else {
-
-        $log->debug("Adding [$title] to the database\n");
-
-        $G_DATA->{ads}->{$site}->{$id}->{history}->{$t} = " Adatbázisba került; ";
-        $G_DATA->{ads}->{$site}->{$id}->{title}         = $title;
-        $G_DATA->{ads}->{$site}->{$id}->{link}          = $link;
-        $G_DATA->{ads}->{$site}->{$id}->{info}          = \@fs;
-        $G_DATA->{ads}->{$site}->{$id}->{desc}          = $desc;
-        $G_DATA->{ads}->{$site}->{$id}->{priceStr}      = $priceStr;
-        $G_DATA->{ads}->{$site}->{$id}->{priceNr}       = $priceNr;
-        $G_DATA->{ads}->{$site}->{$id}->{status}        = $STATUS_NEW;
-      } ### else [ if ( defined $G_DATA->...)]
-
-      $G_DATA->{lastChange} = time;
-
-      my $sign;
-      if ( $G_DATA->{ads}->{$site}->{$id}->{status} eq $STATUS_NEW ) {
-        $sign = "+";
-      } elsif ( $G_DATA->{ads}->{$site}->{$id}->{status} eq $STATUS_CHANGED ) {
-        $sign = "*";
-      } else {
-        $sign = " ";
-      }
-
-      # $log->debug( "\n$id:" . Dumper( $G_DATA->{ads}->{$site}->{$id} ) );
-
-      print "$sign";
-
+      my $text = "\n - $priceStr\n - $year($age)\n - $km\n - $desc\n";
+      $text = u_clearSpaces($text);
     } ### if ( $site eq 'WillHaben')
 
-    if ($G_ITEMS_IN_DB) {
-      my $val = ( ( 0.0 + 100 * ( $G_ITEMS_PROCESSED ? $G_ITEMS_PROCESSED : 100 ) ) / $G_ITEMS_IN_DB );
-      $log->info( sprintf( "] %2d%%", $val ) );
+    # FEATURES
+
+    if ( $site eq 'autoscout24' ) {
+      my $features = encode_utf8( join( '#', $item->findvalues( $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_FEATURES} ) ) );
+      $features =~ s/$G_DATA->{sites}->{$site}->{textToDelete}//g;
+      $features =~ s/^ //;
+      $features =~ s/ $//;
+      $features =~ s/ # /#/g;
+      $features =~ s/  / /g;
+      @fs = split( '#', $features );
+    } ### if ( $site eq 'autoscout24')
+
+    say Dumper(@fs);
+    exit 1;    # FIXME
+
+    ######################################################################################################
+    # Storing data
+    my $t = time;
+    if ( defined $G_DATA->{ads}->{$site}->{$id} ) {
+
+      # $log->debug("Updating [$title] in the database...\n");
+      $G_DATA->{ads}->{$site}->{$id}->{status} = $STATUS_EMPTY;
+
+      if ( not defined $G_DATA->{ads}->{$site}->{$id}->{history} ) {
+        $G_DATA->{ads}->{$site}->{$id}->{history}->{$t} .= "Adatbázisba került; ";
+        $log->debug(" Updating history\n");
+      }
+
+      # $title;
+      # $desc;
+      # $priceNr;
+      #  $priceStr;
+      #  @fs;    # features
+      #  $link;
+      # $info
+
+      # already defined. Is it changed?
+      if ( $G_DATA->{ads}->{$site}->{$id}->{title} ne $title ) {
+        $G_DATA->{ads}->{$site}->{$id}->{history}->{$t} .= "Cím: [" . $G_DATA->{ads}->{$site}->{$id}->{title} . "] -> [$title]; ";
+        $G_DATA->{ads}->{$site}->{$id}->{title}  = $title;
+        $G_DATA->{ads}->{$site}->{$id}->{status} = $STATUS_CHANGED;
+        $log->debug(" Updating title\n");
+      } ### if ( $G_DATA->{ads}->{...})
+
+      if (
+        (
+            $G_DATA->{ads}->{$site}->{$id}->{priceNr}
+          ? $G_DATA->{ads}->{$site}->{$id}->{priceNr}
+          : 0
+        ) != $priceNr
+        ) {
+        $G_DATA->{ads}->{$site}->{$id}->{history}->{$t} .= " Ár: " . $G_DATA->{ads}->{$site}->{$id}->{priceStr} . " -> $priceStr; ";
+        $G_DATA->{ads}->{$site}->{$id}->{priceNr}  = $priceNr;
+        $G_DATA->{ads}->{$site}->{$id}->{priceStr} = $priceStr;
+        $G_DATA->{ads}->{$site}->{$id}->{status}   = $STATUS_CHANGED;
+        $log->debug(" Updating price\n");
+      } ### if ( ( $G_DATA->{ads}->...))
+
     } else {
-      $log->info( sprintf( "] %4d", $G_ITEMS_PROCESSED ) );
+
+      $log->debug("Adding [$title] to the database\n");
+
+      $G_DATA->{ads}->{$site}->{$id}->{history}->{$t} = " Adatbázisba került; ";
+      $G_DATA->{ads}->{$site}->{$id}->{title}         = $title;
+      $G_DATA->{ads}->{$site}->{$id}->{link}          = $link;
+      $G_DATA->{ads}->{$site}->{$id}->{info}          = \@fs;
+      $G_DATA->{ads}->{$site}->{$id}->{desc}          = $desc;
+      $G_DATA->{ads}->{$site}->{$id}->{priceStr}      = $priceStr;
+      $G_DATA->{ads}->{$site}->{$id}->{priceNr}       = $priceNr;
+      $G_DATA->{ads}->{$site}->{$id}->{status}        = $STATUS_NEW;
+    } ### else [ if ( defined $G_DATA->...)]
+
+    $G_DATA->{lastChange} = time;
+
+    my $sign;
+    if ( $G_DATA->{ads}->{$site}->{$id}->{status} eq $STATUS_NEW ) {
+      $sign = "+";
+    } elsif ( $G_DATA->{ads}->{$site}->{$id}->{status} eq $STATUS_CHANGED ) {
+      $sign = "*";
+    } else {
+      $sign = " ";
     }
 
-    # $log->logwarn( "parseItems(): No items, aborting\n" ) unless $items;
+    # $log->debug( "\n$id:" . Dumper( $G_DATA->{ads}->{$site}->{$id} ) );
+
+    print "$sign";
+
   } ### foreach my $item ( $items->...)
+## perltidy -cscw 2018-11-2: ### if ( $site eq 'WillHaben')
+
+  if ($G_ITEMS_IN_DB) {
+    my $val = ( ( 0.0 + 100 * ( $G_ITEMS_PROCESSED ? $G_ITEMS_PROCESSED : 100 ) ) / $G_ITEMS_IN_DB );
+    $log->info( sprintf( "] %2d%%", $val ) );
+  } else {
+    $log->info( sprintf( "] %4d", $G_ITEMS_PROCESSED ) );
+  }
+
+  # $log->logwarn( "parseItems(): No items, aborting\n" ) unless $items;
+} ### sub parseItems
+## perltidy -cscw 2018-11-2: ### foreach my $item ( $items->...)
 ## perltidy -cscw 2018-11-2: ### sub parseItems
 
-  sub collectData {
-    $log->info("collectData(): entering");
-    $collectionDate = strftime "%Y.%m.%d %H:%M:%S", localtime;
+sub collectData {
+  $log->info("collectData(): entering");
+  $collectionDate = strftime "%Y.%m.%d %H:%M:%S", localtime;
 
-    $G_ITEMS_PROCESSED = 0;
+  $G_ITEMS_PROCESSED = 0;
 
-    # AUTOSCOUT
-    foreach my $maker ( sort keys %{ $G_DATA->{sites}->{$site}->{urls} } ) {
-      my $url = $G_DATA->{sites}->{$site}->{urls}->{$maker};
-      $log->info("\n\n** $maker **\n");
+  # AUTOSCOUT
+  foreach my $maker ( sort keys %{ $G_DATA->{sites}->{$site}->{urls} } ) {
+    my $url = $G_DATA->{sites}->{$site}->{urls}->{$maker};
+    $log->info("\n\n** $maker **\n");
+    if (  $G_ITEMS_TO_PROCESS_MAX > 0
+      and $G_ITEMS_PROCESSED >= $G_ITEMS_TO_PROCESS_MAX ) {
+      $log->info("\nElértük a feldolgozási limitet.");
+      return;
+    }
+
+    # getHtml( $url, 1, $maker )
+    # next unless $G_HTML_TREE;
+
+    # pagecount is hard to parse, skipping it.
+    # my $pageCount = parsePageCount( \$html );
+    # $log->logdie("PageCount is 0") if ( $pageCount == 0 );
+    # for ( my $i = 1 ; $i <= $pageCount ; $i++ ) {
+
+    for ( my $i = 1 ; ; $i++ ) {
       if (  $G_ITEMS_TO_PROCESS_MAX > 0
         and $G_ITEMS_PROCESSED >= $G_ITEMS_TO_PROCESS_MAX ) {
         $log->info("\nElértük a feldolgozási limitet.");
         return;
       }
 
-      # getHtml( $url, 1, $maker )
-      # next unless $G_HTML_TREE;
+      # $log->info( sprintf( "\n%2d/%d [", $i, $pageCount ) );
+      # $log->debug( sprintf( "%2.0f%% (%d of %d pages)", ( 0.0 + 100 * ( $i - 1 ) / $pageCount ), $i, $pageCount ) );
+      getHtml( $url, $i, $maker );
+      last unless $G_HTML_TREE;
+      parseItems() or last;
+    } ### for ( my $i = 1 ; ; $i++)
+  } ### foreach my $maker ( sort keys...)
 
-      # pagecount is hard to parse, skipping it.
-      # my $pageCount = parsePageCount( \$html );
-      # $log->logdie("PageCount is 0") if ( $pageCount == 0 );
-      # for ( my $i = 1 ; $i <= $pageCount ; $i++ ) {
+} ### sub collectData
 
-      for ( my $i = 1 ; ; $i++ ) {
-        if (  $G_ITEMS_TO_PROCESS_MAX > 0
-          and $G_ITEMS_PROCESSED >= $G_ITEMS_TO_PROCESS_MAX ) {
-          $log->info("\nElértük a feldolgozási limitet.");
-          return;
-        }
+sub str_replace {
+  my $replace_this = shift;
+  my $with_this    = shift;
+  my $string       = shift;
 
-        # $log->info( sprintf( "\n%2d/%d [", $i, $pageCount ) );
-        # $log->debug( sprintf( "%2.0f%% (%d of %d pages)", ( 0.0 + 100 * ( $i - 1 ) / $pageCount ), $i, $pageCount ) );
-        getHtml( $url, $i, $maker );
-        last unless $G_HTML_TREE;
-        parseItems() or last;
-      } ### for ( my $i = 1 ; ; $i++)
-    } ### foreach my $maker ( sort keys...)
+  if (1) {
+    $string =~ s/$replace_this/$with_this/g;
+  } else {
 
-  } ### sub collectData
+    my $length = length($string);
+    my $target = length($replace_this);
+    for ( my $i = 0 ; $i < $length - $target + 1 ; $i++ ) {
+      if ( substr( $string, $i, $target ) eq $replace_this ) {
+        $string = substr( $string, 0, $i ) . $with_this . substr( $string, $i + $target );
+        return $string;    #Comment this if you what a global replace
+      }
+    } ### for ( my $i = 0 ; $i < ...)
+  } ### else [ if (1) ]
+  return $string;
+} ### sub str_replace
 
-  sub str_replace {
-    my $replace_this = shift;
-    my $with_this    = shift;
-    my $string       = shift;
+sub dataSave {
+  $G_DATA = () unless $G_DATA;
+  if ( $G_DATA->{sendMail} == 1 ) {
+    store $G_DATA, "$SCRIPTDIR/data.dat";
+  } else {
+    $log->info("Az adatokat nem mentettük el, mert nem történt levélküldés sem, a \$G_DATA->{sendMail} változó értéke miatt.\n");
+  }
+} ### sub dataSave
 
-    if (1) {
-      $string =~ s/$replace_this/$with_this/g;
+sub dataLoad {
+
+  # $G_DATA = () unless $G_DATA;
+  if ( not -e "$SCRIPTDIR/data.dat" ) {
+    $log->info("dataLoad(): returning - there is no file to load.\n");
+    return;
+  }
+  $G_DATA = retrieve("$SCRIPTDIR/data.dat") or die;
+  foreach my $id ( keys %{ $G_DATA->{ads}->{$site} } ) {
+    $G_DATA->{ads}->{$site}->{$id}->{status} = $STATUS_EMPTY;
+  }
+} ### sub dataLoad
+
+sub sndMail {
+
+  # http://www.revsys.com/writings/perl/sending-email-with-perl.html
+  my ($bodyText) = @_;
+
+  $log->info("Levél küldése...\n");
+
+  $G_DATA->{lastMailSendTime} = time if ( not defined $G_DATA->{lastMailSendTime} );
+  if ( not $bodyText ) {
+    if ( ( time - $G_DATA->{lastMailSendTime} ) > ( 60 * 60 ) ) {
+      $log->info(" Nincs változás, viszont elég régen nem küldtünk levelet, menjen egy visszajelzés.\n");
+      $bodyText = "Nyugalom, fut a hirdetések figyelése. Viszont nincs változás, ez van.";
     } else {
-
-      my $length = length($string);
-      my $target = length($replace_this);
-      for ( my $i = 0 ; $i < $length - $target + 1 ; $i++ ) {
-        if ( substr( $string, $i, $target ) eq $replace_this ) {
-          $string = substr( $string, 0, $i ) . $with_this . substr( $string, $i + $target );
-          return $string;    #Comment this if you what a global replace
-        }
-      } ### for ( my $i = 0 ; $i < ...)
-    } ### else [ if (1) ]
-    return $string;
-  } ### sub str_replace
-
-  sub dataSave {
-    $G_DATA = () unless $G_DATA;
-    if ( $G_DATA->{sendMail} == 1 ) {
-      store $G_DATA, "$SCRIPTDIR/data.dat";
-    } else {
-      $log->info("Az adatokat nem mentettük el, mert nem történt levélküldés sem, a \$G_DATA->{sendMail} változó értéke miatt.\n");
-    }
-  } ### sub dataSave
-
-  sub dataLoad {
-
-    # $G_DATA = () unless $G_DATA;
-    if ( not -e "$SCRIPTDIR/data.dat" ) {
-      $log->info("dataLoad(): returning - there is no file to load.\n");
+      $log->info(" Kihagyva: nincs változás, nem spamelünk. ;)\n");
       return;
     }
-    $G_DATA = retrieve("$SCRIPTDIR/data.dat") or die;
-    foreach my $id ( keys %{ $G_DATA->{ads}->{$site} } ) {
-      $G_DATA->{ads}->{$site}->{$id}->{status} = $STATUS_EMPTY;
-    }
-  } ### sub dataLoad
+  } ### if ( not $bodyText )
 
-  sub sndMail {
-
-    # http://www.revsys.com/writings/perl/sending-email-with-perl.html
-    my ($bodyText) = @_;
-
-    $log->info("Levél küldése...\n");
-
-    $G_DATA->{lastMailSendTime} = time if ( not defined $G_DATA->{lastMailSendTime} );
-    if ( not $bodyText ) {
-      if ( ( time - $G_DATA->{lastMailSendTime} ) > ( 60 * 60 ) ) {
-        $log->info(" Nincs változás, viszont elég régen nem küldtünk levelet, menjen egy visszajelzés.\n");
-        $bodyText = "Nyugalom, fut a hirdetések figyelése. Viszont nincs változás, ez van.";
-      } else {
-        $log->info(" Kihagyva: nincs változás, nem spamelünk. ;)\n");
-        return;
-      }
-    } ### if ( not $bodyText )
-
-    {
-      my $fileName = ${collectionDate};
-      $fileName =~ s/[.:]//g;
-      $fileName =~ s/[ ]/_/g;
-      if ( $G_DATA->{sendMail} == 1 ) {
-        $fileName = "./mails/${fileName}.txt";
-      } else {
-        $fileName = "./mails/${fileName}_NOT_SENT.txt";
-      }
-      $log->debug("Szöveg mentése $fileName file-ba...");
-
-      open( MYFILE, ">$fileName" ) or die "$fileName: $!";
-      print MYFILE $bodyText;
-      close(MYFILE);
-    }
-
-    $bodyText = u_text2html($bodyText);
-
-    {
-      my $fileName = ${collectionDate};
-      $fileName =~ s/[.:]//g;
-      $fileName =~ s/[ ]/_/g;
-      if ( $G_DATA->{sendMail} == 1 ) {
-        $fileName = "./mails/${fileName}.html";
-      } else {
-        $fileName = "./mails/${fileName}_NOT_SENT.html";
-      }
-      $log->debug("Szöveg mentése $fileName file-ba...");
-      open( MYFILE, ">$fileName" ) or die $!;
-      print MYFILE $bodyText;
-      close(MYFILE);
-    }
-
-    foreach ( @{ $G_DATA->{mailRecipients} } ) {
-      my $email = Email::Simple->create(
-        header => [
-          To             => $_,
-          From           => '"Sanyi" <berczi.sandor@gmail.com>',
-          Subject        => 'Autoscout24.at frissítés',
-          'Content-Type' => 'text/html',
-        ],
-        body => $bodyText,
-      );
-      $log->info(" $_ ...\n");
-
-      # Email::Sender::Simple
-      if ( $G_DATA->{sendMail} == 1 ) {
-        sendmail($email) or die $!;
-        $log->info("Levél küldése sikeres. To: [$_]\n");
-      }
-
-    } ### foreach ( @{ $G_DATA->{mailRecipients...}})
-
+  {
+    my $fileName = ${collectionDate};
+    $fileName =~ s/[.:]//g;
+    $fileName =~ s/[ ]/_/g;
     if ( $G_DATA->{sendMail} == 1 ) {
-      $G_DATA->{lastMailSendTime} = time;
+      $fileName = "./mails/${fileName}.txt";
     } else {
-      $log->info("Levélküldés kihagyva (ok: 'sendMail' változó értéke: false.\n");
+      $fileName = "./mails/${fileName}_NOT_SENT.txt";
     }
-  } ### sub sndMail
+    $log->debug("Szöveg mentése $fileName file-ba...");
 
-  sub u_text2html {
-    my $text    = shift;
-    my $textBak = $text;
-    $text =~ s|\n|<br>|g;
+    open( MYFILE, ">$fileName" ) or die "$fileName: $!";
+    print MYFILE $bodyText;
+    close(MYFILE);
+  }
 
-    $text =~ s| \[(.*?)\]\((.*?)\)| <a href="${2}">${1}</a>|g;
-    $text =~ s|\n|<br/>|g;
+  $bodyText = u_text2html($bodyText);
 
-    return $text;
-  } ### sub u_text2html
-
-  sub getMailText {
-    my $mailTextHtml  = "";
-    my $text_changed  = "";
-    my $text_new      = "";
-    my $count_new     = 0;
-    my $count_changed = 0;
-
-    $mailTextHtml = "Utolsó állapot: $dataFileDate\n\n";
-    foreach my $id ( sort keys %{ $G_DATA->{ads}->{$site} } ) {
-      my $item = $G_DATA->{ads}->{$site}->{$id};
-      if ( $item->{status} eq $STATUS_NEW ) {
-        $count_new++;
-        $log->debug("$id: new\n");
-      } elsif ( $item->{status} eq $STATUS_CHANGED ) {
-        $count_changed++;
-        $log->debug("$id: changed\n");
-      } else {
-        $log->debug( "$id: ??? .[" . $item->{status} . "]\n" );
-        next;
-      }
-      $mailTextHtml .= getMailTextforItem($id);
-
-    } ### foreach my $id ( sort keys ...)
-
-    $mailTextHtml .= "\n";
-    $mailTextHtml .= "$G_ITEMS_PROCESSED feldolgozott hirdetés\n";
-
-    if ( ( $count_new + $count_changed ) == 0 ) {
-      $log->info("\nNincs újdonság.\n$mailTextHtml");
-      $mailTextHtml = "";
+  {
+    my $fileName = ${collectionDate};
+    $fileName =~ s/[.:]//g;
+    $fileName =~ s/[ ]/_/g;
+    if ( $G_DATA->{sendMail} == 1 ) {
+      $fileName = "./mails/${fileName}.html";
     } else {
-      $mailTextHtml .= "\n_____________________\n$count_new ÚJ hirdetés\n";
-      $mailTextHtml .= "$count_changed MEGVÁLTOZOTT hirdetés\n" if $count_changed;
-      $log->info("$mailTextHtml\n");
+      $fileName = "./mails/${fileName}_NOT_SENT.html";
     }
-    return $mailTextHtml;
-  } ### sub getMailText
+    $log->debug("Szöveg mentése $fileName file-ba...");
+    open( MYFILE, ">$fileName" ) or die $!;
+    print MYFILE $bodyText;
+    close(MYFILE);
+  }
 
-  sub getMailTextforItem {
-    my ( $id, $format ) = @_;
-    my $retval = "";
-    return undef if ( not defined( $G_DATA->{ads}->{$site}->{$id} ) );
-    my $item = $G_DATA->{ads}->{$site}->{$id};
-    my $sign = (
-      $item->{status} eq $STATUS_NEW
-      ? "ÚJ!"
-      : ( $item->{status} eq $STATUS_CHANGED ? "*" : "" )
+  foreach ( @{ $G_DATA->{mailRecipients} } ) {
+    my $email = Email::Simple->create(
+      header => [
+        To             => $_,
+        From           => '"Sanyi" <berczi.sandor@gmail.com>',
+        Subject        => 'Autoscout24.at frissítés',
+        'Content-Type' => 'text/html',
+      ],
+      body => $bodyText,
     );
-    return undef if ( not $sign );
+    $log->info(" $_ ...\n");
 
-    # $retval .= "$sign <a href=\"" . $item->{link} . "\">" . $item->{title} . "</a>\n";
-    $retval .= "$sign [" . $item->{title} . "](" . $item->{link} . ")\n";
-    $retval .= " - " . $item->{priceStr} . "\n";
-    $retval .= " - " . str_replace( "^, ", "", join( ', ', @{ $item->{info} } ) ) . "\n";
-
-    foreach my $dt ( sort keys %{ $item->{history} } ) {
-      $retval .= " - " . strftime( "%Y.%m.%d %H:%M", localtime($dt) ) . ": " . $item->{history}->{$dt} . "\n";
+    # Email::Sender::Simple
+    if ( $G_DATA->{sendMail} == 1 ) {
+      sendmail($email) or die $!;
+      $log->info("Levél küldése sikeres. To: [$_]\n");
     }
 
-    $retval .= "\n";
+  } ### foreach ( @{ $G_DATA->{mailRecipients...}})
 
-    return $retval;
-  } ### sub getMailTextforItem
+  if ( $G_DATA->{sendMail} == 1 ) {
+    $G_DATA->{lastMailSendTime} = time;
+  } else {
+    $log->info("Levélküldés kihagyva (ok: 'sendMail' változó értéke: false.\n");
+  }
+} ### sub sndMail
 
-  sub process {
-    stopWatch::reset();
-    stopWatch::continue($SW_FULL_PROCESSING);
-    collectData();
+sub u_text2html {
+  my $text    = shift;
+  my $textBak = $text;
+  $text =~ s|\n|<br>|g;
 
-    sndMail( getMailText() );
-    dataSave();
-    stopWatch::pause($SW_FULL_PROCESSING);
+  $text =~ s| \[(.*?)\]\((.*?)\)| <a href="${2}">${1}</a>|g;
+  $text =~ s|\n|<br/>|g;
 
-    stopWatch::info();
-  } ### sub process
+  return $text;
+} ### sub u_text2html
 
-  sub main {
-    ini();
+sub getMailText {
+  my $mailTextHtml  = "";
+  my $text_changed  = "";
+  my $text_new      = "";
+  my $count_new     = 0;
+  my $count_changed = 0;
 
-    for ( ; ; ) {
-      my $time = time;
-      while ( ( ( 0 + strftime( "%H", localtime ) ) > $G_DATA->{silentHours}->{from} )
-        and ( ( 0 + strftime( "%H", localtime ) ) < $G_DATA->{silentHours}->{till} ) ) {
-        $log->info("Éjszaka nem dolgozunk, majd reggel mennek ki az ajánlatok egyben\n");
-        sleep( 1 * 60 );    # wait 1 minute
-      }
+  $mailTextHtml = "Utolsó állapot: $dataFileDate\n\n";
+  foreach my $id ( sort keys %{ $G_DATA->{ads}->{$site} } ) {
+    my $item = $G_DATA->{ads}->{$site}->{$id};
+    if ( $item->{status} eq $STATUS_NEW ) {
+      $count_new++;
+      $log->debug("$id: new\n");
+    } elsif ( $item->{status} eq $STATUS_CHANGED ) {
+      $count_changed++;
+      $log->debug("$id: changed\n");
+    } else {
+      $log->debug( "$id: ??? .[" . $item->{status} . "]\n" );
+      next;
+    }
+    $mailTextHtml .= getMailTextforItem($id);
 
-      process();
+  } ### foreach my $id ( sort keys ...)
 
-      my $timeToWait = ( $time + $G_DATA->{G_WAIT_BETWEEN_FULL_PROCESS_IN_SEC} ) - time;
-      if ( $timeToWait < 0 ) {
-        $log->warn(
-"Warning: Túl alacsony a G_WAIT_BETWEEN_FULL_PROCESS_IN_SEC változó értéke: folyamatosan fut a feldolgozás. \nA mostani futás hossza "
-            . ( time - $time ) );
-      } else {
-        $log->info( sprintf( "Várakozás a következő feldolgozásig: %d másodperc...\n", $timeToWait ) );
-        sleep($timeToWait);
-      }
+  $mailTextHtml .= "\n";
+  $mailTextHtml .= "$G_ITEMS_PROCESSED feldolgozott hirdetés\n";
 
-    } ### for ( ; ; )
-  } ### sub main
+  if ( ( $count_new + $count_changed ) == 0 ) {
+    $log->info("\nNincs újdonság.\n$mailTextHtml");
+    $mailTextHtml = "";
+  } else {
+    $mailTextHtml .= "\n_____________________\n$count_new ÚJ hirdetés\n";
+    $mailTextHtml .= "$count_changed MEGVÁLTOZOTT hirdetés\n" if $count_changed;
+    $log->info("$mailTextHtml\n");
+  }
+  return $mailTextHtml;
+} ### sub getMailText
 
-  $site = 'WillHaben';
-  main();
+sub getMailTextforItem {
+  my ( $id, $format ) = @_;
+  my $retval = "";
+  return undef if ( not defined( $G_DATA->{ads}->{$site}->{$id} ) );
+  my $item = $G_DATA->{ads}->{$site}->{$id};
+  my $sign = (
+    $item->{status} eq $STATUS_NEW
+    ? "ÚJ!"
+    : ( $item->{status} eq $STATUS_CHANGED ? "*" : "" )
+  );
+  return undef if ( not $sign );
+
+  # $retval .= "$sign <a href=\"" . $item->{link} . "\">" . $item->{title} . "</a>\n";
+  $retval .= "$sign [" . $item->{title} . "](" . $item->{link} . ")\n";
+  $retval .= " - " . $item->{priceStr} . "\n";
+  $retval .= " - " . str_replace( "^, ", "", join( ', ', @{ $item->{info} } ) ) . "\n";
+
+  foreach my $dt ( sort keys %{ $item->{history} } ) {
+    $retval .= " - " . strftime( "%Y.%m.%d %H:%M", localtime($dt) ) . ": " . $item->{history}->{$dt} . "\n";
+  }
+
+  $retval .= "\n";
+
+  return $retval;
+} ### sub getMailTextforItem
+
+sub process {
+  stopWatch::reset();
+  stopWatch::continue($SW_FULL_PROCESSING);
+  collectData();
+
+  sndMail( getMailText() );
+  dataSave();
+  stopWatch::pause($SW_FULL_PROCESSING);
+
+  stopWatch::info();
+} ### sub process
+
+sub main {
+  ini();
+
+  for ( ; ; ) {
+    my $time = time;
+    while ( ( ( 0 + strftime( "%H", localtime ) ) > $G_DATA->{silentHours}->{from} )
+      and ( ( 0 + strftime( "%H", localtime ) ) < $G_DATA->{silentHours}->{till} ) ) {
+      $log->info("Éjszaka nem dolgozunk, majd reggel mennek ki az ajánlatok egyben\n");
+      sleep( 1 * 60 );    # wait 1 minute
+    }
+
+    process();
+
+    my $timeToWait = ( $time + $G_DATA->{G_WAIT_BETWEEN_FULL_PROCESS_IN_SEC} ) - time;
+    if ( $timeToWait < 0 ) {
+      $log->warn(
+        "Warning: Túl alacsony a G_WAIT_BETWEEN_FULL_PROCESS_IN_SEC változó értéke: folyamatosan fut a feldolgozás. \nA mostani futás hossza "
+          . ( time - $time ) );
+    } else {
+      $log->info( sprintf( "Várakozás a következő feldolgozásig: %d másodperc...\n", $timeToWait ) );
+      sleep($timeToWait);
+    }
+
+  } ### for ( ; ; )
+} ### sub main
+
+$site = 'WillHaben';
+main();
