@@ -510,7 +510,7 @@ sub parseItems {
         push( @fs, "$km" );
         push( @fs, "$desc" );
 
-        my $text = "\n - $price\n - $year($age)\n - $km\n - $desc\n";
+        my $text = "\n - $priceStr\n - $year($age)\n - $km\n - $desc\n";
         $text = u_clearSpaces($text);
       } ### if ( $site eq 'WillHaben')
 
