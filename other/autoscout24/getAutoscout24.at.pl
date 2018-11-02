@@ -480,7 +480,7 @@ sub parseItems {
     my $desc = $item->findvalue( $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_DESC} );
     $desc =~ s/bleifrei//g;
 
-    if ( $site eq 'WillHaben' ) {
+    # if ( $site eq 'WillHaben' ) {
       if ( $site eq 'autoscout24' ) {
         $link = "https://www.autoscout24.at${link}";
 
@@ -602,7 +602,6 @@ sub parseItems {
       print "$sign";
 
     } ### if ( $site eq 'WillHaben')
-## perltidy -cscw 2018-11-2: ### foreach my $item ( $items->...)
 
     if ($G_ITEMS_IN_DB) {
       my $val = ( ( 0.0 + 100 * ( $G_ITEMS_PROCESSED ? $G_ITEMS_PROCESSED : 100 ) ) / $G_ITEMS_IN_DB );
