@@ -464,7 +464,6 @@ sub parseItems {
     my $title = u_cleanString( $item->findvalue($xpath) );
     $log->debug("title:  [$xpath]: [$title]\n");
 
-
     if ( $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_TITLE2} ) {
       $xpath = $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_TITLE2};
 
@@ -492,11 +491,12 @@ sub parseItems {
     my $desc = $item->findvalue( $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_DESC} );
     $desc =~ s/bleifrei//g;
 
-    my $priceStr = u_cleanString( $item->findvalue( $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_PRICE} ) );
-    $log->info( "XPATH_PRICE:            [" . $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_PRICE} . "]\n" );
-    $log->info( "findvalue(XPATH_PRICE): [" . $item->findvalue( $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_PRICE} ) . "]\n" );
-    $log->info( "find(XPATH_PRICE)->tl:  [" . $item->find( $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_PRICE} )->to_literal() . "]\n" );
-    $log->info( "find(XPATH_PRICE)->tC:  [" . $item->find( $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_PRICE} )->[0]->textContent . "]\n" );
+    $xpath = $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_PRICE};
+    my $priceStr = u_cleanString( $item->findvalue($xpath) );
+    $log->debug("priceStr:  [$xpath]: [$priceStr]\n");
+    $log->info( "findvalue(XPATH_PRICE): [" . $item->findvalue($xpath) . "]\n" );
+    $log->info( "find(XPATH_PRICE)->tl:  [" . $item->find($xpath)->to_literal() . "]\n" );
+    $log->info( "find(XPATH_PRICE)->tC:  [" . $item->find($xpath)->[ 0 ]->textContent . "]\n" );
     $log->info( "cleaned:                [" . $priceStr . "]\n" );
     $priceStr =~ s/,-/ €/;
     $priceStr = "?" unless $priceStr;
