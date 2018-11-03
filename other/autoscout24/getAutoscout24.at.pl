@@ -462,8 +462,8 @@ sub parseItems {
 
     $xpath = $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_TITLE};
     my $title = u_cleanString( $item->findvalue($xpath) );
+    $log->debug("title:  [$xpath]: [$title]\n");
 
-    # $log->debug("Evaluating1 [$xpath]: [$title]\n");
 
     if ( $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_TITLE2} ) {
       $xpath = $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_TITLE2};
@@ -473,14 +473,12 @@ sub parseItems {
       $title .= " - " . $title2 if $title2;
     } ### if ( $G_DATA->{sites}->...)
 
-    $title = encode_utf8($title);
-    $log->info("parseItems(): title: [$title]\n");
     next unless $title;
+    $title = encode_utf8($title);
     $G_ITEMS_PROCESSED++;
 
     my $link = $item->findvalue( $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_LINK} );
 
-    # if ( $site eq 'WillHaben' ) {
     my $id;
     if ( $site eq 'autoscout24' ) {
       $link = "https://www.autoscout24.at${link}";
