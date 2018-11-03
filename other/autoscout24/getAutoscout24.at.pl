@@ -488,22 +488,29 @@ sub parseItems {
     }
 
     $xpath = $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_DESC};
-    my $desc = u_cleanString($item->findvalue($xpath));
+    my $desc = u_cleanString( $item->findvalue($xpath) );
     $desc =~ s/bleifrei//g;
     $log->debug("desc:  [$xpath]: [$desc]\n");
 
-    $xpath = './section[@class="content-section"]/div[@class="info"]/script';
-    my $script = u_cleanString( $item->findvalue($xpath) );
     $log->debug("script:   [$xpath]: [$script]\n");
 
-    $xpath = $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_PRICE};
-    my $priceStr = u_cleanString( $item->findvalue($xpath) );
-    $log->debug("priceStr:   [$xpath]: [$priceStr]\n");
-    $log->info( "desc left:  [" . u_cleanString( $item->findvalue('./section[@class="content-section"]//span[@class="desc-left"]') ) . "]\n" );
-    $log->info( "pull right: [" . u_cleanString( $item->findvalue('./section[@class="content-section"]//span[@class="pull-right"]') ) . "]\n" );
-    $log->info( "find(XPATH_PRICE)->tl:  [" . $item->find($xpath)->to_literal() . "]\n" );
-    $log->info( "find(XPATH_PRICE)->tC:  [" . $item->find($xpath)->[ 0 ]->textContent . "]\n" );
-    $log->info( "cleaned:                [" . $priceStr . "]\n" );
+    my $priceStr;
+    if ( $site eq 'WillHaben' ) {
+      $xpath = './section[@class="content-section"]/div[@class="info"]/script';
+      my $script = u_cleanString( $item->findvalue($xpath) );
+
+      # ('DQogICAgICAgICAgICAgICAgPHNwYW4gY2xhc3M9InB1bGwtcmlnaHQiPiA1NTAsLSA8L3NwYW4+DQogICAgICAgICAgICA=')
+      $script =~ s/.*'(.*ICA=)'.*/$1/;
+      $script = MIME::Base64::decode_base64($script);
+
+      # <span class="pull-right"> 550,- </span>
+      $script =~ s/.*>(.*)<.*/$1/;
+      $priceStr = u_cleanString($script);
+    } else {
+      $xpath    = $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_PRICE};
+      $priceStr = u_cleanString( $item->findvalue($xpath) );
+    }
+
     $priceStr =~ s/,-/ €/;
     $priceStr = "?" unless $priceStr;
     my $priceNr = $priceStr;
