@@ -453,7 +453,6 @@ sub parseItems {
   my $xpath;
   $xpath = $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_TALALATI_LISTA};
 
-  # $log->debug("Evaluating0 [$xpath]\n");
   $items = $G_HTML_TREE->findnodes($xpath) or return 0;
   $log->debug( " There are " . scalar( $items->get_nodelist ) . " 'talalati_lista' items\n" );
   return 0 unless $items;
@@ -492,6 +491,10 @@ sub parseItems {
     my $desc = u_cleanString($item->findvalue($xpath));
     $desc =~ s/bleifrei//g;
     $log->debug("desc:  [$xpath]: [$desc]\n");
+
+    $xpath = './section[@class="content-section"]/div[@class="info"]/script';
+    my $script = u_cleanString( $item->findvalue($xpath) );
+    $log->debug("script:   [$xpath]: [$script]\n");
 
     $xpath = $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_PRICE};
     my $priceStr = u_cleanString( $item->findvalue($xpath) );
