@@ -782,7 +782,7 @@ sub sndMail {
       header => [
         To             => $_,
         From           => '"Sanyi" <berczi.sandor@gmail.com>',
-        Subject        => 'Autoscout24.at frissítés',
+        Subject        => "$site frissítés",
         'Content-Type' => 'text/html',
       ],
       body => $bodyText,
