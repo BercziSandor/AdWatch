@@ -489,7 +489,7 @@ sub parseItems {
     }
 
     $xpath = $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_DESC};
-    my $desc = $item->findvalue($xpath);
+    my $desc = u_cleanString($item->findvalue($xpath));
     $desc =~ s/bleifrei//g;
     $log->debug("desc:  [$xpath]: [$desc]\n");
 
