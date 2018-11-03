@@ -481,16 +481,15 @@ sub parseItems {
     my $link = $item->findvalue( $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_LINK} );
 
     # if ( $site eq 'WillHaben' ) {
+    my $id;
     if ( $site eq 'autoscout24' ) {
       $link = "https://www.autoscout24.at${link}";
-
-      # /angebote/audi-a3-2-0-tdi-ambition-klimaauto-dpf-alu-6-gang-diesel-schwarz-99d1f527-0d81-ed66-e053-e250040a9fc2
+      $id = $link;
       $id =~ s/^.*-(.{36})$/$1/g;
     } elsif ( $site eq 'WillHaben' ) {
       $link = "https://www.willhaben.at${link}";
+      $id = $link;
     }
-
-    my $id = $link;
 
     my $desc = $item->findvalue( $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_DESC} );
     $desc =~ s/bleifrei//g;
