@@ -204,7 +204,6 @@ sub getUrls {
   $log->info("getUrls -> ${site}\n");
   if ( $site eq $SITE_AUTOSCOUT24 ) {
 
-    # AUTOSCOUT
     foreach my $maker ( sort keys %{ $G_DATA->{sites}->{$site}->{searchConfig}->{mmvmk0} } ) {
       $log->info("maker: [$maker]\n");
       my $out = "https://www.autoscout24.at/ergebnisse?";
@@ -257,7 +256,7 @@ sub getUrls {
       die "Define G_DATA->{$site}->{makers}->{$maker}, it isn't, aborting." if not defined $G_DATA->{sites}->{$site}->{makers}->{$maker};
       $out .= "$makerString=" . $G_DATA->{sites}->{$site}->{makers}->{$maker};
 
-      # $out .= "&YEAR_MODEL_FROM=" . ( $thisYear - ( $G_DATA->{sites}->{$site}->{searchConfig}->{$makerString}->{$maker}->{maxAge} ) );
+      $out .= "&YEAR_MODEL_FROM=" . ( $thisYear - ( $G_DATA->{sites}->{$site}->{searchConfig}->{$makerString}->{$maker}->{maxAge} ) );
       # $log->info( "out=$out\n" );
 
       foreach my $k ( sort keys %{ $G_DATA->{sites}->{$site}->{searchConfig}->{defaults} } ) {
