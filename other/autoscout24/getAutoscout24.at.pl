@@ -17,7 +17,6 @@ use WWW::Mechanize;
 use LWP::UserAgent;
 use LWP::Protocol::https;
 
-
 # Cookie stuff
 use HTTP::Cookies;
 use HTTP::CookieJar;
@@ -198,9 +197,8 @@ sub getUrls {
   $log->info("getUrls(): entering\n");
   die "Run ini() before getUrls, aborting.\n" if ( not defined $thisYear );
 
-  my $site = 'AUTOSCOUT';
   $log->info("getUrls -> ${site}\n");
-  if (0) {
+  if ( $site = 'autoscout24' ) {
 
     # AUTOSCOUT
     foreach my $maker ( sort keys %{ $G_DATA->{sites}->{$site}->{searchConfig}->{mmvmk0} } ) {
@@ -242,49 +240,44 @@ sub getUrls {
       $log->debug( "\$G_DATA->{sites}->{$site}->{urls}->{" . $maker . "}=" . $out . "\n" );
       $G_DATA->{sites}->{$site}->{urls}->{$maker} = $out;
     } ### foreach my $maker ( sort keys...)
-  } ### if (0)
 
-  # WillHaben
-  $site = 'WillHaben';
-  $log->info("getUrls -> ${site}\n");
-  my $makerString = 'CAR_MODEL/MAKE';
-  foreach my $maker ( sort keys %{ $G_DATA->{sites}->{$site}->{searchConfig}->{$makerString} } ) {
-    $log->info("maker: [$maker]\n");
-    next if ( not defined $G_DATA->{sites}->{$site}->{searchConfig}->{$makerString}->{$maker}->{maxAge} );
-    my $out = $G_DATA->{sites}->{$site}->{searchUrlRoot};
+  } elsif ( $site == 'WillHaben' ) {
 
-    # $log->info( Dumper( $G_DATA ) );
-    die "Define G_DATA->{$site}->{makers}->{$maker}, it isn't, aborting." if not defined $G_DATA->{sites}->{$site}->{makers}->{$maker};
-    $out .= "$makerString=" . $G_DATA->{sites}->{$site}->{makers}->{$maker};
+    my $makerString = 'CAR_MODEL/MAKE';
+    foreach my $maker ( sort keys %{ $G_DATA->{sites}->{$site}->{searchConfig}->{$makerString} } ) {
+      $log->info("maker: [$maker]\n");
+      next if ( not defined $G_DATA->{sites}->{$site}->{searchConfig}->{$makerString}->{$maker}->{maxAge} );
+      my $out = $G_DATA->{sites}->{$site}->{searchUrlRoot};
 
-    # $log->info( "out=$out\n" );
-    $out .= "&YEAR_MODEL_FROM=" . ( $thisYear - ( $G_DATA->{sites}->{$site}->{searchConfig}->{$makerString}->{$maker}->{maxAge} ) );
+      # $log->info( Dumper( $G_DATA ) );
+      die "Define G_DATA->{$site}->{makers}->{$maker}, it isn't, aborting." if not defined $G_DATA->{sites}->{$site}->{makers}->{$maker};
+      $out .= "$makerString=" . $G_DATA->{sites}->{$site}->{makers}->{$maker};
 
-    # $log->info( "out=$out\n" );
+      # $out .= "&YEAR_MODEL_FROM=" . ( $thisYear - ( $G_DATA->{sites}->{$site}->{searchConfig}->{$makerString}->{$maker}->{maxAge} ) );
+      # $log->info( "out=$out\n" );
 
-    foreach my $k ( sort keys %{ $G_DATA->{sites}->{$site}->{searchConfig}->{defaults} } ) {
-      my $val;
-      $log->debug("Default: $k\n");
-      if ( defined $G_DATA->{sites}->{$site}->{searchConfig}->{$makerString}->{$maker}->{$k} ) {
-        $val = $G_DATA->{sites}->{$site}->{searchConfig}->{$makerString}->{$maker}->{$k};
-      } else {
-        $val = $G_DATA->{sites}->{$site}->{searchConfig}->{defaults}->{$k};
-      }
-      if ( index( $val, ',' ) > 0 ) {
-        my @vals = split( ',', $val );
-        foreach my $v (@vals) {
-          $out .= "&$k=$v";
+      foreach my $k ( sort keys %{ $G_DATA->{sites}->{$site}->{searchConfig}->{defaults} } ) {
+        my $val;
+        $log->debug("Default: $k\n");
+        if ( defined $G_DATA->{sites}->{$site}->{searchConfig}->{$makerString}->{$maker}->{$k} ) {
+          $val = $G_DATA->{sites}->{$site}->{searchConfig}->{$makerString}->{$maker}->{$k};
+        } else {
+          $val = $G_DATA->{sites}->{$site}->{searchConfig}->{defaults}->{$k};
         }
-      } else {
-        $out .= "&$k=$val";
-      }
+        if ( index( $val, ',' ) > 0 ) {
+          my @vals = split( ',', $val );
+          foreach my $v (@vals) {
+            $out .= "&$k=$v";
+          }
+        } else {
+          $out .= "&$k=$val";
+        }
+      } ### foreach my $k ( sort keys %...)
 
-      # $log->debug("out=[$out]\n");
-    } ### foreach my $k ( sort keys %...)
-
-    # $log->debug( "\$G_DATA->{sites}->{$site}->{urls}->{" . $maker . "}=" . $out . "\n" );
-    $G_DATA->{sites}->{$site}->{urls}->{$maker} = $out;
-  } ### foreach my $maker ( sort keys...)
+      # $log->debug( "\$G_DATA->{sites}->{$site}->{urls}->{" . $maker . "}=" . $out . "\n" );
+      $G_DATA->{sites}->{$site}->{urls}->{$maker} = $out;
+    } ### foreach my $maker ( sort keys...)
+  } ### elsif ( $site == 'WillHaben')
 
   print Dumper( $G_DATA->{sites}->{$site}->{urls} );
 
