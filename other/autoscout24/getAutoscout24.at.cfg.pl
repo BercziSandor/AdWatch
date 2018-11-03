@@ -43,7 +43,7 @@ $default_price_to         = 550;                                       # FIXME
   $G_DATA->{sites}->{WillHaben}->{XPATHS}->{XPATH_TITLE}          = './section[@class="content-section"]//span[@itemprop="name"]';
   $G_DATA->{sites}->{WillHaben}->{XPATHS}->{XPATH_TITLE2}         = '';
   $G_DATA->{sites}->{WillHaben}->{XPATHS}->{XPATH_LINK}           = './section[@class="content-section"]//div[contains(@class, "header")]/a/@href';
-  $G_DATA->{sites}->{WillHaben}->{XPATHS}->{XPATH_PRICE}          = './section[@class="content-section"]/div[contains(@class, "info")]/span[@class="pull-right"]';
+  $G_DATA->{sites}->{WillHaben}->{XPATHS}->{XPATH_PRICE}          = './/span[@class="pull-right"]';
   $G_DATA->{sites}->{WillHaben}->{XPATHS}->{XPATH_DESC}           = './section[@class="content-section"]//div[@itemprop="description"]';
   $G_DATA->{sites}->{WillHaben}->{XPATHS}->{XPATH_FEATURES}       = '';
   $G_DATA->{sites}->{WillHaben}->{textToDelete}                   = '';
