@@ -498,7 +498,7 @@ sub parseItems {
     $log->info( "XPATH_PRICE:            [" . $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_PRICE} . "]\n" );
     $log->info( "findvalue(XPATH_PRICE): [" . $item->findvalue( $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_PRICE} ) . "]\n" );
     $log->info( "find(XPATH_PRICE)->tl:  [" . $item->find( $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_PRICE} )->to_literal() . "]\n" );
-    $log->info( "find(XPATH_PRICE)->tC:  [" . $item->find( $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_PRICE} )[0]->textContent() . "]\n" );
+    $log->info( "find(XPATH_PRICE)->tC:  [" . $item->find( $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_PRICE} )->[0]->textContent . "]\n" );
     $log->info( "cleaned:                [" . $priceStr . "]\n" );
     $priceStr =~ s/,-/ €/;
     $priceStr = "?" unless $priceStr;
