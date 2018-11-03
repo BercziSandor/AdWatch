@@ -54,7 +54,7 @@ our $G_DATA;
 $Data::Dumper::Sortkeys = 1;
 my $site;
 my $offline       = 0;
-my $saveHtmlFiles = 0;
+my $saveHtmlFiles = 1;
 
 my $dataFileDate;
 my $G_ITEMS_IN_DB;
@@ -368,7 +368,7 @@ sub getHtml {
     print MYFILE encode_utf8($html);
     close(MYFILE);
   } ### if ($saveHtmlFiles)
-  $log->logdie("The content of the received html is emply.") if ( length($html) == 0 );
+  $log->logdie("The content of the received html is empty.") if ( length($html) == 0 );
 
   my $dom = XML::LibXML->load_html(
     string          => $content,
