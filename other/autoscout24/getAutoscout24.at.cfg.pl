@@ -23,8 +23,8 @@ $G_DATA->{mailRecipients} = [ '"Sanyi" <berczi.sandor@gmail.com>', '"Tillatilla1
 # FIXME: debug
 $G_DATA->{sendMail}       = 1;
 $G_DATA->{mailRecipients} = [ '"Sanyi" <berczi.sandor@gmail.com>' ];
-$default_price_from       = 550;
-$default_price_to         = 550;                                       # FIXME
+# $default_price_from       = 550;
+# $default_price_to         = 550;                                       # FIXME
 
 # WillHaben
 {
