@@ -55,9 +55,9 @@ foreach my $item ( $items->get_nodelist ) {
   say " title: [$title]";
 
   my $desc   = u_cleanString( $item->findvalue('./section[@class="content-section"]//div[@itemprop="description"]') );
-  my $yearKm = u_cleanString( $item->findvalue('./section[@class="content-section"]//span[@class="desc-left"]') );
 
   # 2008 75.000 km
+  my $yearKm = u_cleanString( $item->findvalue('./section[@class="content-section"]//span[@class="desc-left"]') );
   my $year = $yearKm;
   $year =~ s/^(\d*) .*/$1/;
   my $age = 2018 - $year;
