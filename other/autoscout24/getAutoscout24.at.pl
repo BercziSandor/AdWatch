@@ -479,10 +479,6 @@ sub parseItems {
     $G_ITEMS_PROCESSED++;
 
     my $link = $item->findvalue( $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_LINK} );
-    my $id   = $link;
-
-    my $desc = $item->findvalue( $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_DESC} );
-    $desc =~ s/bleifrei//g;
 
     # if ( $site eq 'WillHaben' ) {
     if ( $site eq 'autoscout24' ) {
@@ -490,11 +486,16 @@ sub parseItems {
 
       # /angebote/audi-a3-2-0-tdi-ambition-klimaauto-dpf-alu-6-gang-diesel-schwarz-99d1f527-0d81-ed66-e053-e250040a9fc2
       $id =~ s/^.*-(.{36})$/$1/g;
-    } elsif($site eq 'WillHaben'){
+    } elsif ( $site eq 'WillHaben' ) {
       $link = "https://www.willhaben.at${link}";
     }
 
-    my $priceStr = u_cleanString( encode_utf8( $item->findvalue( $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_PRICE} ) ) );
+    my $id = $link;
+
+    my $desc = $item->findvalue( $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_DESC} );
+    $desc =~ s/bleifrei//g;
+
+    my $priceStr = u_cleanString( $item->findvalue( $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_PRICE} ) );
     $log->info( "price: [" . $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_PRICE} . "]\n" );
     $log->info( "price 0: [" . $item->findvalue( $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_PRICE} ) . "]\n" );
     $log->info( "price 1: [" . $priceStr . "]\n" );
