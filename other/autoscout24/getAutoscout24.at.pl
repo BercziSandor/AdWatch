@@ -17,6 +17,7 @@ use WWW::Mechanize;
 use LWP::UserAgent;
 use LWP::Protocol::https;
 
+
 # Cookie stuff
 use HTTP::Cookies;
 use HTTP::CookieJar;
@@ -24,6 +25,7 @@ use HTTP::CookieJar::LWP;
 
 # http://search.cpan.org/~mirod/HTML-TreeBuilder-XPath-0.14/lib/HTML/TreeBuilder/XPath.pm
 use XML::LibXML;
+use MIME::Base64;
 
 #use HTML::TreeBuilder::XPath;
 #use HTML::Entities;
