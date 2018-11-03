@@ -41,6 +41,10 @@ use Email::Simple::Creator;
 
 require stopWatch;
 
+my $SITE_WILLHABEN='willHaben';
+my $SITE_AUTOSCOUT24='autoScout24';
+
+
 my $thisYear;
 
 # my $urls;
@@ -198,7 +202,7 @@ sub getUrls {
   die "Run ini() before getUrls, aborting.\n" if ( not defined $thisYear );
 
   $log->info("getUrls -> ${site}\n");
-  if ( $site = 'autoscout24' ) {
+  if ( $site eq $SITE_AUTOSCOUT24 ) {
 
     # AUTOSCOUT
     foreach my $maker ( sort keys %{ $G_DATA->{sites}->{$site}->{searchConfig}->{mmvmk0} } ) {
@@ -241,7 +245,7 @@ sub getUrls {
       $G_DATA->{sites}->{$site}->{urls}->{$maker} = $out;
     } ### foreach my $maker ( sort keys...)
 
-  } elsif ( $site == 'WillHaben' ) {
+  } elsif ( $site eq $SITE_WILLHABEN ) {
 
     my $makerString = 'CAR_MODEL/MAKE';
     foreach my $maker ( sort keys %{ $G_DATA->{sites}->{$site}->{searchConfig}->{$makerString} } ) {
@@ -277,7 +281,7 @@ sub getUrls {
       # $log->debug( "\$G_DATA->{sites}->{$site}->{urls}->{" . $maker . "}=" . $out . "\n" );
       $G_DATA->{sites}->{$site}->{urls}->{$maker} = $out;
     } ### foreach my $maker ( sort keys...)
-  } ### elsif ( $site == 'WillHaben')
+  } ### elsif ( $site == $SITE_WILLHABEN)
 
   print Dumper( $G_DATA->{sites}->{$site}->{urls} );
 
@@ -473,11 +477,11 @@ sub parseItems {
     my $link = $item->findvalue( $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_LINK} );
 
     my $id;
-    if ( $site eq 'autoscout24' ) {
+    if ( $site eq $SITE_AUTOSCOUT24 ) {
       $link = "https://www.autoscout24.at${link}";
       $id   = $link;
       $id =~ s/^.*-(.{36})$/$1/g;
-    } elsif ( $site eq 'WillHaben' ) {
+    } elsif ( $site eq $SITE_WILLHABEN ) {
       $link = "https://www.willhaben.at${link}";
       $id   = $link;
     }
@@ -488,7 +492,7 @@ sub parseItems {
     $log->debug("desc:  [$xpath]: [$desc]\n");
 
     my $priceStr;
-    if ( $site eq 'WillHaben' ) {
+    if ( $site eq $SITE_WILLHABEN ) {
       $xpath = './section[@class="content-section"]/div[@class="info"]/script';
       my $script = u_cleanString( $item->findvalue($xpath) );
 
@@ -511,7 +515,7 @@ sub parseItems {
     $priceNr = 0 unless $priceNr;
 
     my @fs;
-    if ( $site eq 'WillHaben' ) {
+    if ( $site eq $SITE_WILLHABEN ) {
 
       # '
       #         340.000 kW (462.060 PS)
@@ -539,11 +543,11 @@ sub parseItems {
 
       my $text = "\n - $priceStr\n - $year($age)\n - $km\n - $desc\n";
       $text = u_clearSpaces($text);
-    } ### if ( $site eq 'WillHaben')
+    } ### if ( $site eq $SITE_WILLHABEN)
 
     # FEATURES
 
-    if ( $site eq 'autoscout24' ) {
+    if ( $site eq $SITE_AUTOSCOUT24 ) {
       my $features = encode_utf8( join( '#', $item->findvalues( $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_FEATURES} ) ) );
       $features =~ s/$G_DATA->{sites}->{$site}->{textToDelete}//g;
       $features =~ s/^ //;
@@ -551,7 +555,7 @@ sub parseItems {
       $features =~ s/ # /#/g;
       $features =~ s/  / /g;
       @fs = split( '#', $features );
-    } ### if ( $site eq 'autoscout24')
+    } ### if ( $site eq $SITE_AUTOSCOUT24)
 
     ######################################################################################################
     # Storing data
@@ -645,7 +649,6 @@ sub collectData {
 
   $G_ITEMS_PROCESSED = 0;
 
-  # AUTOSCOUT
   foreach my $maker ( sort keys %{ $G_DATA->{sites}->{$site}->{urls} } ) {
     my $url = $G_DATA->{sites}->{$site}->{urls}->{$maker};
     $log->info("\n\n** $maker **\n");
@@ -915,5 +918,5 @@ sub main {
   } ### for ( ; ; )
 } ### sub main
 
-$site = 'WillHaben';
+$site = $SITE_WILLHABEN;
 main();
