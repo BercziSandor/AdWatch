@@ -457,6 +457,7 @@ sub parseItems {
   $items = $G_HTML_TREE->findnodes($xpath) or return 0;
   $log->debug( " There are " . scalar( $items->get_nodelist ) . " 'talalati_lista' items\n" );
   return 0 unless $items;
+
   foreach my $item ( $items->get_nodelist ) {
 
     $xpath = $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_TITLE};
@@ -492,8 +493,8 @@ sub parseItems {
     } ### if ( $site eq 'autoscout24')
 
     my $priceStr = u_cleanString( encode_utf8( $item->findvalue( $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_PRICE} ) ) );
-    $priceStr = "?" unless $priceStr;
     $priceStr =~ s/,-/ €/;
+    $priceStr = "?" unless $priceStr;
     my $priceNr = $priceStr;
     $priceNr =~ s/\D//g;
     $priceNr = 0 unless $priceStr;
@@ -596,6 +597,8 @@ sub parseItems {
       $G_DATA->{ads}->{$site}->{$id}->{priceStr}      = $priceStr;
       $G_DATA->{ads}->{$site}->{$id}->{priceNr}       = $priceNr;
       $G_DATA->{ads}->{$site}->{$id}->{status}        = $STATUS_NEW;
+
+      $log->debug( $id . ":" . Dumper( $G_DATA->{ads}->{$site}->{$id} ) );
     } ### else [ if ( defined $G_DATA->...)]
 
     $G_DATA->{lastChange} = time;
@@ -887,7 +890,7 @@ sub main {
     }
 
     process();
-    
+
     my $timeToWait = ( $time + $G_DATA->{G_WAIT_BETWEEN_FULL_PROCESS_IN_SEC} ) - time;
     if ( $timeToWait < 0 ) {
       $log->warn(
