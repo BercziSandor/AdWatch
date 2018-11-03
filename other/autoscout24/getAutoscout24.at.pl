@@ -490,7 +490,9 @@ sub parseItems {
 
       # /angebote/audi-a3-2-0-tdi-ambition-klimaauto-dpf-alu-6-gang-diesel-schwarz-99d1f527-0d81-ed66-e053-e250040a9fc2
       $id =~ s/^.*-(.{36})$/$1/g;
-    } ### if ( $site eq 'autoscout24')
+    } elsif($site eq 'WillHaben'){
+      $link = "https://www.willhaben.at${link}";
+    }
 
     my $priceStr = u_cleanString( encode_utf8( $item->findvalue( $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_PRICE} ) ) );
     $log->info( "price: [" . $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_PRICE} . "]\n" );
@@ -501,7 +503,7 @@ sub parseItems {
     $priceStr = "?" unless $priceStr;
     my $priceNr = $priceStr;
     $priceNr =~ s/\D//g;
-    $priceNr = 0 unless $priceStr;
+    $priceNr = 0 unless $priceNr;
 
     my @fs;
     if ( $site eq 'WillHaben' ) {
