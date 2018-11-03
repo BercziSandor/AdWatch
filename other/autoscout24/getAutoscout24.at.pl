@@ -484,11 +484,11 @@ sub parseItems {
     my $id;
     if ( $site eq 'autoscout24' ) {
       $link = "https://www.autoscout24.at${link}";
-      $id = $link;
+      $id   = $link;
       $id =~ s/^.*-(.{36})$/$1/g;
     } elsif ( $site eq 'WillHaben' ) {
       $link = "https://www.willhaben.at${link}";
-      $id = $link;
+      $id   = $link;
     }
 
     my $desc = $item->findvalue( $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_DESC} );
@@ -497,6 +497,7 @@ sub parseItems {
     my $priceStr = u_cleanString( $item->findvalue( $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_PRICE} ) );
     $log->info( "XPATH_PRICE:            [" . $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_PRICE} . "]\n" );
     $log->info( "findvalue(XPATH_PRICE): [" . $item->findvalue( $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_PRICE} ) . "]\n" );
+    $log->info( "find(XPATH_PRICE)->tl:  [" . $item->find( $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_PRICE} )->to_literal() . "]\n" );
     $log->info( "cleaned:                [" . $priceStr . "]\n" );
     $priceStr =~ s/,-/ €/;
     $priceStr = "?" unless $priceStr;
