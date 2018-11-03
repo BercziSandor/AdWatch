@@ -492,8 +492,6 @@ sub parseItems {
     $desc =~ s/bleifrei//g;
     $log->debug("desc:  [$xpath]: [$desc]\n");
 
-    $log->debug("script:   [$xpath]: [$script]\n");
-
     my $priceStr;
     if ( $site eq 'WillHaben' ) {
       $xpath = './section[@class="content-section"]/div[@class="info"]/script';
