@@ -69,7 +69,7 @@ my $collectionDate;
 my $SCRIPTDIR;
 
 my $G_ITEMS_TO_PROCESS_MAX     = 0;    # 0: unlimited
-my $G_WAIT_BETWEEN_GETS_IN_SEC = 5;
+my $G_WAIT_BETWEEN_GETS_IN_SEC = 2;
 
 # CONSTANTS
 my $STATUS_EMPTY   = 'undef';
@@ -452,6 +452,7 @@ sub parseItems {
   my $items;
   my $xpath;
   $xpath = $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_TALALATI_LISTA};
+
   # $log->debug("Evaluating0 [$xpath]\n");
   $items = $G_HTML_TREE->findnodes($xpath) or return 0;
   $log->debug( " There are " . scalar( $items->get_nodelist ) . " 'talalati_lista' items\n" );
@@ -460,10 +461,12 @@ sub parseItems {
 
     $xpath = $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_TITLE};
     my $title = u_cleanString( $item->findvalue($xpath) );
+
     # $log->debug("Evaluating1 [$xpath]: [$title]\n");
 
     if ( $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_TITLE2} ) {
       $xpath = $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_TITLE2};
+
       # $log->debug("Evaluating2 [$xpath]\n");
       my $title2 = $item->findvalue($xpath) if $xpath;
       $title .= " - " . $title2 if $title2;
@@ -504,7 +507,6 @@ sub parseItems {
       #  Limousine
       #     '
 
-
       # 2008 75.000 km
       my $yearKm = u_cleanString( $item->findvalue('./section[@class="content-section"]//span[@class="desc-left"]') );
       my $year   = $yearKm;
@@ -516,12 +518,12 @@ sub parseItems {
       push( @fs, "$year($age)" );
       push( @fs, "$km" );
 
-      $desc=~ s/[ ]+/ /g;
-      $desc=~ s/^[ ]//g;
-      $desc=~ s/^$//g;
-      $desc=~ s/\n/#/g;
-      $desc=~ s/# $//g;
-      push( @fs, split('# ', $desc) );
+      $desc =~ s/[ ]+/ /g;
+      $desc =~ s/^[ ]//g;
+      $desc =~ s/^$//g;
+      $desc =~ s/\n/#/g;
+      $desc =~ s/# $//g;
+      push( @fs, split( '# ', $desc ) );
 
       my $text = "\n - $priceStr\n - $year($age)\n - $km\n - $desc\n";
       $text = u_clearSpaces($text);
@@ -729,6 +731,7 @@ sub sndMail {
     my $fileName = ${collectionDate};
     $fileName =~ s/[.:]//g;
     $fileName =~ s/[ ]/_/g;
+    if ( !-e "./mails" ) { `mkdir ./mails` }
     if ( $G_DATA->{sendMail} == 1 ) {
       $fileName = "./mails/${fileName}.txt";
     } else {
