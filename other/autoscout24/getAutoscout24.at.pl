@@ -54,7 +54,7 @@ our $G_DATA;
 $Data::Dumper::Sortkeys = 1;
 my $site;
 my $offline       = 0;
-my $saveHtmlFiles = 1;
+my $saveHtmlFiles = 0;
 
 my $dataFileDate;
 my $G_ITEMS_IN_DB;
@@ -452,7 +452,7 @@ sub parseItems {
   my $items;
   my $xpath;
   $xpath = $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_TALALATI_LISTA};
-  $log->debug("Evaluating0 [$xpath]\n");
+  # $log->debug("Evaluating0 [$xpath]\n");
   $items = $G_HTML_TREE->findnodes($xpath) or return 1;
   $log->debug( " There are " . scalar( $items->get_nodelist ) . " 'talalati_lista' items\n" );
   return 1 unless $items;
@@ -460,11 +460,11 @@ sub parseItems {
 
     $xpath = $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_TITLE};
     my $title = u_cleanString( $item->findvalue($xpath) );
-    $log->debug("Evaluating1 [$xpath]: [$title]\n");
+    # $log->debug("Evaluating1 [$xpath]: [$title]\n");
 
     if ( $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_TITLE2} ) {
       $xpath = $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_TITLE2};
-      $log->debug("Evaluating2 [$xpath]\n");
+      # $log->debug("Evaluating2 [$xpath]\n");
       my $title2 = $item->findvalue($xpath) if $xpath;
       $title .= " - " . $title2 if $title2;
     } ### if ( $G_DATA->{sites}->...)

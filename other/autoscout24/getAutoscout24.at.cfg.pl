@@ -1,11 +1,12 @@
 # debug options for the developer;
 
 my $default_maxAge     = 11;
+
+
 my $default_price_from = 500;
 my $default_price_to   = 6000;
 my $default_year_from  = 2011;
 
-$default_price_to = 1000;    # FIXME
 
 $G_DATA->{CONSTANTS}->{DOWNLOADMETHODS}->{lwp}      = 'lwp';
 $G_DATA->{CONSTANTS}->{DOWNLOADMETHODS}->{httpTiny} = 'httpTiny';
@@ -19,9 +20,12 @@ $G_DATA->{G_WAIT_BETWEEN_FULL_PROCESS_IN_SEC} = 8 * 60;
 $G_DATA->{silentHours}->{from} = 20;
 $G_DATA->{silentHours}->{till} = 06;
 
+$G_DATA->{mailRecipients} = [ '"Sanyi" <berczi.sandor@gmail.com>', '"Tillatilla1966" <tillatilla.1966@gmail.com>' ];
+
 # FIXME: debug
 $G_DATA->{mailRecipients} = [ '"Sanyi" <berczi.sandor@gmail.com>' ];
-$G_DATA->{mailRecipients} = [ '"Sanyi" <berczi.sandor@gmail.com>', '"Tillatilla1966" <tillatilla.1966@gmail.com>' ];
+$default_price_from    = 550;
+$default_price_to      = 550;     # FIXME
 
 # WillHaben
 {
