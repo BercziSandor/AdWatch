@@ -495,8 +495,9 @@ sub parseItems {
 
     $xpath = $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_PRICE};
     my $priceStr = u_cleanString( $item->findvalue($xpath) );
-    $log->debug("priceStr:  [$xpath]: [$priceStr]\n");
-    $log->info( "findvalue(XPATH_PRICE): [" . $item->findvalue($xpath) . "]\n" );
+    $log->debug("priceStr:   [$xpath]: [$priceStr]\n");
+    $log->info( "desc left:  [" . u_cleanString( $item->findvalue('./section[@class="content-section"]//span[@class="desc-left"]') ) . "]\n" );
+    $log->info( "pull right: [" . u_cleanString( $item->findvalue('./section[@class="content-section"]//span[@class="pull-right"]') ) . "]\n" );
     $log->info( "find(XPATH_PRICE)->tl:  [" . $item->find($xpath)->to_literal() . "]\n" );
     $log->info( "find(XPATH_PRICE)->tC:  [" . $item->find($xpath)->[ 0 ]->textContent . "]\n" );
     $log->info( "cleaned:                [" . $priceStr . "]\n" );
