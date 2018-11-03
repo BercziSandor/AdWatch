@@ -453,9 +453,9 @@ sub parseItems {
   my $xpath;
   $xpath = $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_TALALATI_LISTA};
   # $log->debug("Evaluating0 [$xpath]\n");
-  $items = $G_HTML_TREE->findnodes($xpath) or return 1;
+  $items = $G_HTML_TREE->findnodes($xpath) or return 0;
   $log->debug( " There are " . scalar( $items->get_nodelist ) . " 'talalati_lista' items\n" );
-  return 1 unless $items;
+  return 0 unless $items;
   foreach my $item ( $items->get_nodelist ) {
 
     $xpath = $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_TITLE};
