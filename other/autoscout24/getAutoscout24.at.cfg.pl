@@ -69,7 +69,7 @@ $default_price_to         = 550;                                       # FIXME
   $G_DATA->{sites}->{WillHaben}->{searchConfig}->{defaults}->{PRICE_FROM}      = $default_price_from;
   $G_DATA->{sites}->{WillHaben}->{searchConfig}->{defaults}->{PRICE_TO}        = $default_price_to;
   $G_DATA->{sites}->{WillHaben}->{searchConfig}->{defaults}->{MOTOR_CONDITION} = '20%3B30%3B40';
-  $G_DATA->{sites}->{WillHaben}->{searchConfig}->{defaults}->{YEAR_MODEL_FROM} = $default_year_from;
+  # $G_DATA->{sites}->{WillHaben}->{searchConfig}->{defaults}->{YEAR_MODEL_FROM} = $default_year_from;
 
   $G_DATA->{sites}->{WillHaben}->{searchConfig}->{defaults}->{rows} = 200;
   $G_DATA->{sites}->{WillHaben}->{searchConfig}->{defaults}->{sort} = 1;
