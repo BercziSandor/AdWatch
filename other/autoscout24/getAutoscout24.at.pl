@@ -488,8 +488,10 @@ sub parseItems {
       $id   = $link;
     }
 
-    my $desc = $item->findvalue( $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_DESC} );
+    $xpath = $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_DESC};
+    my $desc = $item->findvalue($xpath);
     $desc =~ s/bleifrei//g;
+    $log->debug("desc:  [$xpath]: [$desc]\n");
 
     $xpath = $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_PRICE};
     my $priceStr = u_cleanString( $item->findvalue($xpath) );
