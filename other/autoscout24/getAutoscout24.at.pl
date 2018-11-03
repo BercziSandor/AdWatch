@@ -495,10 +495,9 @@ sub parseItems {
     $desc =~ s/bleifrei//g;
 
     my $priceStr = u_cleanString( $item->findvalue( $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_PRICE} ) );
-    $log->info( "price: [" . $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_PRICE} . "]\n" );
-    $log->info( "price 0: [" . $item->findvalue( $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_PRICE} ) . "]\n" );
-    $log->info( "price 1: [" . $priceStr . "]\n" );
-
+    $log->info( "XPATH_PRICE:            [" . $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_PRICE} . "]\n" );
+    $log->info( "findvalue(XPATH_PRICE): [" . $item->findvalue( $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_PRICE} ) . "]\n" );
+    $log->info( "cleaned:                [" . $priceStr . "]\n" );
     $priceStr =~ s/,-/ €/;
     $priceStr = "?" unless $priceStr;
     my $priceNr = $priceStr;
