@@ -496,7 +496,7 @@ sub parseItems {
       my $script = u_cleanString( $item->findvalue($xpath) );
 
       # ('DQogICAgICAgICAgICAgICAgPHNwYW4gY2xhc3M9InB1bGwtcmlnaHQiPiA1NTAsLSA8L3NwYW4+DQogICAgICAgICAgICA=')
-      $script =~ s/.*'(.*ICA=)'.*/$1/;
+      $script =~ s/.*'(.*=)'\).*/$1/;
       $script = MIME::Base64::decode_base64($script);
 
       # <span class="pull-right"> 550,- </span>
