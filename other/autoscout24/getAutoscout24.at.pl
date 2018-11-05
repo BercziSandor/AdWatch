@@ -604,8 +604,8 @@ sub parseItems {
     $G_DATA->{ads}->{$site}->{$id}->{desc}     = $desc;
 
     if ( $G_DATA->{ads}->{$site}->{$id}->{status} eq $STATUS_CHANGED or not defined $G_DATA->{lastChange} ) {
-      $G_DATA->->{ads}->{$site}->{$id}->{lastChange} = time;
-      $G_DATA->{lastChange} = time;
+      $G_DATA->{ads}->{$site}->{$id}->{lastChange} = $t;
+      $G_DATA->{lastChange} = $t;
     }
 
     my $sign;
