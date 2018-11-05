@@ -41,9 +41,8 @@ use Email::Simple::Creator;
 
 require stopWatch;
 
-my $SITE_WILLHABEN='willHaben';
-my $SITE_AUTOSCOUT24='autoScout24';
-
+my $SITE_WILLHABEN   = 'willHaben';
+my $SITE_AUTOSCOUT24 = 'autoScout24';
 
 my $thisYear;
 
@@ -257,6 +256,7 @@ sub getUrls {
       $out .= "$makerString=" . $G_DATA->{sites}->{$site}->{makers}->{$maker};
 
       $out .= "&YEAR_MODEL_FROM=" . ( $thisYear - ( $G_DATA->{sites}->{$site}->{searchConfig}->{$makerString}->{$maker}->{maxAge} ) );
+
       # $log->info( "out=$out\n" );
 
       foreach my $k ( sort keys %{ $G_DATA->{sites}->{$site}->{searchConfig}->{defaults} } ) {
@@ -280,7 +280,7 @@ sub getUrls {
       # $log->debug( "\$G_DATA->{sites}->{$site}->{urls}->{" . $maker . "}=" . $out . "\n" );
       $G_DATA->{sites}->{$site}->{urls}->{$maker} = $out;
     } ### foreach my $maker ( sort keys...)
-  } ### elsif ( $site == $SITE_WILLHABEN)
+  } ### elsif ( $site eq $SITE_WILLHABEN)
 
   print Dumper( $G_DATA->{sites}->{$site}->{urls} );
 
@@ -559,63 +559,54 @@ sub parseItems {
     ######################################################################################################
     # Storing data
     my $t = time;
-    if ( defined $G_DATA->{ads}->{$site}->{$id} ) {
 
-      # $log->debug("Updating [$title] in the database...\n");
+    if ( not defined $G_DATA->{ads}->{$site}->{$id} ) {
+
+      # New
+      $G_DATA->{ads}->{$site}->{$id}->{status} = $STATUS_NEW;
+
+      $log->debug("Adding [$title] to the database\n");
+      $G_DATA->{ads}->{$site}->{$id}->{history}->{$t} = " Adatbázisba került; ";
+
+    } else {
       $G_DATA->{ads}->{$site}->{$id}->{status} = $STATUS_EMPTY;
 
       if ( not defined $G_DATA->{ads}->{$site}->{$id}->{history} ) {
-        $G_DATA->{ads}->{$site}->{$id}->{history}->{$t} .= "Adatbázisba került; ";
-        $log->debug(" Updating history\n");
+        $G_DATA->{ads}->{$site}->{$id}->{history}->{$t} = "Adatbázisba került; ";
       }
 
-      # $title;
-      # $desc;
-      # $priceNr;
-      #  $priceStr;
-      #  @fs;    # features
-      #  $link;
-      # $info
-
-      # already defined. Is it changed?
+      # Title changed?
       if ( $G_DATA->{ads}->{$site}->{$id}->{title} ne $title ) {
         $G_DATA->{ads}->{$site}->{$id}->{history}->{$t} .= "Cím: [" . $G_DATA->{ads}->{$site}->{$id}->{title} . "] -> [$title]; ";
-        $G_DATA->{ads}->{$site}->{$id}->{title}  = $title;
         $G_DATA->{ads}->{$site}->{$id}->{status} = $STATUS_CHANGED;
-        $log->debug(" Updating title\n");
-      } ### if ( $G_DATA->{ads}->{...})
+      }
 
-      if (
-        (
-            $G_DATA->{ads}->{$site}->{$id}->{priceNr}
-          ? $G_DATA->{ads}->{$site}->{$id}->{priceNr}
-          : 0
-        ) != $priceNr
-        ) {
+      # Price changed?
+      if ( $G_DATA->{ads}->{$site}->{$id}->{priceNr} != $priceNr ) {
         $G_DATA->{ads}->{$site}->{$id}->{history}->{$t} .= " Ár: " . $G_DATA->{ads}->{$site}->{$id}->{priceStr} . " -> $priceStr; ";
-        $G_DATA->{ads}->{$site}->{$id}->{priceNr}  = $priceNr;
-        $G_DATA->{ads}->{$site}->{$id}->{priceStr} = $priceStr;
-        $G_DATA->{ads}->{$site}->{$id}->{status}   = $STATUS_CHANGED;
-        $log->debug(" Updating price\n");
-      } ### if ( ( $G_DATA->{ads}->...))
+        $G_DATA->{ads}->{$site}->{$id}->{status} = $STATUS_CHANGED;
+      }
 
-    } else {
+      # Desc changed?
+      if ( $G_DATA->{ads}->{$site}->{$id}->{desc} ne $desc ) {
+        $G_DATA->{ads}->{$site}->{$id}->{history}->{$t} .= " Leírás: " . $G_DATA->{ads}->{$site}->{$id}->{desc} . " -> $desc; ";
+        $G_DATA->{ads}->{$site}->{$id}->{status} = $STATUS_CHANGED;
+      }
 
-      $log->debug("Adding [$title] to the database\n");
+    } ### else [ if ( not defined $G_DATA...)]
 
-      $G_DATA->{ads}->{$site}->{$id}->{history}->{$t} = " Adatbázisba került; ";
-      $G_DATA->{ads}->{$site}->{$id}->{title}         = $title;
-      $G_DATA->{ads}->{$site}->{$id}->{link}          = $link;
-      $G_DATA->{ads}->{$site}->{$id}->{info}          = \@fs;
-      $G_DATA->{ads}->{$site}->{$id}->{desc}          = $desc;
-      $G_DATA->{ads}->{$site}->{$id}->{priceStr}      = $priceStr;
-      $G_DATA->{ads}->{$site}->{$id}->{priceNr}       = $priceNr;
-      $G_DATA->{ads}->{$site}->{$id}->{status}        = $STATUS_NEW;
+    # update
+    $G_DATA->{ads}->{$site}->{$id}->{title}    = $title;
+    $G_DATA->{ads}->{$site}->{$id}->{priceNr}  = $priceNr;
+    $G_DATA->{ads}->{$site}->{$id}->{priceStr} = $priceStr;
+    $G_DATA->{ads}->{$site}->{$id}->{link}     = $link;
+    $G_DATA->{ads}->{$site}->{$id}->{info}     = \@fs;
+    $G_DATA->{ads}->{$site}->{$id}->{desc}     = $desc;
 
-      $log->debug( $id . ":" . Dumper( $G_DATA->{ads}->{$site}->{$id} ) );
-    } ### else [ if ( defined $G_DATA->...)]
-
-    $G_DATA->{lastChange} = time;
+    if ( $G_DATA->{ads}->{$site}->{$id}->{status} eq $STATUS_CHANGED or not defined $G_DATA->{lastChange} ) {
+      $G_DATA->->{ads}->{$site}->{$id}->{lastChange} = time;
+      $G_DATA->{lastChange} = time;
+    }
 
     my $sign;
     if ( $G_DATA->{ads}->{$site}->{$id}->{status} eq $STATUS_NEW ) {
@@ -625,8 +616,6 @@ sub parseItems {
     } else {
       $sign = " ";
     }
-
-    # $log->debug( "\n$id:" . Dumper( $G_DATA->{ads}->{$site}->{$id} ) );
 
     print "$sign";
 
