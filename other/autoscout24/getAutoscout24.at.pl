@@ -749,7 +749,7 @@ sub getMailTextforItems {
 
   foreach my $id (@items) {
     if ( not defined $G_DATA->{ads}->{$site}->{$id} ){
-      $log->die("$id is not defined. ??? \n");
+      $log->logdie("$id is not defined. ??? \n");
     };
     my $item = $G_DATA->{ads}->{$site}->{$id};
     if ( $item->{status} eq $STATUS_NEW ) {
