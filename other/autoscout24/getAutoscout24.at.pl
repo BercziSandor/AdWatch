@@ -727,7 +727,7 @@ sub sndMails {
     if ( scalar(@items) >= 100 ) {
       $index++;
       sndMail( "${collectionDate}_${index}", getMailTextforItems(@items) );
-      $items = ();
+      @items = ();
     }
   } ### foreach my $id ( sort keys ...)
 
