@@ -456,6 +456,7 @@ sub parseItems {
 
     $xpath = $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_TITLE};
     my $title = u_cleanString( $item->findvalue($xpath) );
+
     # $log->debug("title:  [$xpath]: [$title]\n");
 
     if ( $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_TITLE2} ) {
@@ -488,6 +489,7 @@ sub parseItems {
     $xpath = $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_DESC};
     my $desc = u_cleanString( $item->findvalue($xpath) );
     $desc =~ s/bleifrei//g;
+
     # $log->debug("desc:  [$xpath]: [$desc]\n");
 
     my $priceStr;
@@ -748,9 +750,9 @@ sub getMailTextforItems {
   $mailTextHtml = "Utolsó állapot: $dataFileDate\n\n";
 
   foreach my $id (@ids) {
-    if ( not defined $G_DATA->{ads}->{$site}->{$id} ){
-      $log->logdie("$id is not defined. ??? \n");
-    };
+    if ( not defined $G_DATA->{ads}->{$site}->{$id} ) {
+      $log->logdie("getMailTextforItems(): $id is not defined. ??? \n");
+    }
     my $item = $G_DATA->{ads}->{$site}->{$id};
     if ( $item->{status} eq $STATUS_NEW ) {
       $count_new++;
@@ -764,7 +766,8 @@ sub getMailTextforItems {
     }
     $count_all++;
     $mailTextHtml .= getMailTextforItem($id);
-  } ### foreach my $id (@items)
+  } ### foreach my $id (@ids)
+## perltidy -cscw 2018-11-5: ### foreach my $id (@items)
 
   $mailTextHtml .= "\n";
   $mailTextHtml .= "$G_ITEMS_PROCESSED feldolgozott hirdetés\n";
@@ -783,14 +786,20 @@ sub getMailTextforItems {
 sub getMailTextforItem {
   my ( $id, $format ) = @_;
   my $retval = "";
-  return undef if ( not defined( $G_DATA->{ads}->{$site}->{$id} ) );
+  $log->debug("getMailTextforItem($id)\n");
+
+  if ( not defined( $G_DATA->{ads}->{$site}->{$id} ) ) {
+    $log->logdie("getMailTextforItem(): $id is not defined. ??? \n");
+  }
   my $item = $G_DATA->{ads}->{$site}->{$id};
-  my $sign = (
-    $item->{status} eq $STATUS_NEW
-    ? "ÚJ!"
-    : ( $item->{status} eq $STATUS_CHANGED ? "*" : "" )
-  );
-  return undef if ( not $sign );
+  my $sign;
+  if ( $item->{status} eq $STATUS_NEW ) {
+    $sign = "ÚJ!";
+  } elsif ( $item->{status} eq $STATUS_CHANGED ) {
+    $sign = "*";
+  } else {
+    return "";
+  }
 
   # $retval .= "$sign <a href=\"" . $item->{link} . "\">" . $item->{title} . "</a>\n";
   $retval .= "$sign [" . $item->{title} . "](" . $item->{link} . ")\n";
@@ -802,7 +811,6 @@ sub getMailTextforItem {
   }
 
   $retval .= "\n";
-
   return $retval;
 } ### sub getMailTextforItem
 
