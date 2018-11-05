@@ -714,93 +714,24 @@ sub dataLoad {
   }
 } ### sub dataLoad
 
-sub sndMail {
+# Mail sending
 
-  # http://www.revsys.com/writings/perl/sending-email-with-perl.html
-  my ( $fileName, $bodyText ) = @_;
-
-  $log->info("Levél küldése...\n");
-
-  $G_DATA->{lastMailSendTime} = time if ( not defined $G_DATA->{lastMailSendTime} );
-  if ( not $bodyText ) {
-    if ( ( time - $G_DATA->{lastMailSendTime} ) > ( 60 * 60 ) ) {
-      $log->info(" Nincs változás, viszont elég régen nem küldtünk levelet, menjen egy visszajelzés.\n");
-      $bodyText = "Nyugalom, fut a hirdetések figyelése. Viszont nincs megváltozott vagy új hirdetés.";
-    } else {
-      $log->info(" Kihagyva: nincs változás, nem spamelünk. ;)\n");
-      return;
+sub sndMails {
+  my @items = ();
+  my $index;
+  foreach my $id ( sort keys %{ $G_DATA->{ads}->{$site} } ) {
+    my $item = $G_DATA->{ads}->{$site}->{$id};
+    next unless ( $item->{status} eq $STATUS_NEW or $item->{status} eq $STATUS_CHANGED );
+    push( @items, $item );
+    $item->{status} = $STATUS_EMPTY;
+    if ( scalar(@items) >= 100 ) {
+      $index++;
+      sndMail( "${collectionDate}_${index}", getMailTextforItems(@items) );
+      $items = ();
     }
-  } ### if ( not $bodyText )
+  } ### foreach my $id ( sort keys ...)
 
-  {
-    $fileName =~ s/[.:]//g;
-    $fileName =~ s/[ ]/_/g;
-    if ( !-e "./mails" ) { `mkdir ./mails` }
-    if ( $G_DATA->{sendMail} == 1 ) {
-      $fileName = "./mails/${fileName}.txt";
-    } else {
-      $fileName = "./mails/${fileName}_NOT_SENT.txt";
-    }
-    $log->debug("Szöveg mentése $fileName file-ba...");
-
-    open( MYFILE, ">$fileName" ) or die "$fileName: $!";
-    print MYFILE $bodyText;
-    close(MYFILE);
-  }
-
-  $bodyText = u_text2html($bodyText);
-
-  {
-    $fileName =~ s/[.:]//g;
-    $fileName =~ s/[ ]/_/g;
-    if ( $G_DATA->{sendMail} == 1 ) {
-      $fileName = "./mails/${fileName}.html";
-    } else {
-      $fileName = "./mails/${fileName}_NOT_SENT.html";
-    }
-    $log->debug("Szöveg mentése $fileName file-ba...");
-    open( MYFILE, ">$fileName" ) or die $!;
-    print MYFILE $bodyText;
-    close(MYFILE);
-  }
-
-  foreach ( @{ $G_DATA->{mailRecipients} } ) {
-    my $email = Email::Simple->create(
-      header => [
-        To             => $_,
-        From           => '"Sanyi" <berczi.sandor@gmail.com>',
-        Subject        => "$site frissítés",
-        'Content-Type' => 'text/html',
-      ],
-      body => $bodyText,
-    );
-    $log->info(" $_ ...\n");
-
-    # Email::Sender::Simple
-    if ( $G_DATA->{sendMail} == 1 ) {
-      sendmail($email) or die $!;
-      $log->info("Levél küldése sikeres. To: [$_]\n");
-    }
-
-  } ### foreach ( @{ $G_DATA->{mailRecipients...}})
-
-  if ( $G_DATA->{sendMail} == 1 ) {
-    $G_DATA->{lastMailSendTime} = time;
-  } else {
-    $log->info("Levélküldés kihagyva (ok: 'sendMail' változó értéke: false.\n");
-  }
-} ### sub sndMail
-
-sub u_text2html {
-  my $text    = shift;
-  my $textBak = $text;
-  $text =~ s|\n|<br>|g;
-
-  $text =~ s| \[(.*?)\]\((.*?)\)| <a href="${2}">${1}</a>|g;
-  $text =~ s|\n|<br/>|g;
-
-  return $text;
-} ### sub u_text2html
+} ### sub sndMails
 
 sub getMailTextforItems {
   my (@items) = @_;
@@ -872,9 +803,90 @@ sub getMailTextforItem {
   return $retval;
 } ### sub getMailTextforItem
 
-sub sndMails {
+sub sndMail {
 
-}
+  # http://www.revsys.com/writings/perl/sending-email-with-perl.html
+  my ( $fileName, $bodyText ) = @_;
+  $log->info("Levél küldése...\n");
+  $G_DATA->{lastMailSendTime} = time if ( not defined $G_DATA->{lastMailSendTime} );
+  if ( not $bodyText ) {
+    if ( ( time - $G_DATA->{lastMailSendTime} ) > ( 60 * 60 ) ) {
+      $log->info(" Nincs változás, viszont elég régen nem küldtünk levelet, menjen egy visszajelzés.\n");
+      $bodyText = "Nyugalom, fut a hirdetések figyelése. Viszont nincs megváltozott vagy új hirdetés.";
+    } else {
+      $log->info(" Kihagyva: nincs változás, nem spamelünk. ;)\n");
+      return;
+    }
+  } ### if ( not $bodyText )
+
+  {
+    $fileName =~ s/[.:]//g;
+    $fileName =~ s/[ ]/_/g;
+    if ( !-e "./mails" ) { `mkdir ./mails` }
+    if ( $G_DATA->{sendMail} == 1 ) {
+      $fileName = "./mails/${fileName}.txt";
+    } else {
+      $fileName = "./mails/${fileName}_NOT_SENT.txt";
+    }
+    $log->debug("Szöveg mentése $fileName file-ba...");
+
+    open( MYFILE, ">$fileName" ) or die "$fileName: $!";
+    print MYFILE $bodyText;
+    close(MYFILE);
+  }
+
+  $bodyText = u_text2html($bodyText);
+  {
+    $fileName =~ s/[.:]//g;
+    $fileName =~ s/[ ]/_/g;
+    if ( $G_DATA->{sendMail} == 1 ) {
+      $fileName = "./mails/${fileName}.html";
+    } else {
+      $fileName = "./mails/${fileName}_NOT_SENT.html";
+    }
+    $log->debug("Szöveg mentése $fileName file-ba...");
+    open( MYFILE, ">$fileName" ) or die $!;
+    print MYFILE $bodyText;
+    close(MYFILE);
+  }
+
+  foreach ( @{ $G_DATA->{mailRecipients} } ) {
+    my $email = Email::Simple->create(
+      header => [
+        To             => $_,
+        From           => '"Sanyi" <berczi.sandor@gmail.com>',
+        Subject        => "$site frissítés",
+        'Content-Type' => 'text/html',
+      ],
+      body => $bodyText,
+    );
+    $log->info(" $_ ...\n");
+
+    # Email::Sender::Simple
+    if ( $G_DATA->{sendMail} == 1 ) {
+      sendmail($email) or die $!;
+      $log->info("Levél küldése sikeres. To: [$_]\n");
+    }
+
+  } ### foreach ( @{ $G_DATA->{mailRecipients...}})
+
+  if ( $G_DATA->{sendMail} == 1 ) {
+    $G_DATA->{lastMailSendTime} = time;
+  } else {
+    $log->info("Levélküldés kihagyva (ok: 'sendMail' változó értéke: false.\n");
+  }
+} ### sub sndMail
+
+sub u_text2html {
+  my $text    = shift;
+  my $textBak = $text;
+  $text =~ s|\n|<br>|g;
+
+  $text =~ s| \[(.*?)\]\((.*?)\)| <a href="${2}">${1}</a>|g;
+  $text =~ s|\n|<br/>|g;
+
+  return $text;
+} ### sub u_text2html
 
 sub process {
   stopWatch::reset();
