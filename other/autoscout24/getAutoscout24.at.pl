@@ -488,7 +488,7 @@ sub parseItems {
     $xpath = $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_DESC};
     my $desc = u_cleanString( $item->findvalue($xpath) );
     $desc =~ s/bleifrei//g;
-    $log->debug("desc:  [$xpath]: [$desc]\n");
+    # $log->debug("desc:  [$xpath]: [$desc]\n");
 
     my $priceStr;
     if ( $site eq $SITE_WILLHABEN ) {
