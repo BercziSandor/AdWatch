@@ -480,9 +480,10 @@ sub parseItems {
     } elsif ( $site eq $SITE_WILLHABEN ) {
       $link = "https://www.willhaben.at${link}";
       $id   = $link;
+
       # https://www.willhaben.at/iad/gebrauchtwagen/d/auto/citroen-c4-1-6-16v-vti-275306032/
       $id =~ s/^.*\/(.*)\/$/$1/;
-    }
+    } ### elsif ( $site eq $SITE_WILLHABEN)
 
     $xpath = $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_DESC};
     my $desc = u_cleanString( $item->findvalue($xpath) );
@@ -713,10 +714,10 @@ sub dataLoad {
   }
 } ### sub dataLoad
 
-sub sndMails {
+sub sndMail {
 
   # http://www.revsys.com/writings/perl/sending-email-with-perl.html
-  my ($bodyText) = @_;
+  my ( $fileName, $bodyText ) = @_;
 
   $log->info("Levél küldése...\n");
 
@@ -724,7 +725,7 @@ sub sndMails {
   if ( not $bodyText ) {
     if ( ( time - $G_DATA->{lastMailSendTime} ) > ( 60 * 60 ) ) {
       $log->info(" Nincs változás, viszont elég régen nem küldtünk levelet, menjen egy visszajelzés.\n");
-      $bodyText = "Nyugalom, fut a hirdetések figyelése. Viszont nincs változás, ez van.";
+      $bodyText = "Nyugalom, fut a hirdetések figyelése. Viszont nincs megváltozott vagy új hirdetés.";
     } else {
       $log->info(" Kihagyva: nincs változás, nem spamelünk. ;)\n");
       return;
@@ -732,7 +733,6 @@ sub sndMails {
   } ### if ( not $bodyText )
 
   {
-    my $fileName = ${collectionDate};
     $fileName =~ s/[.:]//g;
     $fileName =~ s/[ ]/_/g;
     if ( !-e "./mails" ) { `mkdir ./mails` }
@@ -751,7 +751,6 @@ sub sndMails {
   $bodyText = u_text2html($bodyText);
 
   {
-    my $fileName = ${collectionDate};
     $fileName =~ s/[.:]//g;
     $fileName =~ s/[ ]/_/g;
     if ( $G_DATA->{sendMail} == 1 ) {
@@ -790,7 +789,7 @@ sub sndMails {
   } else {
     $log->info("Levélküldés kihagyva (ok: 'sendMail' változó értéke: false.\n");
   }
-} ### sub sndMails
+} ### sub sndMail
 
 sub u_text2html {
   my $text    = shift;
@@ -803,15 +802,21 @@ sub u_text2html {
   return $text;
 } ### sub u_text2html
 
-sub getMailText {
+sub getMailTextforItems {
+  my (@items) = @_;
+
   my $mailTextHtml  = "";
   my $text_changed  = "";
   my $text_new      = "";
   my $count_new     = 0;
+  my $count_all     = 0;
   my $count_changed = 0;
 
   $mailTextHtml = "Utolsó állapot: $dataFileDate\n\n";
-  foreach my $id ( sort keys %{ $G_DATA->{ads}->{$site} } ) {
+
+  foreach my $id (@items) {
+    next
+      if ( not defined $G_DATA->{ads}->{$site}->{$id} );
     my $item = $G_DATA->{ads}->{$site}->{$id};
     if ( $item->{status} eq $STATUS_NEW ) {
       $count_new++;
@@ -825,8 +830,7 @@ sub getMailText {
     }
     $count_all++;
     $mailTextHtml .= getMailTextforItem($id);
-
-  } ### foreach my $id ( sort keys ...)
+  } ### foreach my $id (@items)
 
   $mailTextHtml .= "\n";
   $mailTextHtml .= "$G_ITEMS_PROCESSED feldolgozott hirdetés\n";
@@ -840,7 +844,7 @@ sub getMailText {
     $log->info("$mailTextHtml\n");
   }
   return $mailTextHtml;
-} ### sub getMailText
+} ### sub getMailTextforItems
 
 sub getMailTextforItem {
   my ( $id, $format ) = @_;
@@ -868,13 +872,17 @@ sub getMailTextforItem {
   return $retval;
 } ### sub getMailTextforItem
 
+sub sndMails {
+
+}
+
 sub process {
   stopWatch::reset();
   stopWatch::continue($SW_FULL_PROCESSING);
   $dataFileDate = $G_DATA->{lastChange} ? ( strftime( "%Y.%m.%d %H:%M", localtime( $G_DATA->{lastChange} ) ) ) : "";
   collectData();
 
-  sndMails( getMailText() );
+  sndMail( $collectionDate, sndMails() );
 
   dataSave();
   stopWatch::pause($SW_FULL_PROCESSING);
