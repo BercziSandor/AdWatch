@@ -76,10 +76,8 @@ $G_DATA->{mailRecipients} = [ '"Sanyi" <berczi.sandor@gmail.com>', '"Tillatilla1
   $G_DATA->{sites}->{willHaben}->{searchConfig}->{defaults}->{page} = "VVPAGEVV";
 
   # $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString_willhaben}->{Audi}->{maxAge}    = $default_maxAge;
-  # $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString_willhaben}->{Citroen}->{maxAge} = $default_maxAge;
-
-  $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString_willhaben}->{Fiat}->{maxAge}    = $default_maxAge;
-
+  $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString_willhaben}->{Citroen}->{maxAge} = $default_maxAge;
+  # $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString_willhaben}->{Fiat}->{maxAge}    = $default_maxAge;
   # $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString_willhaben}->{Ford}->{maxAge}    = $default_maxAge;
   # $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString_willhaben}->{Honda}->{maxAge}   = $default_maxAge;
   # $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString_willhaben}->{Hyundai}->{maxAge} = $default_maxAge;

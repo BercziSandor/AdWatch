@@ -562,7 +562,7 @@ sub parseItems {
     # Storing data
     my $t = time;
 
-    if ( not defined $G_DATA->{ads}->{$site}->{$id} ) {
+    if ( not defined ($G_DATA->{ads}->{$site}->{$id}) ) {
 
       # New
       $G_DATA->{ads}->{$site}->{$id}->{status} = $STATUS_NEW;
@@ -571,6 +571,7 @@ sub parseItems {
       $G_DATA->{ads}->{$site}->{$id}->{history}->{$t} = " Adatbázisba került; ";
 
     } else {
+
       $G_DATA->{ads}->{$site}->{$id}->{status} = $STATUS_EMPTY;
 
       if ( not defined $G_DATA->{ads}->{$site}->{$id}->{history} ) {
@@ -609,6 +610,8 @@ sub parseItems {
     if ( $G_DATA->{ads}->{$site}->{$id}->{status} eq $STATUS_CHANGED ) {
       $G_DATA->{ads}->{$site}->{$id}->{lastChange} = $t;
     }
+
+    $log->debug(Dumper($G_DATA->{ads}->{$site}->{$id}));
 
     my $sign;
     if ( $G_DATA->{ads}->{$site}->{$id}->{status} eq $STATUS_NEW ) {
@@ -767,7 +770,6 @@ sub getMailTextforItems {
     $count_all++;
     $mailTextHtml .= getMailTextforItem($id);
   } ### foreach my $id (@ids)
-## perltidy -cscw 2018-11-5: ### foreach my $id (@items)
 
   $mailTextHtml .= "\n";
   $mailTextHtml .= "$G_ITEMS_PROCESSED feldolgozott hirdetés\n";
