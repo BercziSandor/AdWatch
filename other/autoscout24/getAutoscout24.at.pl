@@ -58,7 +58,7 @@ our $G_DATA;
 $Data::Dumper::Sortkeys = 1;
 my $site;
 my $offline       = 0;
-my $saveHtmlFiles = 1;
+my $saveHtmlFiles = 0;
 
 my $dataFileDate;
 my $G_ITEMS_IN_DB;
@@ -456,7 +456,7 @@ sub parseItems {
 
     $xpath = $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_TITLE};
     my $title = u_cleanString( $item->findvalue($xpath) );
-    $log->debug("title:  [$xpath]: [$title]\n");
+    # $log->debug("title:  [$xpath]: [$title]\n");
 
     if ( $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_TITLE2} ) {
       $xpath = $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_TITLE2};
@@ -722,6 +722,8 @@ sub sndMails {
   foreach my $id ( sort keys %{ $G_DATA->{ads}->{$site} } ) {
     my $item = $G_DATA->{ads}->{$site}->{$id};
     next unless ( $item->{status} eq $STATUS_NEW or $item->{status} eq $STATUS_CHANGED );
+
+    $log->debug("sndMails(): push: [$id]\n");
     push( @items, $item );
     $item->{status} = $STATUS_EMPTY;
     if ( scalar(@items) >= 100 ) {
@@ -746,8 +748,9 @@ sub getMailTextforItems {
   $mailTextHtml = "Utolsó állapot: $dataFileDate\n\n";
 
   foreach my $id (@items) {
-    next
-      if ( not defined $G_DATA->{ads}->{$site}->{$id} );
+    if ( not defined $G_DATA->{ads}->{$site}->{$id} ){
+      $log->die("$id is not defined. ??? \n");
+    };
     my $item = $G_DATA->{ads}->{$site}->{$id};
     if ( $item->{status} eq $STATUS_NEW ) {
       $count_new++;
