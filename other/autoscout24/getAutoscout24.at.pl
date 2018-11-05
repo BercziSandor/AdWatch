@@ -717,18 +717,18 @@ sub dataLoad {
 # Mail sending
 
 sub sndMails {
-  my @items = ();
+  my @ids = ();
   my $index;
   foreach my $id ( sort keys %{ $G_DATA->{ads}->{$site} } ) {
     my $item = $G_DATA->{ads}->{$site}->{$id};
     next unless ( $item->{status} eq $STATUS_NEW or $item->{status} eq $STATUS_CHANGED );
 
     $log->debug("sndMails(): push: [$id]\n");
-    push( @items, $item );
+    push( @ids, $id );
     $item->{status} = $STATUS_EMPTY;
-    if ( scalar(@items) >= 100 ) {
+    if ( scalar(@ids) >= 100 ) {
       $index++;
-      sndMail( "${collectionDate}_${index}", getMailTextforItems(@items) );
+      sndMail( "${collectionDate}_${index}", getMailTextforItems(@ids) );
       @items = ();
     }
   } ### foreach my $id ( sort keys ...)
@@ -736,7 +736,7 @@ sub sndMails {
 } ### sub sndMails
 
 sub getMailTextforItems {
-  my (@items) = @_;
+  my (@ids) = @_;
 
   my $mailTextHtml  = "";
   my $text_changed  = "";
@@ -747,7 +747,7 @@ sub getMailTextforItems {
 
   $mailTextHtml = "Utolsó állapot: $dataFileDate\n\n";
 
-  foreach my $id (@items) {
+  foreach my $id (@ids) {
     if ( not defined $G_DATA->{ads}->{$site}->{$id} ){
       $log->logdie("$id is not defined. ??? \n");
     };
