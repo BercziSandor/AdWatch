@@ -136,10 +136,7 @@ sub ini {
   dataLoad();
   $log->info("ini(): dataLoad ok\n");
 
-  $dataFileDate
-    = $G_DATA->{lastChange}
-    ? ( strftime( "%Y.%m.%d %H:%M", localtime( $G_DATA->{lastChange} ) ) )
-    : "";
+  $dataFileDate = $G_DATA->{lastChange} ? ( strftime( "%Y.%m.%d %H:%M", localtime( $G_DATA->{lastChange} ) ) ) : "";
 
   my $cnt = `ps -aef | grep -v grep | grep -c "$name.pl"`;
   if ( $cnt > 1 ) {
@@ -483,6 +480,8 @@ sub parseItems {
     } elsif ( $site eq $SITE_WILLHABEN ) {
       $link = "https://www.willhaben.at${link}";
       $id   = $link;
+      # https://www.willhaben.at/iad/gebrauchtwagen/d/auto/citroen-c4-1-6-16v-vti-275306032/
+      $id =~ s/^.*\/(.*)\/$/$1/;
     }
 
     $xpath = $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_DESC};
@@ -603,9 +602,9 @@ sub parseItems {
     $G_DATA->{ads}->{$site}->{$id}->{info}     = \@fs;
     $G_DATA->{ads}->{$site}->{$id}->{desc}     = $desc;
 
-    if ( $G_DATA->{ads}->{$site}->{$id}->{status} eq $STATUS_CHANGED or not defined $G_DATA->{lastChange} ) {
+    $G_DATA->{lastChange} = $t;
+    if ( $G_DATA->{ads}->{$site}->{$id}->{status} eq $STATUS_CHANGED ) {
       $G_DATA->{ads}->{$site}->{$id}->{lastChange} = $t;
-      $G_DATA->{lastChange} = $t;
     }
 
     my $sign;
@@ -714,7 +713,7 @@ sub dataLoad {
   }
 } ### sub dataLoad
 
-sub sndMail {
+sub sndMails {
 
   # http://www.revsys.com/writings/perl/sending-email-with-perl.html
   my ($bodyText) = @_;
@@ -791,7 +790,7 @@ sub sndMail {
   } else {
     $log->info("Levélküldés kihagyva (ok: 'sendMail' változó értéke: false.\n");
   }
-} ### sub sndMail
+} ### sub sndMails
 
 sub u_text2html {
   my $text    = shift;
@@ -824,6 +823,7 @@ sub getMailText {
       $log->debug( "$id: ??? .[" . $item->{status} . "]\n" );
       next;
     }
+    $count_all++;
     $mailTextHtml .= getMailTextforItem($id);
 
   } ### foreach my $id ( sort keys ...)
@@ -871,9 +871,11 @@ sub getMailTextforItem {
 sub process {
   stopWatch::reset();
   stopWatch::continue($SW_FULL_PROCESSING);
+  $dataFileDate = $G_DATA->{lastChange} ? ( strftime( "%Y.%m.%d %H:%M", localtime( $G_DATA->{lastChange} ) ) ) : "";
   collectData();
 
-  sndMail( getMailText() );
+  sndMails( getMailText() );
+
   dataSave();
   stopWatch::pause($SW_FULL_PROCESSING);
 
