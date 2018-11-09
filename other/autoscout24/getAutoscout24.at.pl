@@ -90,7 +90,7 @@ sub ini {
     'help|?|h'  => \$HELP,
     'verbose|v' => \$VERBOSE,
   );
-  die "Invalid site: [$SITE]\n" if ( $SITE ne $SITE_WILLHABEN and $SITE ne $SITE_AUTOSCOUT24 );
+  die "ERROR: Invalid site: [$SITE]\n Valid sites are: [$SITE_WILLHABEN], [$SITE_AUTOSCOUT24]\n" if ( $SITE ne $SITE_WILLHABEN and $SITE ne $SITE_AUTOSCOUT24 );
 
   # Logging
   my $logConf = q(
