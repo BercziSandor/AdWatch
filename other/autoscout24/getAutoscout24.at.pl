@@ -92,7 +92,6 @@ sub ini {
     'site|s=s'  => \$SITE,
     'help|?|h'  => \$HELP,
     'verbose|v' => \$VERBOSE,
-    'version|V' => \$VERSION,
   );
 
   # Logging
@@ -216,7 +215,7 @@ sub getUrls {
   $log->info("getUrls(): entering\n");
   die "Run ini() before getUrls, aborting.\n" if ( not defined $thisYear );
 
-  $log->info("getUrls -> ${site}\n");
+  $log->info("getUrls -> ${SITE}\n");
   if ( $SITE eq $SITE_AUTOSCOUT24 ) {
 
     foreach my $maker ( sort keys %{ $G_DATA->{sites}->{$SITE}->{searchConfig}->{mmvmk0} } ) {
