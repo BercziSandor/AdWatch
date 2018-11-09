@@ -471,6 +471,7 @@ sub parseItems {
   $log->debug( " There are " . scalar( $items->get_nodelist ) . " 'talalati_lista' items\n" );
   return 0 unless $items;
 
+  print "[";
   foreach my $item ( $items->get_nodelist ) {
 
     $xpath = $G_DATA->{sites}->{$SITE}->{XPATHS}->{XPATH_TITLE};
@@ -615,9 +616,7 @@ sub parseItems {
         $G_DATA->{ads}->{$SITE}->{$id}->{history}->{$t} .= " Leírás: " . $G_DATA->{ads}->{$SITE}->{$id}->{desc} . " -> $desc; ";
         $G_DATA->{ads}->{$SITE}->{$id}->{status} = $STATUS_CHANGED;
       }
-
     } ### else [ if ( $priceStr =~ m/verkauft/i)]
-## perltidy -cscw 2018-11-9: ### else [ if ( not defined( $G_DATA...))]
 
     # update
     $G_DATA->{ads}->{$SITE}->{$id}->{title}    = $title;
@@ -650,9 +649,9 @@ sub parseItems {
 
   if ($G_ITEMS_IN_DB) {
     my $val = ( ( 0.0 + 100 * ( $G_ITEMS_PROCESSED ? $G_ITEMS_PROCESSED : 100 ) ) / $G_ITEMS_IN_DB );
-    $log->info( sprintf( "] %2d%%\n[", $val ) );
+    $log->info( sprintf( "] %2d%%\n", $val ) );
   } else {
-    $log->info( sprintf( "] %4d\n[", $G_ITEMS_PROCESSED ) );
+    $log->info( sprintf( "] %4d\n", $G_ITEMS_PROCESSED ) );
   }
 } ### sub parseItems
 
