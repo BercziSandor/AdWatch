@@ -90,6 +90,7 @@ sub ini {
     'help|?|h'  => \$HELP,
     'verbose|v' => \$VERBOSE,
   );
+  die "Invalid site: [$SITE]\n" if ( $SITE != $SITE_WILLHABEN and $SITE != $SITE_AUTOSCOUT24 );
 
   # Logging
   my $logConf = q(
@@ -117,6 +118,9 @@ sub ini {
   }
 
   $log->info("ini(): entering\n");
+
+  $log->info("ini(): site: $SITE\n");
+
   if ( !-e "./mails" ) { `mkdir ./mails` }
 
   # $G_HTML_TREE = HTML::TreeBuilder::XPath->new;
