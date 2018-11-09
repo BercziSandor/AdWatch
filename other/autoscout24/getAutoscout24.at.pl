@@ -179,7 +179,7 @@ sub ini {
   # Generic
   $G_ITEMS_IN_DB = ( $G_DATA->{ads}->{$SITE} ? scalar( keys %{ $G_DATA->{ads}->{$SITE} } ) : 0 );
   if ($G_DATA) {
-    $log->info( Dumper($G_DATA) );
+    $log->debug( Dumper($G_DATA) );
   }
 
   $log->info( "Ini: Eddig beolvasott hirdetések száma: " . $G_ITEMS_IN_DB . "\n" );
@@ -265,7 +265,7 @@ sub getUrls {
       next if ( not defined $G_DATA->{sites}->{$SITE}->{searchConfig}->{$makerString}->{$maker}->{maxAge} );
       my $out = $G_DATA->{sites}->{$SITE}->{searchUrlRoot};
 
-      # $log->info( Dumper( $G_DATA ) );
+      # $log->debug( Dumper( $G_DATA ) );
       die "Define G_DATA->{$SITE}->{makers}->{$maker}, it isn't, aborting." if not defined $G_DATA->{sites}->{$SITE}->{makers}->{$maker};
       $out .= "$makerString=" . $G_DATA->{sites}->{$SITE}->{makers}->{$maker};
 
@@ -296,7 +296,7 @@ sub getUrls {
     } ### foreach my $maker ( sort keys...)
   } ### elsif ( $SITE eq $SITE_WILLHABEN)
 
-  print Dumper( $G_DATA->{sites}->{$SITE}->{urls} );
+  $log->debug(Dumper( $G_DATA->{sites}->{$SITE}->{urls} ));
 
 } ### sub getUrls
 
@@ -628,7 +628,7 @@ sub parseItems {
       $G_DATA->{ads}->{$SITE}->{$id}->{lastChange} = $t;
     }
 
-    # $log->debug(Dumper($G_DATA->{ads}->{$SITE}->{$id}));
+    $log->debug(Dumper($G_DATA->{ads}->{$SITE}->{$id}));
 
     my $sign;
     if ( $G_DATA->{ads}->{$SITE}->{$id}->{status} eq $STATUS_NEW ) {
@@ -780,7 +780,7 @@ sub getMailTextforItems {
     my $item = $G_DATA->{ads}->{$SITE}->{$id};
     $log->debug("Processing '$id'\n");
 
-    # $log->debug( Dumper($item) );
+    $log->debug( Dumper($item) );
 
     if ( $item->{status} eq $STATUS_NEW ) {
       $count_new++;
