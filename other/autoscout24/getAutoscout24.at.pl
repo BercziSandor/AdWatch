@@ -730,7 +730,6 @@ sub sndMails {
 
     $log->debug("sndMails(): push: [$id]\n");
     push( @ids, $id );
-    $item->{status} = $STATUS_EMPTY;
     if ( scalar(@ids) >= 100 ) {
       $index++;
       sndMail( "${collectionDate}_${index}", getMailTextforItems(@ids) );
@@ -767,8 +766,8 @@ sub getMailTextforItems {
     $log->debug("Processing '$id'\n");
     $log->debug(Dumper($item));
 
-    
-    
+
+
     if ( $item->{status} eq $STATUS_NEW ) {
       $count_new++;
       $log->debug("$id: new\n");
@@ -781,6 +780,7 @@ sub getMailTextforItems {
     }
     $count_all++;
     $mailTextHtml .= getMailTextforItem($id);
+    $G_DATA->{ads}->{$site}->{$id}->{status} = $STATUS_EMPTY;
   } ### foreach my $id (@ids)
 
   $mailTextHtml .= "\n";
