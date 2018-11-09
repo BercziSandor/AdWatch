@@ -861,9 +861,9 @@ sub mailThisText {
     $bodyText=u_text2html($bodyText);
     my $fileNameTmp = $fileName;
     if ( $G_DATA->{sendMail} == 1 ) {
-      $fileNameTmp = "./${fileName}.html";
+      $fileNameTmp = "./mails/${fileName}.html";
     } else {
-      $fileNameTmp = "./${fileName}_NOT_SENT.html";
+      $fileNameTmp = "./mails/${fileName}_NOT_SENT.html";
     }
     $log->debug("Szöveg mentése $fileNameTmp file-ba...");
     open( MYFILE, ">$fileNameTmp" ) or die "${$fileNameTmp}: $!";
