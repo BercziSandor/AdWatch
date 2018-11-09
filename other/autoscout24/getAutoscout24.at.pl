@@ -17,6 +17,8 @@ use WWW::Mechanize;
 use LWP::UserAgent;
 use LWP::Protocol::https;
 
+use Getopt::Long;
+
 # Cookie stuff
 use HTTP::Cookies;
 use HTTP::CookieJar;
@@ -56,7 +58,7 @@ my $SW_PROCESSING      = 'Feldolgozás';
 our $G_DATA;
 
 $Data::Dumper::Sortkeys = 1;
-my $site;
+my;
 my $offline       = 0;
 my $saveHtmlFiles = 0;
 
@@ -75,6 +77,8 @@ my $SCRIPTDIR;
 my $G_ITEMS_TO_PROCESS_MAX     = 0;    # 0: unlimited
 my $G_WAIT_BETWEEN_GETS_IN_SEC = 2;
 
+my ( $SITE, $QUIET, $VERBOSE, $HELP, ) = ( $SITE_WILLHABEN, undef, undef, undef );
+
 # CONSTANTS
 my $STATUS_EMPTY   = 'undef';
 my $STATUS_CHANGED = 'changed';
@@ -82,6 +86,14 @@ my $STATUS_NEW     = 'new';
 
 sub ini {
   $SCRIPTDIR = dirname( abs_path($0) );
+
+  # Reading Parameters
+  GetOptions(
+    'site|s=s'  => \$SITE,
+    'help|?|h'  => \$HELP,
+    'verbose|v' => \$VERBOSE,
+    'version|V' => \$VERSION,
+  );
 
   # Logging
   my $logConf = q(
@@ -102,6 +114,12 @@ sub ini {
 
   Log::Log4perl::init( \$logConf );
   $log = Log::Log4perl->get_logger();
+  if ($VERBOSE) {
+    $Log::Log4perl::Logger::APPENDER_BY_NAME{'Screen'}->threshold('DEBUG');
+  } else {
+    $Log::Log4perl::Logger::APPENDER_BY_NAME{'Screen'}->threshold('INFO');
+  }
+
   $log->info("ini(): entering\n");
   if ( !-e "./mails" ) { `mkdir ./mails` }
 
@@ -119,8 +137,8 @@ sub ini {
   } ### unless ( my $return = require...)
   $log->info("ini(): cfg read\n");
 
-  if ( not defined $G_DATA->{sites}->{$site}->{searchConfig}->{defaults}->{page} ) {
-    $log->logdie("A G_DATA->{$site}->{searchConfig}->{defaults}->{page} nincs definiálva.\n");
+  if ( not defined $G_DATA->{sites}->{$SITE}->{searchConfig}->{defaults}->{page} ) {
+    $log->logdie("A G_DATA->{$SITE}->{searchConfig}->{defaults}->{page} nincs definiálva.\n");
   }
 
   # Checking config
@@ -153,15 +171,15 @@ sub ini {
   # Specific code
   getUrls();
 
-  if ( "$site" eq "hasznaltauto.hu" ) {
+  if ( "$SITE" eq "hasznaltauto.hu" ) {
     $cookieJar_HttpCookieJar->add( "http://hasznaltauto.hu", "visitor_telepules=3148 Path=/; Domain=.hasznaltauto.hu" )
       or die "$!";
     $cookieJar_HttpCookieJarLWP->add( "http://hasznaltauto.hu", "visitor_telepules=3148 Path=/; Domain=.hasznaltauto.hu" )
       or die "$!";
-  } ### if ( "$site" eq "hasznaltauto.hu")
+  } ### if ( "$SITE" eq "hasznaltauto.hu")
 
   # Generic
-  $G_ITEMS_IN_DB = ( $G_DATA->{ads}->{$site} ? scalar( keys %{ $G_DATA->{ads}->{$site} } ) : 0 );
+  $G_ITEMS_IN_DB = ( $G_DATA->{ads}->{$SITE} ? scalar( keys %{ $G_DATA->{ads}->{$SITE} } ) : 0 );
   if ($G_DATA) {
     $log->info( Dumper($G_DATA) );
   }
@@ -199,31 +217,31 @@ sub getUrls {
   die "Run ini() before getUrls, aborting.\n" if ( not defined $thisYear );
 
   $log->info("getUrls -> ${site}\n");
-  if ( $site eq $SITE_AUTOSCOUT24 ) {
+  if ( $SITE eq $SITE_AUTOSCOUT24 ) {
 
-    foreach my $maker ( sort keys %{ $G_DATA->{sites}->{$site}->{searchConfig}->{mmvmk0} } ) {
+    foreach my $maker ( sort keys %{ $G_DATA->{sites}->{$SITE}->{searchConfig}->{mmvmk0} } ) {
       $log->info("maker: [$maker]\n");
       my $out = "https://www.autoscout24.at/ergebnisse?";
 
       # $log->info( Dumper( $G_DATA ) );
-      $out .= "mmvmk0=" . $G_DATA->{sites}->{$site}->{makers}->{$maker};
+      $out .= "mmvmk0=" . $G_DATA->{sites}->{$SITE}->{makers}->{$maker};
 
       # $log->info( "out=$out\n" );
 
-      if ( not defined $G_DATA->{sites}->{$site}->{searchConfig}->{mmvmk0}->{$maker}->{maxAge} ) {
-        $log->logdie( $G_DATA->{sites}->{$site}->{searchConfig}->{mmvmk0}->{$maker}->{maxAge} . " is not defined. Aborting." );
+      if ( not defined $G_DATA->{sites}->{$SITE}->{searchConfig}->{mmvmk0}->{$maker}->{maxAge} ) {
+        $log->logdie( $G_DATA->{sites}->{$SITE}->{searchConfig}->{mmvmk0}->{$maker}->{maxAge} . " is not defined. Aborting." );
       }
-      $out .= "&fregfrom=" . ( $thisYear - ( $G_DATA->{sites}->{$site}->{searchConfig}->{mmvmk0}->{$maker}->{maxAge} ) );
+      $out .= "&fregfrom=" . ( $thisYear - ( $G_DATA->{sites}->{$SITE}->{searchConfig}->{mmvmk0}->{$maker}->{maxAge} ) );
 
       # $log->info( "out=$out\n" );
 
-      foreach my $k ( sort keys %{ $G_DATA->{sites}->{$site}->{searchConfig}->{defaults} } ) {
+      foreach my $k ( sort keys %{ $G_DATA->{sites}->{$SITE}->{searchConfig}->{defaults} } ) {
         my $val;
         $log->debug("Default: $k\n");
-        if ( defined $G_DATA->{sites}->{$site}->{searchConfig}->{mmvmk0}->{$maker}->{$k} ) {
-          $val = $G_DATA->{sites}->{$site}->{searchConfig}->{mmvmk0}->{$maker}->{$k};
+        if ( defined $G_DATA->{sites}->{$SITE}->{searchConfig}->{mmvmk0}->{$maker}->{$k} ) {
+          $val = $G_DATA->{sites}->{$SITE}->{searchConfig}->{mmvmk0}->{$maker}->{$k};
         } else {
-          $val = $G_DATA->{sites}->{$site}->{searchConfig}->{defaults}->{$k};
+          $val = $G_DATA->{sites}->{$SITE}->{searchConfig}->{defaults}->{$k};
         }
         if ( index( $val, ',' ) > 0 ) {
           my @vals = split( ',', $val );
@@ -237,33 +255,33 @@ sub getUrls {
         }
       } ### foreach my $k ( sort keys %...)
 
-      $log->debug( "\$G_DATA->{sites}->{$site}->{urls}->{" . $maker . "}=" . $out . "\n" );
-      $G_DATA->{sites}->{$site}->{urls}->{$maker} = $out;
+      $log->debug( "\$G_DATA->{sites}->{$SITE}->{urls}->{" . $maker . "}=" . $out . "\n" );
+      $G_DATA->{sites}->{$SITE}->{urls}->{$maker} = $out;
     } ### foreach my $maker ( sort keys...)
 
-  } elsif ( $site eq $SITE_WILLHABEN ) {
+  } elsif ( $SITE eq $SITE_WILLHABEN ) {
 
     my $makerString = 'CAR_MODEL/MAKE';
-    foreach my $maker ( sort keys %{ $G_DATA->{sites}->{$site}->{searchConfig}->{$makerString} } ) {
+    foreach my $maker ( sort keys %{ $G_DATA->{sites}->{$SITE}->{searchConfig}->{$makerString} } ) {
       $log->info("maker: [$maker]\n");
-      next if ( not defined $G_DATA->{sites}->{$site}->{searchConfig}->{$makerString}->{$maker}->{maxAge} );
-      my $out = $G_DATA->{sites}->{$site}->{searchUrlRoot};
+      next if ( not defined $G_DATA->{sites}->{$SITE}->{searchConfig}->{$makerString}->{$maker}->{maxAge} );
+      my $out = $G_DATA->{sites}->{$SITE}->{searchUrlRoot};
 
       # $log->info( Dumper( $G_DATA ) );
-      die "Define G_DATA->{$site}->{makers}->{$maker}, it isn't, aborting." if not defined $G_DATA->{sites}->{$site}->{makers}->{$maker};
-      $out .= "$makerString=" . $G_DATA->{sites}->{$site}->{makers}->{$maker};
+      die "Define G_DATA->{$SITE}->{makers}->{$maker}, it isn't, aborting." if not defined $G_DATA->{sites}->{$SITE}->{makers}->{$maker};
+      $out .= "$makerString=" . $G_DATA->{sites}->{$SITE}->{makers}->{$maker};
 
-      $out .= "&YEAR_MODEL_FROM=" . ( $thisYear - ( $G_DATA->{sites}->{$site}->{searchConfig}->{$makerString}->{$maker}->{maxAge} ) );
+      $out .= "&YEAR_MODEL_FROM=" . ( $thisYear - ( $G_DATA->{sites}->{$SITE}->{searchConfig}->{$makerString}->{$maker}->{maxAge} ) );
 
       # $log->info( "out=$out\n" );
 
-      foreach my $k ( sort keys %{ $G_DATA->{sites}->{$site}->{searchConfig}->{defaults} } ) {
+      foreach my $k ( sort keys %{ $G_DATA->{sites}->{$SITE}->{searchConfig}->{defaults} } ) {
         my $val;
         $log->debug("Default: $k\n");
-        if ( defined $G_DATA->{sites}->{$site}->{searchConfig}->{$makerString}->{$maker}->{$k} ) {
-          $val = $G_DATA->{sites}->{$site}->{searchConfig}->{$makerString}->{$maker}->{$k};
+        if ( defined $G_DATA->{sites}->{$SITE}->{searchConfig}->{$makerString}->{$maker}->{$k} ) {
+          $val = $G_DATA->{sites}->{$SITE}->{searchConfig}->{$makerString}->{$maker}->{$k};
         } else {
-          $val = $G_DATA->{sites}->{$site}->{searchConfig}->{defaults}->{$k};
+          $val = $G_DATA->{sites}->{$SITE}->{searchConfig}->{defaults}->{$k};
         }
         if ( index( $val, ',' ) > 0 ) {
           my @vals = split( ',', $val );
@@ -275,12 +293,12 @@ sub getUrls {
         }
       } ### foreach my $k ( sort keys %...)
 
-      # $log->debug( "\$G_DATA->{sites}->{$site}->{urls}->{" . $maker . "}=" . $out . "\n" );
-      $G_DATA->{sites}->{$site}->{urls}->{$maker} = $out;
+      # $log->debug( "\$G_DATA->{sites}->{$SITE}->{urls}->{" . $maker . "}=" . $out . "\n" );
+      $G_DATA->{sites}->{$SITE}->{urls}->{$maker} = $out;
     } ### foreach my $maker ( sort keys...)
-  } ### elsif ( $site eq $SITE_WILLHABEN)
+  } ### elsif ( $SITE eq $SITE_WILLHABEN)
 
-  print Dumper( $G_DATA->{sites}->{$site}->{urls} );
+  print Dumper( $G_DATA->{sites}->{$SITE}->{urls} );
 
 } ### sub getUrls
 
@@ -291,14 +309,14 @@ sub getHtml {
   # $G_HTML_TREE->delete() if defined $G_HTML_TREE;
   $G_HTML_TREE = undef;
 
-  $url =~ s/$G_DATA->{sites}->{$site}->{searchConfig}->{defaults}->{page}/$page/g;
+  $url =~ s/$G_DATA->{sites}->{$SITE}->{searchConfig}->{defaults}->{page}/$page/g;
   $log->debug("getHtml($url, $page, $maker)\n");
 
   my $html    = '';
   my $content = '';
 
   # Specific code
-  if ( $url !~ m|$site|i ) {
+  if ( $url !~ m|$SITE|i ) {
     $log->logdie("Mi ez az url?? [$url]");
   }
 
@@ -447,7 +465,7 @@ sub parseItems {
 
   my $items;
   my $xpath;
-  $xpath = $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_TALALATI_LISTA};
+  $xpath = $G_DATA->{sites}->{$SITE}->{XPATHS}->{XPATH_TALALATI_LISTA};
 
   $items = $G_HTML_TREE->findnodes($xpath) or return 0;
   $log->debug( " There are " . scalar( $items->get_nodelist ) . " 'talalati_lista' items\n" );
@@ -455,13 +473,13 @@ sub parseItems {
 
   foreach my $item ( $items->get_nodelist ) {
 
-    $xpath = $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_TITLE};
+    $xpath = $G_DATA->{sites}->{$SITE}->{XPATHS}->{XPATH_TITLE};
     my $title = u_cleanString( $item->findvalue($xpath) );
 
     # $log->debug("title:  [$xpath]: [$title]\n");
 
-    if ( $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_TITLE2} ) {
-      $xpath = $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_TITLE2};
+    if ( $G_DATA->{sites}->{$SITE}->{XPATHS}->{XPATH_TITLE2} ) {
+      $xpath = $G_DATA->{sites}->{$SITE}->{XPATHS}->{XPATH_TITLE2};
 
       # $log->debug("Evaluating2 [$xpath]\n");
       my $title2 = $item->findvalue($xpath) if $xpath;
@@ -472,29 +490,29 @@ sub parseItems {
     $title = encode_utf8($title);
     $G_ITEMS_PROCESSED++;
 
-    my $link = $item->findvalue( $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_LINK} );
+    my $link = $item->findvalue( $G_DATA->{sites}->{$SITE}->{XPATHS}->{XPATH_LINK} );
 
     my $id;
-    if ( $site eq $SITE_AUTOSCOUT24 ) {
+    if ( $SITE eq $SITE_AUTOSCOUT24 ) {
       $link = "https://www.autoscout24.at${link}";
       $id   = $link;
       $id =~ s/^.*-(.{36})$/$1/g;
-    } elsif ( $site eq $SITE_WILLHABEN ) {
+    } elsif ( $SITE eq $SITE_WILLHABEN ) {
       $link = "https://www.willhaben.at${link}";
       $id   = $link;
 
       # https://www.willhaben.at/iad/gebrauchtwagen/d/auto/citroen-c4-1-6-16v-vti-275306032/
       $id =~ s/^.*\/(.*)\/$/$1/;
-    } ### elsif ( $site eq $SITE_WILLHABEN)
+    } ### elsif ( $SITE eq $SITE_WILLHABEN)
 
-    $xpath = $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_DESC};
+    $xpath = $G_DATA->{sites}->{$SITE}->{XPATHS}->{XPATH_DESC};
     my $desc = u_cleanString( $item->findvalue($xpath) );
     $desc =~ s/bleifrei//g;
 
     # $log->debug("desc:  [$xpath]: [$desc]\n");
 
     my $priceStr;
-    if ( $site eq $SITE_WILLHABEN ) {
+    if ( $SITE eq $SITE_WILLHABEN ) {
       $xpath = './section[@class="content-section"]/div[@class="info"]/script';
       my $script = u_cleanString( $item->findvalue($xpath) );
 
@@ -506,7 +524,7 @@ sub parseItems {
       $script =~ s/.*>(.*)<.*/$1/;
       $priceStr = u_cleanString($script);
     } else {
-      $xpath    = $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_PRICE};
+      $xpath    = $G_DATA->{sites}->{$SITE}->{XPATHS}->{XPATH_PRICE};
       $priceStr = u_cleanString( $item->findvalue($xpath) );
     }
 
@@ -517,7 +535,7 @@ sub parseItems {
     $priceNr = 0 unless $priceNr;
 
     my @fs;
-    if ( $site eq $SITE_WILLHABEN ) {
+    if ( $SITE eq $SITE_WILLHABEN ) {
 
       # '
       #         340.000 kW (462.060 PS)
@@ -545,79 +563,79 @@ sub parseItems {
 
       my $text = "\n - $priceStr\n - $year($age)\n - $km\n - $desc\n";
       $text = u_clearSpaces($text);
-    } ### if ( $site eq $SITE_WILLHABEN)
+    } ### if ( $SITE eq $SITE_WILLHABEN)
 
     # FEATURES
 
-    if ( $site eq $SITE_AUTOSCOUT24 ) {
-      my $features = encode_utf8( join( '#', $item->findvalues( $G_DATA->{sites}->{$site}->{XPATHS}->{XPATH_FEATURES} ) ) );
-      $features =~ s/$G_DATA->{sites}->{$site}->{textToDelete}//g;
+    if ( $SITE eq $SITE_AUTOSCOUT24 ) {
+      my $features = encode_utf8( join( '#', $item->findvalues( $G_DATA->{sites}->{$SITE}->{XPATHS}->{XPATH_FEATURES} ) ) );
+      $features =~ s/$G_DATA->{sites}->{$SITE}->{textToDelete}//g;
       $features =~ s/^ //;
       $features =~ s/ $//;
       $features =~ s/ # /#/g;
       $features =~ s/  / /g;
       @fs = split( '#', $features );
-    } ### if ( $site eq $SITE_AUTOSCOUT24)
+    } ### if ( $SITE eq $SITE_AUTOSCOUT24)
 
     ######################################################################################################
     # Storing data
     my $t = time;
 
-    if ( not defined( $G_DATA->{ads}->{$site}->{$id} ) ) {
+    if ( not defined( $G_DATA->{ads}->{$SITE}->{$id} ) ) {
 
       # New
-      $G_DATA->{ads}->{$site}->{$id}->{status} = $STATUS_NEW;
+      $G_DATA->{ads}->{$SITE}->{$id}->{status} = $STATUS_NEW;
 
       $log->debug("Adding [$title] to the database (id: $id)\n");
-      $G_DATA->{ads}->{$site}->{$id}->{history}->{$t} = " Adatbázisba került; ";
+      $G_DATA->{ads}->{$SITE}->{$id}->{history}->{$t} = " Adatbázisba került; ";
 
     } else {
 
-      $G_DATA->{ads}->{$site}->{$id}->{status} = $STATUS_EMPTY;
+      $G_DATA->{ads}->{$SITE}->{$id}->{status} = $STATUS_EMPTY;
 
-      if ( not defined $G_DATA->{ads}->{$site}->{$id}->{history} ) {
-        $G_DATA->{ads}->{$site}->{$id}->{history}->{$t} = "Adatbázisba került; ";
+      if ( not defined $G_DATA->{ads}->{$SITE}->{$id}->{history} ) {
+        $G_DATA->{ads}->{$SITE}->{$id}->{history}->{$t} = "Adatbázisba került; ";
       }
 
       # Title changed?
-      if ( $G_DATA->{ads}->{$site}->{$id}->{title} ne $title ) {
-        $G_DATA->{ads}->{$site}->{$id}->{history}->{$t} .= "Cím: [" . $G_DATA->{ads}->{$site}->{$id}->{title} . "] -> [$title]; ";
-        $G_DATA->{ads}->{$site}->{$id}->{status} = $STATUS_CHANGED;
+      if ( $G_DATA->{ads}->{$SITE}->{$id}->{title} ne $title ) {
+        $G_DATA->{ads}->{$SITE}->{$id}->{history}->{$t} .= "Cím: [" . $G_DATA->{ads}->{$SITE}->{$id}->{title} . "] -> [$title]; ";
+        $G_DATA->{ads}->{$SITE}->{$id}->{status} = $STATUS_CHANGED;
       }
 
       # Price changed?
-      if ( $G_DATA->{ads}->{$site}->{$id}->{priceNr} != $priceNr ) {
-        $G_DATA->{ads}->{$site}->{$id}->{history}->{$t} .= " Ár: " . $G_DATA->{ads}->{$site}->{$id}->{priceStr} . " -> $priceStr; ";
-        $G_DATA->{ads}->{$site}->{$id}->{status} = $STATUS_CHANGED;
+      if ( $G_DATA->{ads}->{$SITE}->{$id}->{priceNr} != $priceNr ) {
+        $G_DATA->{ads}->{$SITE}->{$id}->{history}->{$t} .= " Ár: " . $G_DATA->{ads}->{$SITE}->{$id}->{priceStr} . " -> $priceStr; ";
+        $G_DATA->{ads}->{$SITE}->{$id}->{status} = $STATUS_CHANGED;
       }
 
       # Desc changed?
-      if ( $G_DATA->{ads}->{$site}->{$id}->{desc} ne $desc ) {
-        $G_DATA->{ads}->{$site}->{$id}->{history}->{$t} .= " Leírás: " . $G_DATA->{ads}->{$site}->{$id}->{desc} . " -> $desc; ";
-        $G_DATA->{ads}->{$site}->{$id}->{status} = $STATUS_CHANGED;
+      if ( $G_DATA->{ads}->{$SITE}->{$id}->{desc} ne $desc ) {
+        $G_DATA->{ads}->{$SITE}->{$id}->{history}->{$t} .= " Leírás: " . $G_DATA->{ads}->{$SITE}->{$id}->{desc} . " -> $desc; ";
+        $G_DATA->{ads}->{$SITE}->{$id}->{status} = $STATUS_CHANGED;
       }
 
     } ### else [ if ( not defined( $G_DATA...))]
 
     # update
-    $G_DATA->{ads}->{$site}->{$id}->{title}    = $title;
-    $G_DATA->{ads}->{$site}->{$id}->{priceNr}  = $priceNr;
-    $G_DATA->{ads}->{$site}->{$id}->{priceStr} = $priceStr;
-    $G_DATA->{ads}->{$site}->{$id}->{link}     = $link;
-    $G_DATA->{ads}->{$site}->{$id}->{info}     = \@fs;
-    $G_DATA->{ads}->{$site}->{$id}->{desc}     = $desc;
+    $G_DATA->{ads}->{$SITE}->{$id}->{title}    = $title;
+    $G_DATA->{ads}->{$SITE}->{$id}->{priceNr}  = $priceNr;
+    $G_DATA->{ads}->{$SITE}->{$id}->{priceStr} = $priceStr;
+    $G_DATA->{ads}->{$SITE}->{$id}->{link}     = $link;
+    $G_DATA->{ads}->{$SITE}->{$id}->{info}     = \@fs;
+    $G_DATA->{ads}->{$SITE}->{$id}->{desc}     = $desc;
 
     $G_DATA->{lastChange} = $t;
-    if ( $G_DATA->{ads}->{$site}->{$id}->{status} eq $STATUS_CHANGED ) {
-      $G_DATA->{ads}->{$site}->{$id}->{lastChange} = $t;
+    if ( $G_DATA->{ads}->{$SITE}->{$id}->{status} eq $STATUS_CHANGED ) {
+      $G_DATA->{ads}->{$SITE}->{$id}->{lastChange} = $t;
     }
 
-    # $log->debug(Dumper($G_DATA->{ads}->{$site}->{$id}));
+    # $log->debug(Dumper($G_DATA->{ads}->{$SITE}->{$id}));
 
     my $sign;
-    if ( $G_DATA->{ads}->{$site}->{$id}->{status} eq $STATUS_NEW ) {
+    if ( $G_DATA->{ads}->{$SITE}->{$id}->{status} eq $STATUS_NEW ) {
       $sign = "+";
-    } elsif ( $G_DATA->{ads}->{$site}->{$id}->{status} eq $STATUS_CHANGED ) {
+    } elsif ( $G_DATA->{ads}->{$SITE}->{$id}->{status} eq $STATUS_CHANGED ) {
       $sign = "*";
     } else {
       $sign = " ";
@@ -643,8 +661,8 @@ sub collectData {
 
   $G_ITEMS_PROCESSED = 0;
 
-  foreach my $maker ( sort keys %{ $G_DATA->{sites}->{$site}->{urls} } ) {
-    my $url = $G_DATA->{sites}->{$site}->{urls}->{$maker};
+  foreach my $maker ( sort keys %{ $G_DATA->{sites}->{$SITE}->{urls} } ) {
+    my $url = $G_DATA->{sites}->{$SITE}->{urls}->{$maker};
     $log->info("\n\n** $maker **\n");
     if (  $G_ITEMS_TO_PROCESS_MAX > 0
       and $G_ITEMS_PROCESSED >= $G_ITEMS_TO_PROCESS_MAX ) {
@@ -715,8 +733,8 @@ sub dataLoad {
     return;
   }
   $G_DATA = retrieve("$SCRIPTDIR/data.dat") or die;
-  foreach my $id ( keys %{ $G_DATA->{ads}->{$site} } ) {
-    $G_DATA->{ads}->{$site}->{$id}->{status} = $STATUS_EMPTY;
+  foreach my $id ( keys %{ $G_DATA->{ads}->{$SITE} } ) {
+    $G_DATA->{ads}->{$SITE}->{$id}->{status} = $STATUS_EMPTY;
   }
 } ### sub dataLoad
 
@@ -725,8 +743,8 @@ sub dataLoad {
 sub sndMails {
   my @ids = ();
   my $index;
-  foreach my $id ( sort keys %{ $G_DATA->{ads}->{$site} } ) {
-    my $item = $G_DATA->{ads}->{$site}->{$id};
+  foreach my $id ( sort keys %{ $G_DATA->{ads}->{$SITE} } ) {
+    my $item = $G_DATA->{ads}->{$SITE}->{$id};
     next unless ( $item->{status} eq $STATUS_NEW or $item->{status} eq $STATUS_CHANGED );
 
     $log->debug("sndMails(): push: [$id]\n");
@@ -758,11 +776,12 @@ sub getMailTextforItems {
   $mailTextHtml = "Utolsó állapot: $dataFileDate\n\n";
 
   foreach my $id (@ids) {
-    if ( not defined $G_DATA->{ads}->{$site}->{$id} ) {
+    if ( not defined $G_DATA->{ads}->{$SITE}->{$id} ) {
       $log->logdie("getMailTextforItems(): $id is not defined. ??? \n");
     }
-    my $item = $G_DATA->{ads}->{$site}->{$id};
+    my $item = $G_DATA->{ads}->{$SITE}->{$id};
     $log->debug("Processing '$id'\n");
+
     # $log->debug( Dumper($item) );
 
     if ( $item->{status} eq $STATUS_NEW ) {
@@ -777,7 +796,7 @@ sub getMailTextforItems {
     }
     $count_all++;
     $mailTextHtml .= getMailTextforItem($id);
-    $G_DATA->{ads}->{$site}->{$id}->{status} = $STATUS_EMPTY;
+    $G_DATA->{ads}->{$SITE}->{$id}->{status} = $STATUS_EMPTY;
   } ### foreach my $id (@ids)
 
   $mailTextHtml .= "\n";
@@ -799,10 +818,10 @@ sub getMailTextforItem {
   my $retval = "";
   $log->debug("getMailTextforItem($id)\n");
 
-  if ( not defined( $G_DATA->{ads}->{$site}->{$id} ) ) {
+  if ( not defined( $G_DATA->{ads}->{$SITE}->{$id} ) ) {
     $log->logdie("getMailTextforItem(): $id is not defined. ??? \n");
   }
-  my $item = $G_DATA->{ads}->{$site}->{$id};
+  my $item = $G_DATA->{ads}->{$SITE}->{$id};
   my $sign;
   if ( $item->{status} eq $STATUS_NEW ) {
     $sign = "ÚJ!";
@@ -858,7 +877,7 @@ sub mailThisText {
     close(MYFILE);
   }
   {
-    $bodyText=u_text2html($bodyText);
+    $bodyText = u_text2html($bodyText);
     my $fileNameTmp = $fileName;
     if ( $G_DATA->{sendMail} == 1 ) {
       $fileNameTmp = "./mails/${fileName}.html";
@@ -876,7 +895,7 @@ sub mailThisText {
       header => [
         To             => $_,
         From           => '"Sanyi" <berczi.sandor@gmail.com>',
-        Subject        => "$site frissítés",
+        Subject        => "$SITE frissítés",
         'Content-Type' => 'text/html',
       ],
       body => $bodyText,
@@ -950,5 +969,4 @@ sub main {
   } ### for ( ; ; )
 } ### sub main
 
-$site = $SITE_WILLHABEN;
 main();
