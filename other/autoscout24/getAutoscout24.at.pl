@@ -103,6 +103,7 @@ sub ini {
   Log::Log4perl::init( \$logConf );
   $log = Log::Log4perl->get_logger();
   $log->info("ini(): entering\n");
+  if ( !-e "./mails" ) { `mkdir ./mails` }
 
   # $G_HTML_TREE = HTML::TreeBuilder::XPath->new;
 
@@ -562,7 +563,7 @@ sub parseItems {
     # Storing data
     my $t = time;
 
-    if ( not defined ($G_DATA->{ads}->{$site}->{$id}) ) {
+    if ( not defined( $G_DATA->{ads}->{$site}->{$id} ) ) {
 
       # New
       $G_DATA->{ads}->{$site}->{$id}->{status} = $STATUS_NEW;
@@ -596,7 +597,7 @@ sub parseItems {
         $G_DATA->{ads}->{$site}->{$id}->{status} = $STATUS_CHANGED;
       }
 
-    } ### else [ if ( not defined $G_DATA...)]
+    } ### else [ if ( not defined( $G_DATA...))]
 
     # update
     $G_DATA->{ads}->{$site}->{$id}->{title}    = $title;
@@ -738,8 +739,7 @@ sub sndMails {
   } ### foreach my $id ( sort keys ...)
 
   $index++;
-  sndMail( "${collectionDate}_${index}", getMailTextforItems(@ids)) if ( scalar(@ids));
-
+  sndMail( "${collectionDate}_${index}", getMailTextforItems(@ids) ) if ( scalar(@ids) );
 
 } ### sub sndMails
 
@@ -753,8 +753,7 @@ sub getMailTextforItems {
   my $count_all     = 0;
   my $count_changed = 0;
 
-  $log->debug("getMailTextforItems(".join(',',@ids).") \n");
-
+  $log->debug( "getMailTextforItems(" . join( ',', @ids ) . ") \n" );
 
   $mailTextHtml = "Utolsó állapot: $dataFileDate\n\n";
 
@@ -764,9 +763,7 @@ sub getMailTextforItems {
     }
     my $item = $G_DATA->{ads}->{$site}->{$id};
     $log->debug("Processing '$id'\n");
-    $log->debug(Dumper($item));
-
-
+    $log->debug( Dumper($item) );
 
     if ( $item->{status} eq $STATUS_NEW ) {
       $count_new++;
@@ -832,6 +829,9 @@ sub sndMail {
 
   # http://www.revsys.com/writings/perl/sending-email-with-perl.html
   my ( $fileName, $bodyText ) = @_;
+  $fileName =~ s/[.:]//g;
+  $fileName =~ s/[ ]/_/g;
+
   $log->info("Levél küldése...\n");
   $G_DATA->{lastMailSendTime} = time if ( not defined $G_DATA->{lastMailSendTime} );
   if ( not $bodyText ) {
@@ -845,33 +845,29 @@ sub sndMail {
   } ### if ( not $bodyText )
 
   {
-    $fileName =~ s/[.:]//g;
-    $fileName =~ s/[ ]/_/g;
-    if ( !-e "./mails" ) { `mkdir ./mails` }
+    my $fileNameTmp = $fileName;
     if ( $G_DATA->{sendMail} == 1 ) {
-      $fileName = "./mails/${fileName}.txt";
+      $fileNameTmp = "./mails/${fileName}.txt";
     } else {
-      $fileName = "./mails/${fileName}_NOT_SENT.txt";
+      $fileNameTmp = "./mails/${fileName}_NOT_SENT.txt";
     }
-    $log->debug("Szöveg mentése $fileName file-ba...");
+    $log->debug("Szöveg mentése $fileNameTmp file-ba...");
 
-    open( MYFILE, ">$fileName" ) or die "$fileName: $!";
+    open( MYFILE, ">$fileNameTmp" ) or die "$fileNameTmp: $!";
     print MYFILE $bodyText;
     close(MYFILE);
   }
 
-  $bodyText = u_text2html($bodyText);
   {
-    $fileName =~ s/[.:]//g;
-    $fileName =~ s/[ ]/_/g;
+    my $fileNameTmp = $fileName;
     if ( $G_DATA->{sendMail} == 1 ) {
-      $fileName = "./mails/${fileName}.html";
+      $fileNameTmp = "./${fileName}.html";
     } else {
-      $fileName = "./mails/${fileName}_NOT_SENT.html";
+      $fileNameTmp = "./${fileName}_NOT_SENT.html";
     }
-    $log->debug("Szöveg mentése $fileName file-ba...");
-    open( MYFILE, ">$fileName" ) or die "${fileName}: $!";
-    print MYFILE $bodyText;
+    $log->debug("Szöveg mentése $fileNameTmp file-ba...");
+    open( MYFILE, ">$fileNameTmp" ) or die "${$fileNameTmp}: $!";
+    print MYFILE u_text2html($bodyText);
     close(MYFILE);
   }
 
@@ -918,7 +914,7 @@ sub process {
   stopWatch::continue($SW_FULL_PROCESSING);
   $dataFileDate = $G_DATA->{lastChange} ? ( strftime( "%Y.%m.%d %H:%M", localtime( $G_DATA->{lastChange} ) ) ) : "";
   collectData();
-  $log->debug(Dumper($G_DATA));
+  $log->debug( Dumper($G_DATA) );
 
   sndMail( $collectionDate, sndMails() );
 
