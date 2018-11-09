@@ -567,7 +567,7 @@ sub parseItems {
       # New
       $G_DATA->{ads}->{$site}->{$id}->{status} = $STATUS_NEW;
 
-      $log->debug("Adding [$title] to the database\n");
+      $log->debug("Adding [$title] to the database (id: $id)\n");
       $G_DATA->{ads}->{$site}->{$id}->{history}->{$t} = " Adatbázisba került; ";
 
     } else {
@@ -611,7 +611,7 @@ sub parseItems {
       $G_DATA->{ads}->{$site}->{$id}->{lastChange} = $t;
     }
 
-    $log->debug(Dumper($G_DATA->{ads}->{$site}->{$id}));
+    # $log->debug(Dumper($G_DATA->{ads}->{$site}->{$id}));
 
     my $sign;
     if ( $G_DATA->{ads}->{$site}->{$id}->{status} eq $STATUS_NEW ) {
@@ -738,6 +738,10 @@ sub sndMails {
     }
   } ### foreach my $id ( sort keys ...)
 
+  $index++;
+  sndMail( "${collectionDate}_${index}", getMailTextforItems(@ids)) if ( scalar(@ids));
+
+
 } ### sub sndMails
 
 sub getMailTextforItems {
@@ -750,6 +754,9 @@ sub getMailTextforItems {
   my $count_all     = 0;
   my $count_changed = 0;
 
+  $log->debug("getMailTextforItems(".join(',',@ids).") \n");
+
+
   $mailTextHtml = "Utolsó állapot: $dataFileDate\n\n";
 
   foreach my $id (@ids) {
@@ -757,6 +764,11 @@ sub getMailTextforItems {
       $log->logdie("getMailTextforItems(): $id is not defined. ??? \n");
     }
     my $item = $G_DATA->{ads}->{$site}->{$id};
+    $log->debug("Processing '$id'\n");
+    $log->debug(Dumper($item));
+
+    
+    
     if ( $item->{status} eq $STATUS_NEW ) {
       $count_new++;
       $log->debug("$id: new\n");
@@ -906,6 +918,7 @@ sub process {
   stopWatch::continue($SW_FULL_PROCESSING);
   $dataFileDate = $G_DATA->{lastChange} ? ( strftime( "%Y.%m.%d %H:%M", localtime( $G_DATA->{lastChange} ) ) ) : "";
   collectData();
+  $log->debug(Dumper($G_DATA));
 
   sndMail( $collectionDate, sndMails() );
 
