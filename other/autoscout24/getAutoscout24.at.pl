@@ -721,7 +721,7 @@ sub dataLoad {
 } ### sub dataLoad
 
 # Mail sending
-
+# Params
 sub sndMails {
   my @ids = ();
   my $index;
@@ -733,13 +733,13 @@ sub sndMails {
     push( @ids, $id );
     if ( scalar(@ids) >= 100 ) {
       $index++;
-      sndMail( "${collectionDate}_${index}", getMailTextforItems(@ids) );
+      mailThisText( "${collectionDate}_${index}", getMailTextforItems(@ids) );
       @ids = ();
     }
   } ### foreach my $id ( sort keys ...)
 
   $index++;
-  sndMail( "${collectionDate}_${index}", getMailTextforItems(@ids) ) if ( scalar(@ids) );
+  mailThisText( "${collectionDate}_${index}", getMailTextforItems(@ids) ) if ( scalar(@ids) );
 
 } ### sub sndMails
 
@@ -763,7 +763,7 @@ sub getMailTextforItems {
     }
     my $item = $G_DATA->{ads}->{$site}->{$id};
     $log->debug("Processing '$id'\n");
-    $log->debug( Dumper($item) );
+    # $log->debug( Dumper($item) );
 
     if ( $item->{status} eq $STATUS_NEW ) {
       $count_new++;
@@ -825,7 +825,7 @@ sub getMailTextforItem {
   return $retval;
 } ### sub getMailTextforItem
 
-sub sndMail {
+sub mailThisText {
 
   # http://www.revsys.com/writings/perl/sending-email-with-perl.html
   my ( $fileName, $bodyText ) = @_;
@@ -857,8 +857,8 @@ sub sndMail {
     print MYFILE $bodyText;
     close(MYFILE);
   }
-
   {
+    $bodyText=u_text2html($bodyText);
     my $fileNameTmp = $fileName;
     if ( $G_DATA->{sendMail} == 1 ) {
       $fileNameTmp = "./${fileName}.html";
@@ -867,7 +867,7 @@ sub sndMail {
     }
     $log->debug("Szöveg mentése $fileNameTmp file-ba...");
     open( MYFILE, ">$fileNameTmp" ) or die "${$fileNameTmp}: $!";
-    print MYFILE u_text2html($bodyText);
+    print MYFILE $bodyText;
     close(MYFILE);
   }
 
@@ -896,7 +896,7 @@ sub sndMail {
   } else {
     $log->info("Levélküldés kihagyva (ok: 'sendMail' változó értéke: false.\n");
   }
-} ### sub sndMail
+} ### sub mailThisText
 
 sub u_text2html {
   my $text    = shift;
@@ -916,7 +916,7 @@ sub process {
   collectData();
   $log->debug( Dumper($G_DATA) );
 
-  sndMail( $collectionDate, sndMails() );
+  mailThisText( $collectionDate, sndMails() );
 
   dataSave();
   stopWatch::pause($SW_FULL_PROCESSING);
