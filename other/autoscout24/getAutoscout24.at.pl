@@ -870,7 +870,7 @@ sub sndMail {
       $fileName = "./mails/${fileName}_NOT_SENT.html";
     }
     $log->debug("Szöveg mentése $fileName file-ba...");
-    open( MYFILE, ">$fileName" ) or die $!;
+    open( MYFILE, ">$fileName" ) or die "${fileName}: $!";
     print MYFILE $bodyText;
     close(MYFILE);
   }
