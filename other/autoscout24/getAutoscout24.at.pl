@@ -79,9 +79,7 @@ my $G_WAIT_BETWEEN_GETS_IN_SEC = 2;
 my ( $SITE, $QUIET, $VERBOSE, $HELP, ) = ( $SITE_WILLHABEN, undef, undef, undef );
 
 # CONSTANTS
-my $STATUS_EMPTY   = 'undef';
-my $STATUS_CHANGED = 'changed';
-my $STATUS_NEW     = 'new';
+my ( $STATUS_EMPTY, $STATUS_CHANGED, $STATUS_NEW, $STATUS_VERKAUFT ) = ( 'undef', 'megváltozott', 'új', 'eladva' );
 
 sub ini {
   $SCRIPTDIR = dirname( abs_path($0) );
@@ -296,7 +294,7 @@ sub getUrls {
     } ### foreach my $maker ( sort keys...)
   } ### elsif ( $SITE eq $SITE_WILLHABEN)
 
-  $log->debug(Dumper( $G_DATA->{sites}->{$SITE}->{urls} ));
+  $log->debug( Dumper( $G_DATA->{sites}->{$SITE}->{urls} ) );
 
 } ### sub getUrls
 
@@ -578,8 +576,9 @@ sub parseItems {
     ######################################################################################################
     # Storing data
     my $t = time;
-
-    if ( not defined( $G_DATA->{ads}->{$SITE}->{$id} ) ) {
+    if ( $priceStr =~ m/verkauft/i ) {
+      $G_DATA->{ads}->{$SITE}->{$id}->{status} = $STATUS_VERKAUFT;
+    } elsif ( not defined( $G_DATA->{ads}->{$SITE}->{$id} ) ) {
 
       # New
       $G_DATA->{ads}->{$SITE}->{$id}->{status} = $STATUS_NEW;
@@ -613,7 +612,8 @@ sub parseItems {
         $G_DATA->{ads}->{$SITE}->{$id}->{status} = $STATUS_CHANGED;
       }
 
-    } ### else [ if ( not defined( $G_DATA...))]
+    } ### else [ if ( $priceStr =~ m/verkauft/i)]
+## perltidy -cscw 2018-11-9: ### else [ if ( not defined( $G_DATA...))]
 
     # update
     $G_DATA->{ads}->{$SITE}->{$id}->{title}    = $title;
@@ -628,11 +628,12 @@ sub parseItems {
       $G_DATA->{ads}->{$SITE}->{$id}->{lastChange} = $t;
     }
 
-    $log->debug(Dumper($G_DATA->{ads}->{$SITE}->{$id}));
-
+    $log->debug( Dumper( $G_DATA->{ads}->{$SITE}->{$id} ) );
     my $sign;
     if ( $G_DATA->{ads}->{$SITE}->{$id}->{status} eq $STATUS_NEW ) {
       $sign = "+";
+    } elsif ( $G_DATA->{ads}->{$SITE}->{$id}->{status} eq $STATUS_VERKAUFT ) {
+      $sign = "x";
     } elsif ( $G_DATA->{ads}->{$SITE}->{$id}->{status} eq $STATUS_CHANGED ) {
       $sign = "*";
     } else {
@@ -645,12 +646,10 @@ sub parseItems {
 
   if ($G_ITEMS_IN_DB) {
     my $val = ( ( 0.0 + 100 * ( $G_ITEMS_PROCESSED ? $G_ITEMS_PROCESSED : 100 ) ) / $G_ITEMS_IN_DB );
-    $log->info( sprintf( "] %2d%%\n", $val ) );
+    $log->info( sprintf( "] %2d%%\n[", $val ) );
   } else {
-    $log->info( sprintf( "] %4d\n", $G_ITEMS_PROCESSED ) );
+    $log->info( sprintf( "] %4d\n[", $G_ITEMS_PROCESSED ) );
   }
-
-  # $log->logwarn( "parseItems(): No items, aborting\n" ) unless $items;
 } ### sub parseItems
 
 sub collectData {
