@@ -22,7 +22,7 @@ $G_DATA->{silentHours}->{till} = 06;
 $G_DATA->{mailRecipients} = [ '"Sanyi" <berczi.sandor@gmail.com>', '"Tillatilla1966" <tillatilla.1966@gmail.com>' ];
 
 # FIXME: debug
-$G_DATA->{G_WAIT_BETWEEN_FULL_PROCESS_IN_SEC} = 100;
+# $G_DATA->{G_WAIT_BETWEEN_FULL_PROCESS_IN_SEC} = 100;
 # $G_DATA->{sendMail}       = 1;
 # $G_DATA->{mailRecipients} = [ '"Sanyi" <berczi.sandor@gmail.com>' ];
 # $default_price_from       = 550;
