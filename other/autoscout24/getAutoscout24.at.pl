@@ -4,6 +4,7 @@ use 5.010;
 use strict;
 use warnings;
 use Data::Dumper;
+$Data::Dumper::Sortkeys = 1;
 use Log::Log4perl;
 
 # use Log::Dispatch::File::Rolling;
@@ -57,8 +58,6 @@ my $SW_PROCESSING      = 'Feldolgozás';
 # variables from config file
 our $G_DATA;
 
-$Data::Dumper::Sortkeys = 1;
-my;
 my $offline       = 0;
 my $saveHtmlFiles = 0;
 
