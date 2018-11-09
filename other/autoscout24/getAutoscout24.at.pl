@@ -633,7 +633,7 @@ sub parseItems {
     if ( $G_DATA->{ads}->{$SITE}->{$id}->{status} eq $STATUS_NEW ) {
       $sign = "+";
     } elsif ( $G_DATA->{ads}->{$SITE}->{$id}->{status} eq $STATUS_VERKAUFT ) {
-      $sign = "x";
+      $sign = "\$";
     } elsif ( $G_DATA->{ads}->{$SITE}->{$id}->{status} eq $STATUS_CHANGED ) {
       $sign = "*";
     } else {
