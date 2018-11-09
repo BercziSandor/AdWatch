@@ -73,7 +73,7 @@ $G_DATA->{mailRecipients} = [ '"Sanyi" <berczi.sandor@gmail.com>', '"Tillatilla1
 
   # $G_DATA->{sites}->{willHaben}->{searchConfig}->{defaults}->{YEAR_MODEL_FROM} = $default_year_from;
 
-  $G_DATA->{sites}->{willHaben}->{searchConfig}->{defaults}->{rows} = 200;
+  $G_DATA->{sites}->{willHaben}->{searchConfig}->{defaults}->{rows} = 100;
   $G_DATA->{sites}->{willHaben}->{searchConfig}->{defaults}->{sort} = 1;
   $G_DATA->{sites}->{willHaben}->{searchConfig}->{defaults}->{page} = "VVPAGEVV";
 
