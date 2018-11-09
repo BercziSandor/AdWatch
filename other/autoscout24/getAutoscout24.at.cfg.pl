@@ -12,7 +12,8 @@ $G_DATA->{CONSTANTS}->{DOWNLOADMETHODS}->{wwwMech}  = 'wwwMech';
 
 $G_DATA->{downloadMethod} = $G_DATA->{CONSTANTS}->{DOWNLOADMETHODS}->{wwwMech};
 
-$G_DATA->{sendMail}                           = 1;
+$G_DATA->{mail}->{sendMail}                   = 1;
+$G_DATA->{mail}->{itemsInAMailMax}            = 1000;
 $G_DATA->{G_WAIT_BETWEEN_FULL_PROCESS_IN_SEC} = 8 * 60;
 
 $G_DATA->{silentHours}->{from} = 20;
@@ -69,6 +70,7 @@ $G_DATA->{mailRecipients} = [ '"Sanyi" <berczi.sandor@gmail.com>', '"Tillatilla1
   $G_DATA->{sites}->{willHaben}->{searchConfig}->{defaults}->{PRICE_FROM}      = $default_price_from;
   $G_DATA->{sites}->{willHaben}->{searchConfig}->{defaults}->{PRICE_TO}        = $default_price_to;
   $G_DATA->{sites}->{willHaben}->{searchConfig}->{defaults}->{MOTOR_CONDITION} = '20%3B30%3B40';
+
   # $G_DATA->{sites}->{willHaben}->{searchConfig}->{defaults}->{YEAR_MODEL_FROM} = $default_year_from;
 
   $G_DATA->{sites}->{willHaben}->{searchConfig}->{defaults}->{rows} = 200;

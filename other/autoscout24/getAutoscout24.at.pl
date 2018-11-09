@@ -144,7 +144,7 @@ sub ini {
     or not defined $G_DATA->{CONSTANTS}->{DOWNLOADMETHODS}
     or not defined $G_DATA->{sites}->{AUTOSCOUT}->{searchConfig}->{defaults}
     or not defined $G_DATA->{sites}->{AUTOSCOUT}->{XPATHS}
-    or not defined $G_DATA->{sendMail}
+    or not defined $G_DATA->{mail}->{sendMail}
     or not defined $G_DATA->{mailRecipients}
     or not defined $G_DATA->{downloadMethod} ) {
     die "G_DATA is not ok, aborting\n";
@@ -716,10 +716,10 @@ sub str_replace {
 
 sub dataSave {
   $G_DATA = () unless $G_DATA;
-  if ( $G_DATA->{sendMail} == 1 ) {
+  if ( $G_DATA->{mail}->{sendMail} == 1 ) {
     store $G_DATA, "$SCRIPTDIR/data.dat";
   } else {
-    $log->info("Az adatokat nem mentettük el, mert nem történt levélküldés sem, a \$G_DATA->{sendMail} változó értéke miatt.\n");
+    $log->info("Az adatokat nem mentettük el, mert nem történt levélküldés sem, a \$G_DATA->{mail}->{sendMail} változó értéke miatt.\n");
   }
 } ### sub dataSave
 
@@ -747,7 +747,7 @@ sub sndMails {
 
     $log->debug("sndMails(): push: [$id]\n");
     push( @ids, $id );
-    if ( scalar(@ids) >= 100 ) {
+    if ( scalar(@ids) >= $G_DATA->{mail}->{itemsInAMailMax} ) {
       $index++;
       mailThisText( "${collectionDate}_${index}", getMailTextforItems(@ids) );
       @ids = ();
@@ -863,7 +863,7 @@ sub mailThisText {
 
   {
     my $fileNameTmp = $fileName;
-    if ( $G_DATA->{sendMail} == 1 ) {
+    if ( $G_DATA->{mail}->{sendMail} == 1 ) {
       $fileNameTmp = "./mails/${fileName}.txt";
     } else {
       $fileNameTmp = "./mails/${fileName}_NOT_SENT.txt";
@@ -877,7 +877,7 @@ sub mailThisText {
   {
     $bodyText = u_text2html($bodyText);
     my $fileNameTmp = $fileName;
-    if ( $G_DATA->{sendMail} == 1 ) {
+    if ( $G_DATA->{mail}->{sendMail} == 1 ) {
       $fileNameTmp = "./mails/${fileName}.html";
     } else {
       $fileNameTmp = "./mails/${fileName}_NOT_SENT.html";
@@ -901,14 +901,14 @@ sub mailThisText {
     $log->info(" $_ ...\n");
 
     # Email::Sender::Simple
-    if ( $G_DATA->{sendMail} == 1 ) {
+    if ( $G_DATA->{mail}->{sendMail} == 1 ) {
       sendmail($email) or die $!;
       $log->info("Levél küldése sikeres. To: [$_]\n");
     }
 
   } ### foreach ( @{ $G_DATA->{mailRecipients...}})
 
-  if ( $G_DATA->{sendMail} == 1 ) {
+  if ( $G_DATA->{mail}->{sendMail} == 1 ) {
     $G_DATA->{lastMailSendTime} = time;
   } else {
     $log->info("Levélküldés kihagyva (ok: 'sendMail' változó értéke: false.\n");
