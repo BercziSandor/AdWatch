@@ -645,9 +645,9 @@ sub parseItems {
 
   if ($G_ITEMS_IN_DB) {
     my $val = ( ( 0.0 + 100 * ( $G_ITEMS_PROCESSED ? $G_ITEMS_PROCESSED : 100 ) ) / $G_ITEMS_IN_DB );
-    $log->info( sprintf( "] %2d%%", $val ) );
+    $log->info( sprintf( "] %2d%%\n", $val ) );
   } else {
-    $log->info( sprintf( "] %4d", $G_ITEMS_PROCESSED ) );
+    $log->info( sprintf( "] %4d\n", $G_ITEMS_PROCESSED ) );
   }
 
   # $log->logwarn( "parseItems(): No items, aborting\n" ) unless $items;
