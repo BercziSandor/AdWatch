@@ -117,9 +117,11 @@ sub ini {
   Log::Log4perl::init( \$logConf );
   $log = Log::Log4perl->get_logger();
   if ($VERBOSE) {
+    print "VERBOSE mode on.\n";
     $Log::Log4perl::Logger::APPENDER_BY_NAME{'Logfile'}->threshold('DEBUG');
     $Log::Log4perl::Logger::APPENDER_BY_NAME{'Screen'}->threshold('DEBUG');
   } else {
+    print "VERBOSE mode off.\n";
     $Log::Log4perl::Logger::APPENDER_BY_NAME{'Logfile'}->threshold('INFO');
     $Log::Log4perl::Logger::APPENDER_BY_NAME{'Screen'}->threshold('INFO');
   }
