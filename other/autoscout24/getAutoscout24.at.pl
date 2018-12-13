@@ -190,7 +190,7 @@ sub ini {
   # Generic
   $G_ITEMS_IN_DB = ( $G_DATA->{ads}->{$SITE} ? scalar( keys %{ $G_DATA->{ads}->{$SITE} } ) : 0 );
   if ($G_DATA) {
-    $log->debug( Dumper($G_DATA) );
+    # $log->debug( Dumper($G_DATA) );
   }
 
   $log->info( "Ini: Eddig beolvasott hirdetések száma: " . $G_ITEMS_IN_DB . "\n" );
@@ -307,7 +307,7 @@ sub getUrls {
     } ### foreach my $maker ( sort keys...)
   } ### elsif ( $SITE eq $SITE_WILLHABEN)
 
-  $log->debug( Dumper( $G_DATA->{sites}->{$SITE}->{urls} ) );
+  # $log->debug( Dumper( $G_DATA->{sites}->{$SITE}->{urls} ) );
 
 } ### sub getUrls
 
@@ -640,7 +640,7 @@ sub parseItems {
       $G_DATA->{ads}->{$SITE}->{$id}->{lastChange} = $t;
     }
 
-    $log->debug( Dumper( $G_DATA->{ads}->{$SITE}->{$id} ) );
+    # $log->debug( Dumper( $G_DATA->{ads}->{$SITE}->{$id} ) );
     my $sign;
     if ( $G_DATA->{ads}->{$SITE}->{$id}->{status} eq $STATUS_NEW ) {
       $sign = "+";
@@ -791,7 +791,7 @@ sub getMailTextforItems {
     my $item = $G_DATA->{ads}->{$SITE}->{$id};
     $log->debug("Processing '$id'\n");
 
-    $log->debug( Dumper($item) );
+    # $log->debug( Dumper($item) );
 
     if ( $item->{status} eq $STATUS_NEW ) {
       $count_new++;
@@ -940,7 +940,7 @@ sub process {
   stopWatch::continue($SW_FULL_PROCESSING);
   $dataFileDate = $G_DATA->{lastChange} ? ( strftime( "%Y.%m.%d %H:%M", localtime( $G_DATA->{lastChange} ) ) ) : "";
   collectData();
-  $log->debug( Dumper($G_DATA) );
+  # $log->debug( Dumper($G_DATA) );
 
   mailThisText( $collectionDate, sndMails() );
 
