@@ -76,7 +76,7 @@ my $SCRIPTDIR;
 my $G_ITEMS_TO_PROCESS_MAX     = 0;    # 0: unlimited
 my $G_WAIT_BETWEEN_GETS_IN_SEC = 2;
 
-my ( $SITE, $QUIET, $VERBOSE, $HELP, ) = ( $SITE_WILLHABEN, undef, undef, undef );
+my ( $SITE, $QUIET, $VERBOSE, $HELP, ) = ( $SITE_WILLHABEN, undef, 0, undef );
 
 # CONSTANTS
 my ( $STATUS_EMPTY, $STATUS_CHANGED, $STATUS_NEW, $STATUS_VERKAUFT ) = ( 'undef', 'megváltozott', 'új', 'eladva' );
@@ -93,11 +93,16 @@ sub ini {
   die "ERROR: Invalid site: [$SITE]\n Valid sites are: [$SITE_WILLHABEN], [$SITE_AUTOSCOUT24]\n" if ( $SITE ne $SITE_WILLHABEN and $SITE ne $SITE_AUTOSCOUT24 );
 
   # Logging
+  # http://ddiguru.com/blog/126-eight-loglog4perl-recipes
   my $logConf = q(
             log4perl.rootLogger                                 = DEBUG, Logfile, Screen
 
-            log4perl.appender.Logfile                           = Log::Log4perl::Appender::File
+            log4perl.appender.Logfile                           = Log::Dispatch::FileRotate
             log4perl.appender.Logfile.filename                  = test.log
+            log4perl.appender.Logfile.mode                      = append
+            log4perl.appender.Logfile.autoflush                 = 1
+            log4perl.appender.Logfile.size                      = 10485760
+            log4perl.appender.Logfile.max                       = 5
             log4perl.appender.Logfile.layout                    = Log::Log4perl::Layout::PatternLayout
             log4perl.appender.Logfile.layout.ConversionPattern  = %d %r [%-5p] %F %4L - %m%n
             log4perl.appender.Logfile.Threshold                 = DEBUG
@@ -112,8 +117,10 @@ sub ini {
   Log::Log4perl::init( \$logConf );
   $log = Log::Log4perl->get_logger();
   if ($VERBOSE) {
+    $Log::Log4perl::Logger::APPENDER_BY_NAME{'Logfile'}->threshold('DEBUG');
     $Log::Log4perl::Logger::APPENDER_BY_NAME{'Screen'}->threshold('DEBUG');
   } else {
+    $Log::Log4perl::Logger::APPENDER_BY_NAME{'Logfile'}->threshold('INFO');
     $Log::Log4perl::Logger::APPENDER_BY_NAME{'Screen'}->threshold('INFO');
   }
 
@@ -786,10 +793,8 @@ sub getMailTextforItems {
 
     if ( $item->{status} eq $STATUS_NEW ) {
       $count_new++;
-      $log->debug("$id: new\n");
     } elsif ( $item->{status} eq $STATUS_CHANGED ) {
       $count_changed++;
-      $log->debug("$id: changed\n");
     } else {
       $log->debug( "$id: ??? .[" . $item->{status} . "]\n" );
       next;
