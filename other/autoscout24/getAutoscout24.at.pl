@@ -98,7 +98,7 @@ sub ini {
             log4perl.rootLogger                                 = DEBUG, Logfile, Screen
 
             log4perl.appender.Logfile                           = Log::Dispatch::FileRotate
-            log4perl.appender.Logfile.filename                  = test.log
+            log4perl.appender.Logfile.filename                  = AutoScout24.log
             log4perl.appender.Logfile.mode                      = append
             log4perl.appender.Logfile.autoflush                 = 1
             log4perl.appender.Logfile.size                      = 10485760
