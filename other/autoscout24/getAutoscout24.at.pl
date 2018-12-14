@@ -147,19 +147,20 @@ sub ini {
   } ### unless ( my $return = require...)
   $log->info("ini(): cfg read\n");
 
-  if ( not defined $G_DATA->{sites}->{$SITE}->{searchConfig}->{defaults}->{page} ) {
-    $log->logdie("A G_DATA->{$SITE}->{searchConfig}->{defaults}->{page} nincs definiálva.\n");
-  }
-
   # Checking config
-  if ( not defined $G_DATA->{sites}->{$SITE}->{searchConfig}->{defaults}
-    or not defined $G_DATA->{sites}->{$SITE}->{XPATHS}
-    or not defined $G_DATA->{CONSTANTS}->{DOWNLOADMETHODS}
+  if ( not defined $G_DATA->{CONSTANTS}->{DOWNLOADMETHODS}
     or not defined $G_DATA->{mail}->{sendMail}
     or not defined $G_DATA->{mailRecipients}
     or not defined $G_DATA->{downloadMethod} ) {
     die "G_DATA is not ok, aborting\n";
   } ### if ( not defined $G_DATA...)
+
+  if ( not defined $G_DATA->{sites}->{$SITE}->{searchConfig}->{defaults}->{page} ) {
+    $log->logdie("A G_DATA->{sites}->{$SITE}->{searchConfig}->{defaults}->{page} nincs definiálva.\n");
+  }
+  if ( not defined $G_DATA->{sites}->{$SITE}->{XPATHS} ) {
+    $log->logdie("A G_DATA->{sites}->{$SITE}->{XPATHS} nincs definiálva.\n");
+  }
 
   dataLoad();
   $log->info("ini(): dataLoad ok\n");
