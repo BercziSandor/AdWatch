@@ -477,10 +477,11 @@ sub parseItems {
   $xpath = $G_DATA->{sites}->{$SITE}->{XPATHS}->{XPATH_TALALATI_LISTA};
   $log->fatal("Üres: G_DATA->{sites}->{$SITE}->{XPATHS}->{XPATH_TALALATI_LISTA}\n") unless $xpath;
 
-  $items = $G_HTML_TREE->findnodes($xpath) or {
+  $items = $G_HTML_TREE->findnodes($xpath) or do {
     $log->error("ERROR: findnodes($xpath) error\n");
     return 0;
-  } $log->debug( " There are " . scalar( $items->get_nodelist ) . " $xpath items\n" );
+  };
+  $log->debug( " There are " . scalar( $items->get_nodelist ) . " $xpath items\n" );
   unless ($items) {
     $log->error("ERROR: findnodes($xpath) error\n");
     return 0;
@@ -610,6 +611,7 @@ sub parseItems {
       $log->debug("Not adding [$title] to the database (id: $id): already sold\n");
       $G_DATA->{ads}->{$SITE}->{$id}->{status} = $STATUS_VERKAUFT;
     } elsif ( not defined( $G_DATA->{ads}->{$SITE}->{$id} ) ) {
+
       # New
       $G_DATA->{ads}->{$SITE}->{$id}->{status} = $STATUS_NEW;
 
