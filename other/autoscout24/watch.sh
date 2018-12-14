@@ -9,5 +9,5 @@ if ps -aef | grep -v grep | grep perl | grep -q "$fileToStart"; then
  	ps -aef | grep -v grep | grep perl | grep "$fileToStart" | tee -a $thisDir/watch.log
 else
 	echo "$(date) $fileToStart is not running, starting it" | tee -a $thisDir/watch.log
-	perl ./$fileToStart >> /dev/null &
+	perl ./$fileToStart >> /dev/null & 
 fi
