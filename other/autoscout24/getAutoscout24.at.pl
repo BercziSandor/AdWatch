@@ -383,7 +383,7 @@ sub getHtml {
   stopWatch::pause($SW_DOWNLOAD);
 
   # $log->debug( $content );
-  if ($saveHtmlFiles) {
+  if ($saveHtmlFiles or $VERBOSE) {
     my $fileName = $url;
     $fileName = int(time) . ".${maker}.${page}.html";
     $log->debug("fileName: $fileName\n");
@@ -508,7 +508,7 @@ sub parseItems {
     } ### if ( $G_DATA->{sites}->...)
 
     unless ($title) {
-      $log->warn("Title is empty for #${index}\n");
+      $log->warn("Title is empty for #${index} - is xpath [".$G_DATA->{sites}->{$SITE}->{XPATHS}->{XPATH_TITLE}."] wrong?\n");
       next;
     }
     $title = encode_utf8($title);
