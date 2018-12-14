@@ -166,11 +166,9 @@ sub ini {
 
   $dataFileDate = $G_DATA->{lastChange} ? ( strftime( "%Y.%m.%d %H:%M", localtime( $G_DATA->{lastChange} ) ) ) : "";
 
-  my $cnt = `ps -aef | grep -v grep | grep -c "$name.pl"`;
+  my $cnt = `ps -aef | grep -v grep | grep -c "$name.pl" | grep -c "-s $SITE"`;
   if ( $cnt > 1 ) {
-    warn "Már fut másik $name folyamat, ez leállítva.\n";
-
-    # FIXME
+    die "Már fut másik $name folyamat '$SITE'-re, ez leállítva.\n";
   }
 
   my $cookieJar_HttpCookieJar    = HTTP::CookieJar->new;
