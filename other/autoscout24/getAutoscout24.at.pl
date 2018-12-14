@@ -90,7 +90,8 @@ sub ini {
     'help|?|h'  => \$HELP,
     'verbose|v' => \$VERBOSE,
   );
-  die "ERROR: Invalid site: [$SITE]\n Valid sites are: [$SITE_WILLHABEN], [$SITE_AUTOSCOUT24]\n" if ( $SITE ne $SITE_WILLHABEN and $SITE ne $SITE_AUTOSCOUT24 );
+  die "ERROR: Invalid site: [$SITE]\n Valid sites are: [$SITE_WILLHABEN], [$SITE_AUTOSCOUT24]\n"
+    if ( $SITE ne $SITE_WILLHABEN and $SITE ne $SITE_AUTOSCOUT24 );
 
   # Logging
   # http://ddiguru.com/blog/126-eight-loglog4perl-recipes
@@ -151,10 +152,9 @@ sub ini {
   }
 
   # Checking config
-  if ( not defined $G_DATA->{sites}->{$SITE}->{searchConfig}->{mmvmk0}
-    or not defined $G_DATA->{CONSTANTS}->{DOWNLOADMETHODS}
-    or not defined $G_DATA->{sites}->{$SITE}->{searchConfig}->{defaults}
+  if ( not defined $G_DATA->{sites}->{$SITE}->{searchConfig}->{defaults}
     or not defined $G_DATA->{sites}->{$SITE}->{XPATHS}
+    or not defined $G_DATA->{CONSTANTS}->{DOWNLOADMETHODS}
     or not defined $G_DATA->{mail}->{sendMail}
     or not defined $G_DATA->{mailRecipients}
     or not defined $G_DATA->{downloadMethod} ) {
@@ -188,6 +188,7 @@ sub ini {
   # Generic
   $G_ITEMS_IN_DB = ( $G_DATA->{ads}->{$SITE} ? scalar( keys %{ $G_DATA->{ads}->{$SITE} } ) : 0 );
   if ($G_DATA) {
+
     # $log->debug( Dumper($G_DATA) );
   }
 
@@ -938,6 +939,7 @@ sub process {
   stopWatch::continue($SW_FULL_PROCESSING);
   $dataFileDate = $G_DATA->{lastChange} ? ( strftime( "%Y.%m.%d %H:%M", localtime( $G_DATA->{lastChange} ) ) ) : "";
   collectData();
+
   # $log->debug( Dumper($G_DATA) );
 
   mailThisText( $collectionDate, sndMails() );
