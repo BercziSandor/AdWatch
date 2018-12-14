@@ -475,32 +475,45 @@ sub parseItems {
   my $items;
   my $xpath;
   $xpath = $G_DATA->{sites}->{$SITE}->{XPATHS}->{XPATH_TALALATI_LISTA};
+  $log->fatal("Üres: G_DATA->{sites}->{$SITE}->{XPATHS}->{XPATH_TALALATI_LISTA}\n") unless $xpath;
 
-  $items = $G_HTML_TREE->findnodes($xpath) or return 0;
-  $log->debug( " There are " . scalar( $items->get_nodelist ) . " 'talalati_lista' items\n" );
-  return 0 unless $items;
+  $items = $G_HTML_TREE->findnodes($xpath) or {
+    $log->error("ERROR: findnodes($xpath) error\n");
+    return 0;
+  } $log->debug( " There are " . scalar( $items->get_nodelist ) . " $xpath items\n" );
+  unless ($items) {
+    $log->error("ERROR: findnodes($xpath) error\n");
+    return 0;
+  }
 
   print "[";
+  my $index;
   foreach my $item ( $items->get_nodelist ) {
-
+    $index++;
     $xpath = $G_DATA->{sites}->{$SITE}->{XPATHS}->{XPATH_TITLE};
+    $log->fatal("Üres: G_DATA->{sites}->{$SITE}->{XPATHS}->{XPATH_TITLE}\n") unless $xpath;
     my $title = u_cleanString( $item->findvalue($xpath) );
-
-    # $log->debug("title:  [$xpath]: [$title]\n");
 
     if ( $G_DATA->{sites}->{$SITE}->{XPATHS}->{XPATH_TITLE2} ) {
       $xpath = $G_DATA->{sites}->{$SITE}->{XPATHS}->{XPATH_TITLE2};
 
-      # $log->debug("Evaluating2 [$xpath]\n");
       my $title2 = $item->findvalue($xpath) if $xpath;
       $title .= " - " . $title2 if $title2;
     } ### if ( $G_DATA->{sites}->...)
 
-    next unless $title;
+    unless ($title) {
+      $log->warn("Title is empty for #${index}");
+      next;
+    }
     $title = encode_utf8($title);
     $G_ITEMS_PROCESSED++;
 
-    my $link = $item->findvalue( $G_DATA->{sites}->{$SITE}->{XPATHS}->{XPATH_LINK} );
+    $xpath = $G_DATA->{sites}->{$SITE}->{XPATHS}->{XPATH_LINK};
+    $log->fatal("Üres: G_DATA->{sites}->{$SITE}->{XPATHS}->{XPATH_LINK}\n") unless $xpath;
+    my $link = $item->findvalue($xpath);
+    unless ($link) {
+      $log->fatal("Link is empty for #${index}");
+    }
 
     my $id;
     if ( $SITE eq $SITE_AUTOSCOUT24 ) {
@@ -516,7 +529,10 @@ sub parseItems {
     } ### elsif ( $SITE eq $SITE_WILLHABEN)
 
     $xpath = $G_DATA->{sites}->{$SITE}->{XPATHS}->{XPATH_DESC};
-    my $desc = u_cleanString( $item->findvalue($xpath) );
+    $log->fatal("Üres: G_DATA->{sites}->{$SITE}->{XPATHS}->{XPATH_DESC}\n") unless $xpath;
+    my $desc = $item->findvalue($xpath);
+    $log->fatal("Üres: desc\n") unless $desc;
+    $desc = u_cleanString($desc);
     $desc =~ s/bleifrei//g;
 
     # $log->debug("desc:  [$xpath]: [$desc]\n");
@@ -591,9 +607,9 @@ sub parseItems {
     # Storing data
     my $t = time;
     if ( $priceStr =~ m/verkauft/i ) {
+      $log->debug("Not adding [$title] to the database (id: $id): already sold\n");
       $G_DATA->{ads}->{$SITE}->{$id}->{status} = $STATUS_VERKAUFT;
     } elsif ( not defined( $G_DATA->{ads}->{$SITE}->{$id} ) ) {
-
       # New
       $G_DATA->{ads}->{$SITE}->{$id}->{status} = $STATUS_NEW;
 
