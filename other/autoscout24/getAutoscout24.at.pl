@@ -151,10 +151,10 @@ sub ini {
   }
 
   # Checking config
-  if ( not defined $G_DATA->{sites}->{AUTOSCOUT}->{searchConfig}->{mmvmk0}
+  if ( not defined $G_DATA->{sites}->{$SITE}->{searchConfig}->{mmvmk0}
     or not defined $G_DATA->{CONSTANTS}->{DOWNLOADMETHODS}
-    or not defined $G_DATA->{sites}->{AUTOSCOUT}->{searchConfig}->{defaults}
-    or not defined $G_DATA->{sites}->{AUTOSCOUT}->{XPATHS}
+    or not defined $G_DATA->{sites}->{$SITE}->{searchConfig}->{defaults}
+    or not defined $G_DATA->{sites}->{$SITE}->{XPATHS}
     or not defined $G_DATA->{mail}->{sendMail}
     or not defined $G_DATA->{mailRecipients}
     or not defined $G_DATA->{downloadMethod} ) {
