@@ -43,7 +43,7 @@ $G_DATA->{mailRecipients} = [ '"Sanyi" <berczi.sandor@gmail.com>', '"Tillatilla1
 
   $G_DATA->{sites}->{willHaben}->{XPATHS}->{XPATH_TALALATI_LISTA} = '//div[@id="resultlist"]/article';
   $G_DATA->{sites}->{willHaben}->{XPATHS}->{XPATH_TITLE}          = './section[@class="content-section"]//span[@itemprop="name"]';
-  $G_DATA->{sites}->{willHaben}->{XPATHS}->{XPATH_TITLE2}         = '';
+  $G_DATA->{sites}->{willHaben}->{XPATHS}->{XPATH_TITLE2}         = undef;
   $G_DATA->{sites}->{willHaben}->{XPATHS}->{XPATH_LINK}           = './section[@class="content-section"]//div[contains(@class, "header")]/a/@href';
   $G_DATA->{sites}->{willHaben}->{XPATHS}->{XPATH_PRICE}          = './section[@class="content-section"]//span[@class="pull-right"]';
   $G_DATA->{sites}->{willHaben}->{XPATHS}->{XPATH_DESC}           = './section[@class="content-section"]//div[@itemprop="description"]';

@@ -444,6 +444,7 @@ sub parsePageCount {
 
 sub u_clearNewLines {
   my ($input) = @_;
+  return undef unless $input;
   my $retval = $input;
   $retval =~ s/\n//g;
   $retval =~ s/\r//g;
@@ -452,6 +453,7 @@ sub u_clearNewLines {
 
 sub u_clearSpaces {
   my ($input) = @_;
+  return undef unless $input;
   my $retval = $input;
   $retval =~ s/^[ \t]*//;
   $retval =~ s/[ \t]*$//;
@@ -463,7 +465,10 @@ sub u_clearSpaces {
 
 sub u_cleanString {
   my ($input) = @_;
-  return ( u_clearSpaces( u_clearNewLines($input) ) );
+  return undef unless $input;
+  my $retval=u_clearSpaces( u_clearNewLines($input) );
+  $log->debug("u_cleanString($input)=$retval\n");
+  return ( $retval );
 }
 
 sub parseItems {
@@ -493,17 +498,17 @@ sub parseItems {
     $index++;
     $xpath = $G_DATA->{sites}->{$SITE}->{XPATHS}->{XPATH_TITLE};
     $log->fatal("Üres: G_DATA->{sites}->{$SITE}->{XPATHS}->{XPATH_TITLE}\n") unless $xpath;
-    my $title = u_cleanString( $item->findvalue($xpath) );
+    my $title = $item->findvalue($xpath);
+    $title = u_cleanString($title);
 
     if ( $G_DATA->{sites}->{$SITE}->{XPATHS}->{XPATH_TITLE2} ) {
       $xpath = $G_DATA->{sites}->{$SITE}->{XPATHS}->{XPATH_TITLE2};
-
       my $title2 = $item->findvalue($xpath) if $xpath;
       $title .= " - " . $title2 if $title2;
     } ### if ( $G_DATA->{sites}->...)
 
     unless ($title) {
-      $log->warn("Title is empty for #${index}");
+      $log->warn("Title is empty for #${index}\n");
       next;
     }
     $title = encode_utf8($title);
@@ -513,7 +518,7 @@ sub parseItems {
     $log->fatal("Üres: G_DATA->{sites}->{$SITE}->{XPATHS}->{XPATH_LINK}\n") unless $xpath;
     my $link = $item->findvalue($xpath);
     unless ($link) {
-      $log->fatal("Link is empty for #${index}");
+      $log->fatal("Link is empty for #${index}\n");
     }
 
     my $id;
