@@ -508,7 +508,7 @@ sub parseItems {
     } ### if ( $G_DATA->{sites}->...)
 
     unless ($title) {
-      $log->warn("Title is empty for #${index} - is xpath [".$G_DATA->{sites}->{$SITE}->{XPATHS}->{XPATH_TITLE}."] wrong?\n");
+      $log->fatal("Title is empty for #${index} - is xpath [".$G_DATA->{sites}->{$SITE}->{XPATHS}->{XPATH_TITLE}."] wrong?\n");
       next;
     }
     $title = encode_utf8($title);
