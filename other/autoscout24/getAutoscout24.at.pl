@@ -35,7 +35,9 @@ use Encode;
 use List::Util qw[min max];
 use Storable;
 use Time::HiRes qw( time );
-use POSIX;
+
+# use POSIX;
+use POSIX qw(strftime);
 use File::Basename;
 use Cwd 'abs_path';
 
@@ -166,10 +168,12 @@ sub ini {
   $log->info("ini(): dataLoad ok\n");
 
   $dataFileDate = $G_DATA->{lastChange} ? ( strftime( "%Y.%m.%d %H:%M", localtime( $G_DATA->{lastChange} ) ) ) : "";
-
-  my $cnt = `ps -aef | grep -v grep | grep -c "$name.pl" | grep -c "-s $SITE"`;
+  my $cmd = "ps -aef | grep -v grep | grep ${name}.pl | grep ' $SITE' | wc -l";
+  my $cnt = `$cmd`;
   if ( $cnt > 1 ) {
     die "Már fut másik $name folyamat '$SITE'-re, ez leállítva.\n";
+  } else {
+    $log->info("ini(): nincs másik futó folyamat - OK\n");
   }
 
   my $cookieJar_HttpCookieJar    = HTTP::CookieJar->new;
@@ -383,14 +387,15 @@ sub getHtml {
   stopWatch::pause($SW_DOWNLOAD);
 
   # $log->debug( $content );
-  if ($saveHtmlFiles or $VERBOSE) {
+  if ( $saveHtmlFiles or $VERBOSE ) {
     my $fileName = $url;
     $fileName = int(time) . ".${maker}.${page}.html";
+    $fileName = u_formatTimeNow_YMD_HMS() . ".${maker}.${page}.html";
     $log->debug("fileName: $fileName\n");
     open( MYFILE, ">$fileName" ) or die "$fileName: $!";
     print MYFILE encode_utf8($html);
     close(MYFILE);
-  } ### if ($saveHtmlFiles)
+  } ### if ( $saveHtmlFiles or...)
   $log->logdie("The content of the received html is empty.") if ( length($html) == 0 );
 
   my $dom = XML::LibXML->load_html(
@@ -442,35 +447,6 @@ sub parsePageCount {
 
 } ### sub parsePageCount
 
-sub u_clearNewLines {
-  my ($input) = @_;
-  return undef unless $input;
-  my $retval = $input;
-  $retval =~ s/\n//g;
-  $retval =~ s/\r//g;
-  return $retval;
-} ### sub u_clearNewLines
-
-sub u_clearSpaces {
-  my ($input) = @_;
-  return undef unless $input;
-  my $retval = $input;
-  $retval =~ s/^[ \t]*//;
-  $retval =~ s/[ \t]*$//;
-  $retval =~ s/[ \t]{2,}/ /g;
-  $retval =~ s/[ \t]{2,}/ /g;
-  $retval =~ s/[ \t]{2,}/ /g;
-  return $retval;
-} ### sub u_clearSpaces
-
-sub u_cleanString {
-  my ($input) = @_;
-  return undef unless $input;
-  my $retval=u_clearSpaces( u_clearNewLines($input) );
-  $log->debug("u_cleanString($input)=$retval\n");
-  return ( $retval );
-}
-
 sub parseItems {
 
   # my ($html) = @_;
@@ -505,12 +481,14 @@ sub parseItems {
       $xpath = $G_DATA->{sites}->{$SITE}->{XPATHS}->{XPATH_TITLE2};
       my $title2 = $item->findvalue($xpath) if $xpath;
       $title .= " - " . $title2 if $title2;
-    } ### if ( $G_DATA->{sites}->...)
+    }
 
     unless ($title) {
-      $log->fatal("Title is empty for #${index} - is xpath [".$G_DATA->{sites}->{$SITE}->{XPATHS}->{XPATH_TITLE}."] wrong?\n");
+      $log->fatal( "Title is empty for #${index} - is xpath [" . $G_DATA->{sites}->{$SITE}->{XPATHS}->{XPATH_TITLE} . "] wrong?\n" );
+
+      die;
       next;
-    }
+    } ### unless ($title)
     $title = encode_utf8($title);
     $G_ITEMS_PROCESSED++;
 
@@ -695,7 +673,7 @@ sub collectData {
 
   foreach my $maker ( sort keys %{ $G_DATA->{sites}->{$SITE}->{urls} } ) {
     my $url = $G_DATA->{sites}->{$SITE}->{urls}->{$maker};
-    $log->info("\n\n** $maker **\n");
+    $log->info("\n\n ** $maker **\n");
     if (  $G_ITEMS_TO_PROCESS_MAX > 0
       and $G_ITEMS_PROCESSED >= $G_ITEMS_TO_PROCESS_MAX ) {
       $log->info("\nElértük a feldolgozási limitet.");
@@ -947,17 +925,6 @@ sub mailThisText {
   }
 } ### sub mailThisText
 
-sub u_text2html {
-  my $text    = shift;
-  my $textBak = $text;
-  $text =~ s|\n|<br>|g;
-
-  $text =~ s| \[(.*?)\]\((.*?)\)| <a href="${2}">${1}</a>|g;
-  $text =~ s|\n|<br/>|g;
-
-  return $text;
-} ### sub u_text2html
-
 sub process {
   stopWatch::reset();
   stopWatch::continue($SW_FULL_PROCESSING);
@@ -974,6 +941,76 @@ sub process {
   stopWatch::info();
 } ### sub process
 
+# ██    ██ ████████ ██ ██      ██ ████████ ██ ███████ ███████
+# ██    ██    ██    ██ ██      ██    ██    ██ ██      ██
+# ██    ██    ██    ██ ██      ██    ██    ██ █████   ███████
+# ██    ██    ██    ██ ██      ██    ██    ██ ██           ██
+#  ██████     ██    ██ ███████ ██    ██    ██ ███████ ███████
+
+sub u_formatEpoch_YMD_HMS {
+  my ($e) = @_;
+  u_formatTime_YMD_HMS( gmtime($e) );
+}
+
+sub u_formatTimeNow_YMD_HMS {
+  u_formatTime_YMD_HMS( localtime() );
+}
+
+sub u_formatTime_YMD_HMS {
+
+  # my ($t) = @_;
+  # print "u_formatTime_YMD_HMS($t)\n";
+  print Dumper(@_);
+  return strftime( '%Y%m%d-%H%M%S', @_ );
+} ### sub u_formatTime_YMD_HMS
+
+sub u_clearNewLines {
+  my ($input) = @_;
+  return undef unless $input;
+  my $retval = $input;
+  $retval =~ s/\n//g;
+  $retval =~ s/\r//g;
+  return $retval;
+} ### sub u_clearNewLines
+
+sub u_clearSpaces {
+  my ($input) = @_;
+  return undef unless $input;
+  my $retval = $input;
+  $retval =~ s/^[ \t]*//;
+  $retval =~ s/[ \t]*$//;
+  $retval =~ s/[ \t]{2,}/ /g;
+  $retval =~ s/[ \t]{2,}/ /g;
+  $retval =~ s/[ \t]{2,}/ /g;
+  return $retval;
+} ### sub u_clearSpaces
+
+sub u_cleanString {
+  my ($input) = @_;
+  return undef unless $input;
+  my $retval = u_clearSpaces( u_clearNewLines($input) );
+  $log->debug("u_cleanString($input)=$retval\n");
+  return ($retval);
+} ### sub u_cleanString
+
+sub u_text2html {
+  my $text    = shift;
+  my $textBak = $text;
+  $text =~ s|\n|<br>|g;
+
+  $text =~ s| \[(.*?)\]\((.*?)\)| <a href="${2}">${1}</a>|g;
+  $text =~ s|\n|<br/>|g;
+
+  return $text;
+} ### sub u_text2html
+
+
+
+# ███████ ███    ██ ████████ ██████  ██    ██
+# ██      ████   ██    ██    ██   ██  ██  ██
+# █████   ██ ██  ██    ██    ██████    ████
+# ██      ██  ██ ██    ██    ██   ██    ██
+# ███████ ██   ████    ██    ██   ██    ██
 sub main {
   ini();
 
