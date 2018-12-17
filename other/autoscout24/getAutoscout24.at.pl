@@ -519,7 +519,7 @@ sub parseItems {
       $desc = u_cleanString($desc);
       $desc =~ s/bleifrei//g;
     } else {
-      $log->logwarn("Üres: desc ($xpath)\n");
+      $log->debug("Üres: desc ($xpath)\n");
     }
 
     # $log->debug("desc:  [$xpath]: [$desc]\n");
