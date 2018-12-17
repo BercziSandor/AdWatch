@@ -389,8 +389,7 @@ sub getHtml {
   # $log->debug( $content );
   if ( $saveHtmlFiles or $VERBOSE ) {
     my $fileName = $url;
-    $fileName = int(time) . ".${maker}.${page}.html";
-    $fileName = u_formatTimeNow_YMD_HMS() . ".${maker}.${page}.html";
+    $fileName = u_formatTimeNow_YMD_HMS() . ".${SITE}.${maker}.${page}.html";
     $log->debug("fileName: $fileName\n");
     open( MYFILE, ">$fileName" ) or die "$fileName: $!";
     print MYFILE encode_utf8($html);
@@ -458,14 +457,15 @@ sub parseItems {
   $xpath = $G_DATA->{sites}->{$SITE}->{XPATHS}->{XPATH_TALALATI_LISTA};
   $log->fatal("Üres: G_DATA->{sites}->{$SITE}->{XPATHS}->{XPATH_TALALATI_LISTA}\n") unless $xpath;
 
-
   $items = $G_HTML_TREE->findnodes($xpath) or do {
-    $log->error("ERROR: findnodes($xpath) error\n");
+
+    # $log->error("ERROR: findnodes($xpath) error\n");
     return 0;
   };
-  $log->info( scalar( $items->get_nodelist ) . " lista elemet találtam a következő xpath-al: [$xpath]\n" );
+  $log->debug( scalar( $items->get_nodelist ) . " lista elemet találtam a következő xpath-al: [$xpath]\n" );
   unless ($items) {
-    $log->error("ERROR: findnodes($xpath) error\n");
+
+    # $log->error("ERROR: findnodes($xpath) error\n");
     return 0;
   }
 
@@ -486,18 +486,9 @@ sub parseItems {
 
     unless ($title) {
       $log->error( "Title is empty for #${index} - is xpath [" . $G_DATA->{sites}->{$SITE}->{XPATHS}->{XPATH_TITLE} . "] wrong?\n" );
-
-
-      $xpath = $G_DATA->{sites}->{$SITE}->{XPATHS}->{XPATH_LINK};
-      $log->fatal("Üres: G_DATA->{sites}->{$SITE}->{XPATHS}->{XPATH_LINK}\n") unless $xpath;
-      my $link = $item->findvalue($xpath);
-      unless ($link) {
-        $log->fatal("Link is empty for #${index}\n");
-      }
-
       die;
       next;
-    } ### unless ($title)
+    }
     $title = encode_utf8($title);
     $G_ITEMS_PROCESSED++;
 
@@ -524,9 +515,12 @@ sub parseItems {
     $xpath = $G_DATA->{sites}->{$SITE}->{XPATHS}->{XPATH_DESC};
     $log->fatal("Üres: G_DATA->{sites}->{$SITE}->{XPATHS}->{XPATH_DESC}\n") unless $xpath;
     my $desc = $item->findvalue($xpath);
-    $log->fatal("Üres: desc\n") unless $desc;
-    $desc = u_cleanString($desc);
-    $desc =~ s/bleifrei//g;
+    if ($desc) {
+      $desc = u_cleanString($desc);
+      $desc =~ s/bleifrei//g;
+    } else {
+      $log->logwarn("Üres: desc ($xpath)\n");
+    }
 
     # $log->debug("desc:  [$xpath]: [$desc]\n");
 
@@ -573,12 +567,14 @@ sub parseItems {
       push( @fs, "$year($age)" );
       push( @fs, "$km" );
 
-      $desc =~ s/[ ]+/ /g;
-      $desc =~ s/^[ ]//g;
-      $desc =~ s/^$//g;
-      $desc =~ s/\n/#/g;
-      $desc =~ s/# $//g;
-      push( @fs, split( '# ', $desc ) );
+      if ($desc) {
+        $desc =~ s/[ ]+/ /g;
+        $desc =~ s/^[ ]//g;
+        $desc =~ s/^$//g;
+        $desc =~ s/\n/#/g;
+        $desc =~ s/# $//g;
+        push( @fs, split( '# ', $desc ) );
+      } ### if ($desc)
 
       my $text = "\n - $priceStr\n - $year($age)\n - $km\n - $desc\n";
       $text = u_clearSpaces($text);
@@ -587,13 +583,17 @@ sub parseItems {
     # FEATURES
 
     if ( $SITE eq $SITE_AUTOSCOUT24 ) {
-      my $features = encode_utf8( join( '#', $item->findvalues( $G_DATA->{sites}->{$SITE}->{XPATHS}->{XPATH_FEATURES} ) ) );
-      $features =~ s/$G_DATA->{sites}->{$SITE}->{textToDelete}//g;
-      $features =~ s/^ //;
-      $features =~ s/ $//;
-      $features =~ s/ # /#/g;
-      $features =~ s/  / /g;
-      @fs = split( '#', $features );
+      $xpath = $G_DATA->{sites}->{$SITE}->{XPATHS}->{XPATH_FEATURES};
+      my @features = $item->findnodes($xpath);
+      if (@features) {
+        my $featuresString = encode_utf8( join( '#', @features ) );
+        $featuresString =~ s/$G_DATA->{sites}->{$SITE}->{textToDelete}//g;
+        $featuresString =~ s/^ //;
+        $featuresString =~ s/ $//;
+        $featuresString =~ s/ # /#/g;
+        $featuresString =~ s/  / /g;
+        @fs = split( '#', $featuresString );
+      } ### if (@features)
     } ### if ( $SITE eq $SITE_AUTOSCOUT24)
 
     ######################################################################################################
@@ -967,7 +967,7 @@ sub u_formatTimeNow_YMD_HMS {
 
 sub u_formatTime_YMD_HMS {
   return strftime( '%Y%m%d-%H%M%S', @_ );
-} ### sub u_formatTime_YMD_HMS
+}
 
 sub u_clearNewLines {
   my ($input) = @_;
@@ -1008,8 +1008,6 @@ sub u_text2html {
 
   return $text;
 } ### sub u_text2html
-
-
 
 # ███████ ███    ██ ████████ ██████  ██    ██
 # ██      ████   ██    ██    ██   ██  ██  ██
