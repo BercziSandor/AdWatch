@@ -458,11 +458,12 @@ sub parseItems {
   $xpath = $G_DATA->{sites}->{$SITE}->{XPATHS}->{XPATH_TALALATI_LISTA};
   $log->fatal("Üres: G_DATA->{sites}->{$SITE}->{XPATHS}->{XPATH_TALALATI_LISTA}\n") unless $xpath;
 
+
   $items = $G_HTML_TREE->findnodes($xpath) or do {
     $log->error("ERROR: findnodes($xpath) error\n");
     return 0;
   };
-  $log->debug( " There are " . scalar( $items->get_nodelist ) . " $xpath items\n" );
+  $log->info( scalar( $items->get_nodelist ) . " lista elemet találtam a következő xpath-al: [$xpath]\n" );
   unless ($items) {
     $log->error("ERROR: findnodes($xpath) error\n");
     return 0;
@@ -484,7 +485,15 @@ sub parseItems {
     }
 
     unless ($title) {
-      $log->fatal( "Title is empty for #${index} - is xpath [" . $G_DATA->{sites}->{$SITE}->{XPATHS}->{XPATH_TITLE} . "] wrong?\n" );
+      $log->error( "Title is empty for #${index} - is xpath [" . $G_DATA->{sites}->{$SITE}->{XPATHS}->{XPATH_TITLE} . "] wrong?\n" );
+
+
+      $xpath = $G_DATA->{sites}->{$SITE}->{XPATHS}->{XPATH_LINK};
+      $log->fatal("Üres: G_DATA->{sites}->{$SITE}->{XPATHS}->{XPATH_LINK}\n") unless $xpath;
+      my $link = $item->findvalue($xpath);
+      unless ($link) {
+        $log->fatal("Link is empty for #${index}\n");
+      }
 
       die;
       next;
@@ -523,7 +532,7 @@ sub parseItems {
 
     my $priceStr;
     if ( $SITE eq $SITE_WILLHABEN ) {
-      $xpath = './section[@class="content-section"]/div[@class="info"]/script';
+      $xpath = './section[contains(@class, "content-section")]/div[@class="info"]/script';
       my $script = u_cleanString( $item->findvalue($xpath) );
 
       # ('DQogICAgICAgICAgICAgICAgPHNwYW4gY2xhc3M9InB1bGwtcmlnaHQiPiA1NTAsLSA8L3NwYW4+DQogICAgICAgICAgICA=')
@@ -554,7 +563,7 @@ sub parseItems {
       #     '
 
       # 2008 75.000 km
-      my $yearKm = u_cleanString( $item->findvalue('./section[@class="content-section"]//span[@class="desc-left"]') );
+      my $yearKm = u_cleanString( $item->findvalue('./section[contains(@class, "content-section")]//span[@class="desc-left"]') );
       my $year   = $yearKm;
       $year =~ s/^(\d*) .*/$1/;
       my $age = $thisYear - $year;
@@ -957,10 +966,6 @@ sub u_formatTimeNow_YMD_HMS {
 }
 
 sub u_formatTime_YMD_HMS {
-
-  # my ($t) = @_;
-  # print "u_formatTime_YMD_HMS($t)\n";
-  print Dumper(@_);
   return strftime( '%Y%m%d-%H%M%S', @_ );
 } ### sub u_formatTime_YMD_HMS
 
