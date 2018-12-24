@@ -587,6 +587,7 @@ sub parseItems {
       my @features = $item->findnodes($xpath);
       if (@features) {
         my $featuresString = join( '#', @features );
+
         # $featuresString = encode_utf8( $featuresString );
         $featuresString =~ s/$G_DATA->{sites}->{$SITE}->{textToDelete}//g;
         $featuresString =~ s/^ //;
@@ -859,6 +860,7 @@ sub getMailTextforItem {
   }
 
   $retval .= "\n";
+
   # $retval=xxx
   return $retval;
 } ### sub getMailTextforItem
@@ -896,7 +898,6 @@ sub mailThisText {
     print MYFILE $bodyText;
     close(MYFILE);
   }
-
 
   {
     $bodyText = u_text2html($bodyText);
@@ -948,6 +949,7 @@ sub process {
   # $log->debug( Dumper($G_DATA) );
 
   sndMails();
+
   # mailThisText( $collectionDate, sndMails() );
   dataSave();
   stopWatch::pause($SW_FULL_PROCESSING);
@@ -1010,7 +1012,8 @@ sub u_text2html {
 
   $text =~ s| \[(.*?)\]\((.*?)\)| <a href="${2}">${1}</a>|g;
   $text =~ s|\n|<br/>|g;
-
+  $text = encode_entities($text);
+  
   return $text;
 } ### sub u_text2html
 
