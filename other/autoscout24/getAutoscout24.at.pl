@@ -586,7 +586,8 @@ sub parseItems {
       $xpath = $G_DATA->{sites}->{$SITE}->{XPATHS}->{XPATH_FEATURES};
       my @features = $item->findnodes($xpath);
       if (@features) {
-        my $featuresString = encode_utf8( join( '#', @features ) );
+        my $featuresString = join( '#', @features );
+        # $featuresString = encode_utf8( $featuresString );
         $featuresString =~ s/$G_DATA->{sites}->{$SITE}->{textToDelete}//g;
         $featuresString =~ s/^ //;
         $featuresString =~ s/ $//;
@@ -858,6 +859,7 @@ sub getMailTextforItem {
   }
 
   $retval .= "\n";
+  # $retval=xxx
   return $retval;
 } ### sub getMailTextforItem
 
