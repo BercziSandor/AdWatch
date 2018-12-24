@@ -882,6 +882,7 @@ sub mailThisText {
     }
   } ### if ( not $bodyText )
 
+  # saving data to file
   {
     my $fileNameTmp = $fileName;
     if ( $G_DATA->{mail}->{sendMail} == 1 ) {
@@ -895,6 +896,8 @@ sub mailThisText {
     print MYFILE $bodyText;
     close(MYFILE);
   }
+
+
   {
     $bodyText = u_text2html($bodyText);
     my $fileNameTmp = $fileName;
@@ -944,8 +947,8 @@ sub process {
 
   # $log->debug( Dumper($G_DATA) );
 
-  mailThisText( $collectionDate, sndMails() );
-
+  sndMails();
+  # mailThisText( $collectionDate, sndMails() );
   dataSave();
   stopWatch::pause($SW_FULL_PROCESSING);
 
