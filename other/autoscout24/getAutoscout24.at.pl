@@ -48,7 +48,7 @@ require stopWatch;
 
 my $SITE_WILLHABEN   = 'willHaben';
 my $SITE_AUTOSCOUT24 = 'autoScout24';
-
+my $logFileName;
 my $thisYear;
 
 # my $urls;
@@ -95,13 +95,15 @@ sub ini {
   die "ERROR: Invalid site: [$SITE]\n Valid sites are: [$SITE_WILLHABEN], [$SITE_AUTOSCOUT24]\n"
     if ( $SITE ne $SITE_WILLHABEN and $SITE ne $SITE_AUTOSCOUT24 );
 
-  # Logging
-  # http://ddiguru.com/blog/126-eight-loglog4perl-recipes
-  my $logConf = q(
+  $logFileName = "${SITE}.log";
+
+    # Logging
+    # http://ddiguru.com/blog/126-eight-loglog4perl-recipes
+    my $logConf = q(
             log4perl.rootLogger                                 = DEBUG, Logfile, Screen
 
             log4perl.appender.Logfile                           = Log::Dispatch::FileRotate
-            log4perl.appender.Logfile.filename                  = AutoScout24.log
+            log4perl.appender.Logfile.filename                  = $logFileName
             log4perl.appender.Logfile.mode                      = append
             log4perl.appender.Logfile.autoflush                 = 1
             log4perl.appender.Logfile.size                      = 10485760
