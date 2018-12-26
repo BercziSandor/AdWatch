@@ -775,13 +775,13 @@ sub sndMails {
     push( @ids, $id );
     if ( scalar(@ids) >= $G_DATA->{mail}->{itemsInAMailMax} ) {
       $index++;
-      mailThisText( "${collectionDate}_{$SITE}_${index}", getMailTextforItems(@ids) );
+      mailThisText( "${collectionDate}_${SITE}_${index}", getMailTextforItems(@ids) );
       @ids = ();
     }
   } ### foreach my $id ( sort keys ...)
 
   $index++;
-  mailThisText( "${collectionDate}_{$SITE}_${index}", getMailTextforItems(@ids) ) if ( scalar(@ids) );
+  mailThisText( "${collectionDate}_${SITE}_${index}", getMailTextforItems(@ids) ) if ( scalar(@ids) );
 
 } ### sub sndMails
 
