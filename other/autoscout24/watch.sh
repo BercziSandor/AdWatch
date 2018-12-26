@@ -14,7 +14,7 @@ function watchFor
 	 	 ps -aef | head -1                      | tee -a $thisDir/watch.log
 	 	 ps -aef | grep -v grep | grep perl | grep "$fileToStart" | grep -q "s $site" | tee -a $thisDir/watch.log
 	else
-		echo "$(date) $fileToStart isn't running for $site, starting it" | tee -a $thisDir/watch.log
+		echo "$(date) $fileToStart does not run for $site, starting it" | tee -a $thisDir/watch.log
 		perl ./$fileToStart -s $site >> /dev/null &
 	fi
 }

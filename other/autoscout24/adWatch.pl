@@ -48,7 +48,7 @@ require stopWatch;
 
 my $SITE_WILLHABEN   = 'willHaben';
 my $SITE_AUTOSCOUT24 = 'autoScout24';
-my $logFileName;
+our $logFileName;
 my $thisYear;
 
 # my $urls;
@@ -97,13 +97,13 @@ sub ini {
 
   $logFileName = "${SITE}.log";
 
-    # Logging
-    # http://ddiguru.com/blog/126-eight-loglog4perl-recipes
-    my $logConf = q(
+  # Logging
+  # http://ddiguru.com/blog/126-eight-loglog4perl-recipes
+  my $logConf = q(
             log4perl.rootLogger                                 = DEBUG, Logfile, Screen
 
             log4perl.appender.Logfile                           = Log::Dispatch::FileRotate
-            log4perl.appender.Logfile.filename                  = $logFileName
+            log4perl.appender.Logfile.filename                  = sub { $main::logFileName }
             log4perl.appender.Logfile.mode                      = append
             log4perl.appender.Logfile.autoflush                 = 1
             log4perl.appender.Logfile.size                      = 10485760
@@ -120,6 +120,7 @@ sub ini {
           );
 
   Log::Log4perl::init( \$logConf );
+  # log4perl.appender.Logfile.filename = sub { $logFileName };
   $log = Log::Log4perl->get_logger();
   if ($VERBOSE) {
     print "VERBOSE mode on.\n";
