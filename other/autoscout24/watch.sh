@@ -1,6 +1,6 @@
 #!/bin/bash
 # set -vx
-fileToStart=getAutoscout24.at.pl
+fileToStart=adWatch.at.pl
 thisDir=$(dirname $(readlink -f $0))
 cd $thisDir
 
