@@ -1,7 +1,7 @@
 #!/bin/bash
 # set -vx
-fileToStart=adWatchX.pl
-[ -e $fileToStart ] || { echo "$fileToStart does not exist, aborting"; exit 1; }
+fileToStart=adWatch.pl
+[ -e $fileToStart ] || { echo "$fileToStart does not exist, aborting."; exit 1; }
 
 thisDir=$(dirname $(readlink -f $0))
 cd $thisDir
