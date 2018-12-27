@@ -20,5 +20,4 @@ function watchFor
 }
 
 watchFor willHaben
-sleep 15
 watchFor autoScout24
