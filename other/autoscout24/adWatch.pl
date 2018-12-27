@@ -490,7 +490,7 @@ sub parseItems {
 
     unless ($title) {
       $log->error( "Title is empty for #${index} - is xpath [" . $G_DATA->{sites}->{$SITE}->{XPATHS}->{XPATH_TITLE} . "] wrong?\n" );
-      die;
+      # die;
       next;
     }
     $title = encode_utf8($title);
@@ -501,6 +501,7 @@ sub parseItems {
     my $link = $item->findvalue($xpath);
     unless ($link) {
       $log->fatal("Link is empty for #${index}\n");
+      next;
     }
 
     my $id;
