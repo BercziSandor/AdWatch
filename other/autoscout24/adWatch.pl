@@ -2,6 +2,7 @@
 
 use 5.010;
 use strict;
+use utf8;
 use warnings;
 use Data::Dumper;
 $Data::Dumper::Sortkeys = 1;
@@ -590,8 +591,7 @@ sub parseItems {
       my @features = $item->findnodes($xpath);
       if (@features) {
         my $featuresString = join( '#', @features );
-
-        # $featuresString = encode_utf8( $featuresString );
+        $featuresString = encode_utf8( $featuresString );
         $featuresString =~ s/$G_DATA->{sites}->{$SITE}->{textToDelete}//g;
         $featuresString =~ s/^ //;
         $featuresString =~ s/ $//;
@@ -1015,7 +1015,7 @@ sub u_text2html {
 
   $text =~ s| \[(.*?)\]\((.*?)\)| <a href="${2}">${1}</a>|g;
   $text =~ s|\n|<br/>|g;
-  $text = encode_entities($text);
+  # $text = encode_entities($text);
 
   return $text;
 } ### sub u_text2html
