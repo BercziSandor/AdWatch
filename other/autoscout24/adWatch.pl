@@ -2,7 +2,6 @@
 
 use 5.010;
 use strict;
-use utf8;
 use warnings;
 use Data::Dumper;
 $Data::Dumper::Sortkeys = 1;
@@ -31,7 +30,7 @@ use XML::LibXML;
 use MIME::Base64;
 
 #use HTML::TreeBuilder::XPath;
-use HTML::Entities;
+#use HTML::Entities;
 use Encode;
 use List::Util qw[min max];
 use Storable;
@@ -49,7 +48,7 @@ require stopWatch;
 
 my $SITE_WILLHABEN   = 'willHaben';
 my $SITE_AUTOSCOUT24 = 'autoScout24';
-our $logFileName;
+
 my $thisYear;
 
 # my $urls;
@@ -96,15 +95,13 @@ sub ini {
   die "ERROR: Invalid site: [$SITE]\n Valid sites are: [$SITE_WILLHABEN], [$SITE_AUTOSCOUT24]\n"
     if ( $SITE ne $SITE_WILLHABEN and $SITE ne $SITE_AUTOSCOUT24 );
 
-  $logFileName = "${SITE}.log";
-
   # Logging
   # http://ddiguru.com/blog/126-eight-loglog4perl-recipes
   my $logConf = q(
             log4perl.rootLogger                                 = DEBUG, Logfile, Screen
 
             log4perl.appender.Logfile                           = Log::Dispatch::FileRotate
-            log4perl.appender.Logfile.filename                  = sub { $main::logFileName }
+            log4perl.appender.Logfile.filename                  = AutoScout24.log
             log4perl.appender.Logfile.mode                      = append
             log4perl.appender.Logfile.autoflush                 = 1
             log4perl.appender.Logfile.size                      = 10485760
@@ -121,7 +118,6 @@ sub ini {
           );
 
   Log::Log4perl::init( \$logConf );
-  # log4perl.appender.Logfile.filename = sub { $logFileName };
   $log = Log::Log4perl->get_logger();
   if ($VERBOSE) {
     print "VERBOSE mode on.\n";
@@ -490,7 +486,7 @@ sub parseItems {
 
     unless ($title) {
       $log->error( "Title is empty for #${index} - is xpath [" . $G_DATA->{sites}->{$SITE}->{XPATHS}->{XPATH_TITLE} . "] wrong?\n" );
-      # die;
+      die;
       next;
     }
     $title = encode_utf8($title);
@@ -501,7 +497,6 @@ sub parseItems {
     my $link = $item->findvalue($xpath);
     unless ($link) {
       $log->fatal("Link is empty for #${index}\n");
-      next;
     }
 
     my $id;
@@ -524,7 +519,7 @@ sub parseItems {
       $desc = u_cleanString($desc);
       $desc =~ s/bleifrei//g;
     } else {
-      $log->debug("Üres: desc ($xpath)\n");
+      $log->logwarn("Üres: desc ($xpath)\n");
     }
 
     # $log->debug("desc:  [$xpath]: [$desc]\n");
@@ -591,8 +586,7 @@ sub parseItems {
       $xpath = $G_DATA->{sites}->{$SITE}->{XPATHS}->{XPATH_FEATURES};
       my @features = $item->findnodes($xpath);
       if (@features) {
-        my $featuresString = join( '#', @features );
-        $featuresString = encode_utf8( $featuresString );
+        my $featuresString = encode_utf8( join( '#', @features ) );
         $featuresString =~ s/$G_DATA->{sites}->{$SITE}->{textToDelete}//g;
         $featuresString =~ s/^ //;
         $featuresString =~ s/ $//;
@@ -776,13 +770,13 @@ sub sndMails {
     push( @ids, $id );
     if ( scalar(@ids) >= $G_DATA->{mail}->{itemsInAMailMax} ) {
       $index++;
-      mailThisText( "${collectionDate}_${SITE}_${index}", getMailTextforItems(@ids) );
+      mailThisText( "${collectionDate}_${index}", getMailTextforItems(@ids) );
       @ids = ();
     }
   } ### foreach my $id ( sort keys ...)
 
   $index++;
-  mailThisText( "${collectionDate}_${SITE}_${index}", getMailTextforItems(@ids) ) if ( scalar(@ids) );
+  mailThisText( "${collectionDate}_${index}", getMailTextforItems(@ids) ) if ( scalar(@ids) );
 
 } ### sub sndMails
 
@@ -864,8 +858,6 @@ sub getMailTextforItem {
   }
 
   $retval .= "\n";
-
-  # $retval=xxx
   return $retval;
 } ### sub getMailTextforItem
 
@@ -888,7 +880,6 @@ sub mailThisText {
     }
   } ### if ( not $bodyText )
 
-  # saving data to file
   {
     my $fileNameTmp = $fileName;
     if ( $G_DATA->{mail}->{sendMail} == 1 ) {
@@ -902,7 +893,6 @@ sub mailThisText {
     print MYFILE $bodyText;
     close(MYFILE);
   }
-
   {
     $bodyText = u_text2html($bodyText);
     my $fileNameTmp = $fileName;
@@ -952,9 +942,8 @@ sub process {
 
   # $log->debug( Dumper($G_DATA) );
 
-  sndMails();
+  mailThisText( $collectionDate, sndMails() );
 
-  # mailThisText( $collectionDate, sndMails() );
   dataSave();
   stopWatch::pause($SW_FULL_PROCESSING);
 
@@ -1016,7 +1005,6 @@ sub u_text2html {
 
   $text =~ s| \[(.*?)\]\((.*?)\)| <a href="${2}">${1}</a>|g;
   $text =~ s|\n|<br/>|g;
-  # $text = encode_entities($text);
 
   return $text;
 } ### sub u_text2html
