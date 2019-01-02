@@ -942,11 +942,7 @@ sub process {
   stopWatch::continue($SW_FULL_PROCESSING);
   $dataFileDate = $G_DATA->{lastChange} ? ( strftime( "%Y.%m.%d %H:%M", localtime( $G_DATA->{lastChange} ) ) ) : "";
   collectData();
-
-  # $log->debug( Dumper($G_DATA) );
-
-  mailThisText( $collectionDate, sndMails() );
-
+  sndMails();
   dataSave();
   stopWatch::pause($SW_FULL_PROCESSING);
 
