@@ -584,17 +584,19 @@ sub parseItems {
     # FEATURES
 
     if ( $SITE eq $SITE_AUTOSCOUT24 ) {
+      @fs=();
       $xpath = $G_DATA->{sites}->{$SITE}->{XPATHS}->{XPATH_FEATURES};
       my @features = $item->findnodes($xpath);
-      if (@features) {
-        my $featuresString = encode_utf8( join( '#', @features ) );
-        $featuresString =~ s/$G_DATA->{sites}->{$SITE}->{textToDelete}//g;
-        $featuresString =~ s/^ //;
-        $featuresString =~ s/ $//;
-        $featuresString =~ s/ # /#/g;
-        $featuresString =~ s/  / /g;
-        @fs = split( '#', $featuresString );
-      } ### if (@features)
+      foreach my $feature (@features) {
+        my $val = encode_utf8($feature->textContent());
+        $val =~ s/\n//g;
+        $val =~ s/$G_DATA->{sites}->{$SITE}->{textToDelete}//g;
+        $val =~ s/^ //;
+        $val =~ s/ $//;
+        $val =~ s/ # /#/g;
+        $val =~ s/  / /g;
+        push @fs, $val;
+      } ### foreach my $feature (@features)
     } ### if ( $SITE eq $SITE_AUTOSCOUT24)
 
     ######################################################################################################
