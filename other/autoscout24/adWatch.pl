@@ -9,7 +9,6 @@ use Log::Log4perl;
 
 # use Log::Dispatch::File::Rolling;
 
-
 use FindBin;
 use lib "$FindBin::Bin/lib";
 
@@ -134,7 +133,8 @@ sub ini {
 
   $log->info("ini(): site: $SITE\n");
 
-  if ( !-e "./mails" ) { `mkdir ./mails` }
+  if ( !-e "$SCRIPTDIR/mails" )     { `mkdir $SCRIPTDIR/mails` }
+  if ( !-e "$SCRIPTDIR/work/html" ) { `mkdir -p $SCRIPTDIR/work/html` }
 
   # $G_HTML_TREE = HTML::TreeBuilder::XPath->new;
 
@@ -390,7 +390,7 @@ sub getHtml {
   # $log->debug( $content );
   if ( $saveHtmlFiles or $VERBOSE ) {
     my $fileName = $url;
-    $fileName = u_formatTimeNow_YMD_HMS() . ".${SITE}.${maker}.${page}.html";
+    $fileName = "$SCRIPTDIR/work/html" . u_formatTimeNow_YMD_HMS() . ".${SITE}.${maker}.${page}.html";
     $log->debug("fileName: $fileName\n");
     open( MYFILE, ">$fileName" ) or die "$fileName: $!";
     print MYFILE encode_utf8($html);

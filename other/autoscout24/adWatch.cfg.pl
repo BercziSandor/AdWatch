@@ -44,11 +44,11 @@ $G_DATA->{mailRecipients} = [ '"Sanyi" <berczi.sandor@gmail.com>', '"Tillatilla1
   $G_DATA->{sites}->{willHaben}->{XPATHS}->{XPATH_TALALATI_LISTA} = '//div[@id="resultlist"]/article[@itemtype="http://schema.org/Product"]';
   $G_DATA->{sites}->{willHaben}->{XPATHS}->{XPATH_TITLE}          = './section[contains(@class, "content-section")]//span[@itemprop="name"]';
   $G_DATA->{sites}->{willHaben}->{XPATHS}->{XPATH_TITLE2}         = undef;
-  $G_DATA->{sites}->{willHaben}->{XPATHS}->{XPATH_LINK}           = './section[contains(@class, "content-section")]//div[contains(@class, "header")]/a/@href';
-  $G_DATA->{sites}->{willHaben}->{XPATHS}->{XPATH_PRICE}          = './section[contains(@class, "content-section")]//span[@class="pull-right"]';
-  $G_DATA->{sites}->{willHaben}->{XPATHS}->{XPATH_DESC}           = './section[contains(@class, "content-section")]//div[@itemprop="description"]';
-  $G_DATA->{sites}->{willHaben}->{XPATHS}->{XPATH_FEATURES}       = '';
-  $G_DATA->{sites}->{willHaben}->{textToDelete}                   = '';
+  $G_DATA->{sites}->{willHaben}->{XPATHS}->{XPATH_LINK}  = './section[contains(@class, "content-section")]//div[contains(@class, "header")]/a/@href';
+  $G_DATA->{sites}->{willHaben}->{XPATHS}->{XPATH_PRICE} = './section[contains(@class, "content-section")]//span[@class="pull-right"]';
+  $G_DATA->{sites}->{willHaben}->{XPATHS}->{XPATH_DESC}  = './section[contains(@class, "content-section")]//div[@itemprop="description"]';
+  $G_DATA->{sites}->{willHaben}->{XPATHS}->{XPATH_FEATURES} = '';
+  $G_DATA->{sites}->{willHaben}->{textToDelete} = '';
 
   #  https://www.willhaben.at/iad/gebrauchtwagen/auto/gebrauchtwagenboerse?YEAR_MODEL_FROM=2011&CAR_MODEL/MAKE=1005&PRICE_TO=12340&page=6&view=
   # https://www.willhaben.at/iad/gebrauchtwagen/auto/gebrauchtwagenboerse?CAR_MODEL/MAKE=1005&PRICE_TO=12340&YEAR_MODEL_FROM=2011
@@ -182,12 +182,14 @@ $G_DATA->{mailRecipients} = [ '"Sanyi" <berczi.sandor@gmail.com>', '"Tillatilla1
 # Autoscout
 # ************************************************************
 {
+
+# https://www.autoscout24.at/ergebnisse?priceto=6000&desc=0&powertype=kw&size=20&page=2&fregfrom=2008&mmm=29%7C%7C&pricetype=public&cy=A&cy=D&mmvco=1&pricefrom=500&offer=D&offer=J&offer=O&offer=S&offer=U&sort=age&ustate=A&ustate=N&ustate=U&atype=C
+
   $G_DATA->{sites}->{autoScout24}->{XPATHS}->{XPATH_TALALATI_LISTA}
     = '//div[contains(concat(" ", @class, " "), " cl-list-element cl-list-element-gap ")]';
   $G_DATA->{sites}->{autoScout24}->{XPATHS}->{XPATH_TITLE}    = './/h2[contains(concat(" ", @class, " "), " cldt-summary-makemodel ")]';
   $G_DATA->{sites}->{autoScout24}->{XPATHS}->{XPATH_TITLE2}   = './/h2[contains(concat(" ", @class, " "), " cldt-summary-version ")]';
   $G_DATA->{sites}->{autoScout24}->{XPATHS}->{XPATH_DESC}     = './/h2[contains(concat(" ", @class, " "), " cldt-summary-version ")]';
-  # $G_DATA->{sites}->{autoScout24}->{XPATHS}->{XPATH_DESC}   = './/h3[contains(concat(" ", @class, " "), " cldt-summary-subheadline ")]';
   $G_DATA->{sites}->{autoScout24}->{XPATHS}->{XPATH_LINK}     = './/div[contains(concat(" ", @class, " "), " cldt-summary-titles ")]/a/@href';
   $G_DATA->{sites}->{autoScout24}->{XPATHS}->{XPATH_PRICE}    = './/span[contains(concat(" ", @class, " "), " cldt-price ")]';
   $G_DATA->{sites}->{autoScout24}->{XPATHS}->{XPATH_FEATURES} = './/div[contains(concat(" ", @class, " "), " cldt-summary-vehicle-data ")]/ul/li';
