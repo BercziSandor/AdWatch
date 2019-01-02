@@ -31,6 +31,7 @@ use MIME::Base64;
 
 #use HTML::TreeBuilder::XPath;
 #use HTML::Entities;
+use utf8::all;
 use Encode;
 use List::Util qw[min max];
 use Storable;
