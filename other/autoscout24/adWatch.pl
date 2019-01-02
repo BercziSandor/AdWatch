@@ -390,7 +390,7 @@ sub getHtml {
   # $log->debug( $content );
   if ( $saveHtmlFiles or $VERBOSE ) {
     my $fileName = $url;
-    $fileName = "$SCRIPTDIR/work/html" . u_formatTimeNow_YMD_HMS() . ".${SITE}.${maker}.${page}.html";
+    $fileName = "$SCRIPTDIR/work/html/" . u_formatTimeNow_YMD_HMS() . ".${SITE}.${maker}.${page}.html";
     $log->debug("fileName: $fileName\n");
     open( MYFILE, ">$fileName" ) or die "$fileName: $!";
     print MYFILE encode_utf8($html);
