@@ -21,5 +21,5 @@ function watchFor
 	fi
 }
 shift
-watchFor willHaben
-watchFor autoScout24
+watchFor willHaben $*
+watchFor autoScout24 $*
