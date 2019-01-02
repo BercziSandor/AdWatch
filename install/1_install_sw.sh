@@ -38,6 +38,20 @@ fi
 sudo apt -y install gcc make libssl-dev mailutils mc vim htop perl-openssl-defaults zlib1g-dev
 timedatectl set-timezone Europe/Budapest
 
+# NOMACHINE
+# https://www.vultr.com/docs/setup-nomachine-nx-on-ubuntu
+# sudo apt-get install ubuntu-desktop
+# sudo dpkg --purge ubuntu-desktop
+# sudo apt-get install pulseaudio
+# wget http://download.nomachine.com/download/6.4/Linux/nomachine_6.4.6_1_amd64.deb
+# sudo dpkg -i nnomachine_6.4.6_1_amd64.deb
+# sudo ufw allow 4000/tcp
+# sudo ufw allow 4011:4999/udp
+# sudo iptables -A INPUT -p tcp --dport 4000 -j ACCEPT
+# sudo iptables -A INPUT -p udp --match multiport --dports 4011:4999 -j ACCEPT
+################################################################################
+
+
 # PERL
 curl -L https://cpanmin.us | perl - --sudo App::cpanminus
 cpanm --sudo install HTTP::CookieJar
@@ -52,10 +66,9 @@ cpanm --sudo install LWP::UserAgent
 cpanm --sudo install LWP::Protocol::https
 cpanm --sudo install WWW::Mechanize
 cpanm --sudo install Email::Sender::Simple
-
-
 sudo apt install libxml-libxml-perl libxml2-dev
 cpanm --sudo install XML::LibXML
+################################################################################
 
 
 
