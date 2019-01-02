@@ -9,6 +9,7 @@ cd $thisDir
 function watchFor
 {
 	site=$1
+	shift
 	if ps -aef | grep -v grep | grep perl | grep "$fileToStart" | grep -q "s $site" ; then
 		echo "$(date) Nothing to do, $fileToStart for $site is already running:" | tee -a $thisDir/watch.log
 	 	 ps -aef | head -1                      | tee -a $thisDir/watch.log
@@ -20,6 +21,5 @@ function watchFor
 		set +vx
 	fi
 }
-shift
 watchFor willHaben $*
 watchFor autoScout24 $*
