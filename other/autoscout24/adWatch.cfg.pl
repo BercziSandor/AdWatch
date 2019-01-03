@@ -3,8 +3,8 @@
 my $default_maxAge = 11;
 
 my $default_price_from = 500;
-my $default_price_to   = 6000;
-my $default_year_from  = 2011;
+my $default_price_to   = 7000;
+my $default_year_from  = $thisYear - $default_maxAge;
 
 $G_DATA->{CONSTANTS}->{DOWNLOADMETHODS}->{lwp}      = 'lwp';
 $G_DATA->{CONSTANTS}->{DOWNLOADMETHODS}->{httpTiny} = 'httpTiny';
@@ -80,13 +80,13 @@ $G_DATA->{mailRecipients} = [ '"Sanyi" <berczi.sandor@gmail.com>', '"Tillatilla1
   $G_DATA->{sites}->{willHaben}->{searchConfig}->{defaults}->{page} = "VVPAGEVV";
 
   # 18.12.15: Alfa rómeó,  chevrolett, kia, mazda,mitsubishi,nissan
-  $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString_willhaben}->{"Alfa Romeo"}->{maxAge} = $default_maxAge;
-  $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString_willhaben}->{"Chevrolet"}->{maxAge}  = $default_maxAge;
-  $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString_willhaben}->{"Chevrolet / Daewoo"}->{maxAge}  = $default_maxAge;
-  $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString_willhaben}->{"KIA"}->{maxAge}        = $default_maxAge;
-  $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString_willhaben}->{"Mazda"}->{maxAge}      = $default_maxAge;
-  $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString_willhaben}->{"Mitsubishi"}->{maxAge} = $default_maxAge;
-  $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString_willhaben}->{"Nissan"}->{maxAge}     = $default_maxAge;
+  $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString_willhaben}->{"Alfa Romeo"}->{maxAge}         = $default_maxAge;
+  $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString_willhaben}->{"Chevrolet"}->{maxAge}          = $default_maxAge;
+  $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString_willhaben}->{"Chevrolet / Daewoo"}->{maxAge} = $default_maxAge;
+  $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString_willhaben}->{"KIA"}->{maxAge}                = $default_maxAge;
+  $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString_willhaben}->{"Mazda"}->{maxAge}              = $default_maxAge;
+  $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString_willhaben}->{"Mitsubishi"}->{maxAge}         = $default_maxAge;
+  $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString_willhaben}->{"Nissan"}->{maxAge}             = $default_maxAge;
 
   $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString_willhaben}->{"Audi"}->{maxAge}    = $default_maxAge;
   $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString_willhaben}->{"Citroen"}->{maxAge} = $default_maxAge;
@@ -211,8 +211,8 @@ $G_DATA->{mailRecipients} = [ '"Sanyi" <berczi.sandor@gmail.com>', '"Tillatilla1
   # mmvmk0=9&mmvco=1&fregfrom=2013&fregto=2015&pricefrom=0&priceto=8000&fuel=B&kmfrom=10000&powertype=kw&atype=C&ustate=N%2CU&sort=standard&desc=0
 
   # ustate=N%2CU&     N,U: nem balesetes; A: balesetes;
-  $G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{pricefrom} = 500;
-  $G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{priceto}   = 6000;
+  $G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{pricefrom} = $default_price_from;
+  $G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{priceto}   = $default_price_to;
   $G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{sort}      = 'age';
   $G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{desc}      = 0;
   $G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{cy}        = 'A,D';    # A: Austria; D: Germany

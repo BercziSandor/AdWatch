@@ -89,6 +89,7 @@ my ( $STATUS_EMPTY, $STATUS_CHANGED, $STATUS_NEW, $STATUS_VERKAUFT ) = ( 'undef'
 
 sub ini {
   $SCRIPTDIR = dirname( abs_path($0) );
+  $thisYear = strftime "%Y", localtime;
 
   # Reading Parameters
   GetOptions(
@@ -146,7 +147,6 @@ sub ini {
 
   # $G_HTML_TREE = HTML::TreeBuilder::XPath->new;
 
-  $thisYear = strftime "%Y", localtime;
   my ( $name, $path, $suffix ) = fileparse( $0, qr{\.[^.]*$} );
 
   my $cnfFile = "${path}${name}.cfg.pl";
@@ -157,6 +157,18 @@ sub ini {
     die "couldn't run $cnfFile\n" unless $return;
   } ### unless ( my $return = require...)
   $log->info("ini(): cfg read\n");
+  if ($DEBUG) {
+    FIXME: debug $G_DATA->{G_WAIT_BETWEEN_FULL_PROCESS_IN_SEC} = 100;
+    $G_DATA->{sendMail}       = 1;
+    $G_DATA->{mailRecipients} = [ '"Sanyi" <berczi.sandor@gmail.com>' ];
+    my $default_price_from = 550;
+    my $default_price_to   = 550;
+    $G_DATA->{sites}->{willHaben}->{searchConfig}->{defaults}->{PRICE_FROM}  = $default_price_from;
+    $G_DATA->{sites}->{willHaben}->{searchConfig}->{defaults}->{PRICE_TO}    = $default_price_to;
+    $G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{pricefrom} = $default_year_from;
+    $G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{priceto}   = $default_price_to;
+
+  } ### if ($DEBUG)
 
   # Checking config
   if ( not defined $G_DATA->{CONSTANTS}->{DOWNLOADMETHODS}
