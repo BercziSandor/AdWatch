@@ -88,11 +88,10 @@ my ( $STATUS_EMPTY, $STATUS_CHANGED, $STATUS_NEW, $STATUS_VERKAUFT ) = ( 'undef'
 sub ini {
   $SCRIPTDIR = dirname( abs_path($0) );
 
-
   # Reading Parameters
   GetOptions(
     'site|s=s'  => \$SITE,
-    'noLoop|nl'    => \$OPTION_NO_LOOP,
+    'noLoop|nl' => \$OPTION_NO_LOOP,
     'help|?|h'  => \$HELP,
     'verbose|v' => \$VERBOSE,
   );
@@ -136,8 +135,8 @@ sub ini {
   }
 
   $log->info("ini(): entering\n");
-
   $log->info("ini(): site: $SITE\n");
+  $log->info( "ini(): noLoop: " . $OPTION_NO_LOOP ? 'ON' : 'OFF' . "\n" );
 
   if ( !-e "$SCRIPTDIR/mails" )     { `mkdir $SCRIPTDIR/mails` }
   if ( !-e "$SCRIPTDIR/work/html" ) { `mkdir -p $SCRIPTDIR/work/html` }
