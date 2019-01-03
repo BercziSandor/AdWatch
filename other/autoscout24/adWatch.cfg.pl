@@ -1,12 +1,12 @@
 # debug options for the developer;
 
-my $default_maxAge = 11;
+my $default_maxAge     = 11;
 my $default_price_from = 500;
 my $default_price_to   = 7000;
 
-$G_DATA->{searchDefaults}->{maxAge}=$default_maxAge;
-$G_DATA->{searchDefaults}->{price_from}=$default_price_from;
-$G_DATA->{searchDefaults}->{price_to}=$default_price_to;
+$G_DATA->{searchDefaults}->{maxAge}     = $default_maxAge;
+$G_DATA->{searchDefaults}->{price_from} = $default_price_from;
+$G_DATA->{searchDefaults}->{price_to}   = $default_price_to;
 
 my $default_year_from = $thisYear - $default_maxAge;
 $G_DATA->{CONSTANTS}->{DOWNLOADMETHODS}->{lwp}      = 'lwp';
@@ -427,21 +427,3 @@ if ( $SITE eq $SITE_WILLHABEN ) {
   $G_DATA->{sites}->{autoScout24}->{makers}->{"Sonstige"}          = 16328;
 
 } ### elsif ( $SITE eq $SITE_AUTOSCOUT24)
-
-get_SearchInfo;
-
-sub get_SearchInfo
-{
-  $G_DATA->{searchInfo} = "A keresés feltételei:\n";
-  $G_DATA->{searchInfo} .= " Oldal: $SITE\n";
-
-  my @ts;
-  foreach my $t ( sort keys %{ $G_DATA->{sites}->{$SITE}->{searchConfig}->{$makerString} } ) {
-    next unless defined $G_DATA->{sites}->{$SITE}->{searchConfig}->{$makerString}->$t->{maxAge};
-    push( @ts, $t );
-  }
-  $G_DATA->{searchInfo} .= " Típusok: " . join( ', ', @ts ) . "\n";
-  $G_DATA->{searchInfo} .= " Évjárat: $default_year_from - $thisYear (max. $default_maxAge év)\n";
-  $G_DATA->{searchInfo} .= " Ár: $default_price_from - $default_price_to €\n";
-  return $G_DATA->{searchInfo};
-}
