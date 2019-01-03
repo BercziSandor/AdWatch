@@ -345,12 +345,14 @@ sub getHtml {
   my $wtime = int( ( $G_LAST_GET_TIME + $G_WAIT_BETWEEN_GETS_IN_SEC ) - time );
   $log->debug("getHtml() #2\n");
   if ( $wtime > 0 ) {
-    $log->debug("$wtime másodperc várakozás (két lekérés közötti minimális várakozási idő: $G_WAIT_BETWEEN_GETS_IN_SEC másodperc)\n");
+    $log->debug("getHtml() #2.1\n");
+    $log->debug("$wtime másodperc várakozás (két lekérés közötti minimális várakozási idö: $G_WAIT_BETWEEN_GETS_IN_SEC másodperc)\n");
+    $log->debug("getHtml() #2.2\n");
     sleep($wtime);
-  }
+  } ### if ( $wtime > 0 )
 
+  $log->debug("getHtml() #2.5\n");
   $G_LAST_GET_TIME = time;
-
   if ( $G_DATA->{downloadMethod} eq 'httpTiny' ) {
     my $response = $httpEngine->get($url);
     if ( $response->{success} ) {
@@ -368,7 +370,7 @@ sub getHtml {
   } elsif ( $G_DATA->{downloadMethod} eq $G_DATA->{CONSTANTS}->{DOWNLOADMETHODS}->{lwp} ) {
     my $response = $httpEngine->get($url);
     if ( $response->is_success ) {
-      $html    = $response->content;
+      $html = $response->content;
     } else {
       $log->logdie( $response->status_line );
     }
@@ -408,6 +410,7 @@ sub getHtml {
   $content = decode_utf8($content);
 
   $log->debug("getHtml() #5\n");
+
   # test 1
   $content =~ s/([^[:ascii:]]+)/unidecode($1)/ge;
 
