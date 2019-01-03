@@ -94,10 +94,12 @@ sub get_SearchInfo {
   $G_DATA->{searchInfo} .= " Oldal: $SITE\n";
 
   my @ts;
+
   # $log->info("makerString: $makerString\n");
   # print Dumper( $G_DATA->{sites} );
   foreach my $t ( sort keys %{ $G_DATA->{sites}->{$SITE}->{searchConfig}->{$makerString} } ) {
     if ( not defined( $G_DATA->{sites}->{$SITE}->{searchConfig}->{$makerString}->{$t}->{maxAge} ) ) {
+
       # $log->info("G_DATA->{sites}->{$SITE}->{searchConfig}->{$makerString}->{$t}->{maxAge} is not defined\n");
       next;
     }
@@ -659,6 +661,12 @@ sub parseItems {
         $val =~ s/ $//;
         $val =~ s/ # /#/g;
         $val =~ s/  / /g;
+        $val =~ s/  / /g;
+
+        # 08/2011 -> 2011(99)
+        if ( $val =~ m|\d\d/(\d\d\d\d)/| ) {
+          $val = "$1(" . ( $thisYear - $1 ) . " év)";
+        }
         push @fs, $val;
       } ### foreach my $feature (@features)
     } ### if ( $SITE eq $SITE_AUTOSCOUT24)
@@ -893,8 +901,9 @@ sub getMailTextforItems {
   } else {
     $mailTextHtml .= "\n_____________________\n$count_new ÚJ hirdetés\n";
     $mailTextHtml .= "$count_changed MEGVÁLTOZOTT hirdetés\n" if $count_changed;
+
     # $log->info("$mailTextHtml\n");
-  }
+  } ### else [ if ( ( $count_new + $count_changed...))]
   return $mailTextHtml;
 } ### sub getMailTextforItems
 
