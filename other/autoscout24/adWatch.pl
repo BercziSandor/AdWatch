@@ -165,7 +165,7 @@ sub ini {
     my $default_price_to   = 550;
     $G_DATA->{sites}->{willHaben}->{searchConfig}->{defaults}->{PRICE_FROM}  = $default_price_from;
     $G_DATA->{sites}->{willHaben}->{searchConfig}->{defaults}->{PRICE_TO}    = $default_price_to;
-    $G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{pricefrom} = $default_year_from;
+    $G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{pricefrom} = $default_price_from;
     $G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{priceto}   = $default_price_to;
 
   } ### if ($DEBUG)
