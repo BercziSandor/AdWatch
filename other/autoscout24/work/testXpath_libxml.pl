@@ -4,11 +4,14 @@ use 5.010;
 use strict;
 use warnings;
 
+use Data::Dumper;
+
 use XML::LibXML;
 
 my $filename;
 $filename = '1540465883__.html';
 $filename = '1540465883.html';
+$filename = '1.html';
 
 my $dom = XML::LibXML->load_html(
   location        => $filename,
@@ -43,35 +46,41 @@ sub u_cleanString {
 
 my $xpath;
 
-$xpath = '//div[@id="resultlist"]/article';
-my $items = $G_HTML_TREE->findnodes($xpath) or return 1;
+$xpath = '//div[contains(concat(" ", @class, " "), " cl-list-element cl-list-element-gap ")]';
+my $items = $G_HTML_TREE->findnodes($xpath) or die "findnodes($xpath) error";
 my $index;
 foreach my $item ( $items->get_nodelist ) {
   $index++;
-  $xpath = './section[@class="content-section"]//span[@itemprop="name"]';
+  $xpath = './/h2[contains(concat(" ", @class, " "), " cldt-summary-makemodel ")]';
   my $title = u_cleanString( $item->findvalue($xpath) );
   next unless $title;
   say "########\n$index";
   say " title: [$title]";
 
-  my $desc   = u_cleanString( $item->findvalue('./section[@class="content-section"]//div[@itemprop="description"]') );
 
-  # 2008 75.000 km
-  my $yearKm = u_cleanString( $item->findvalue('./section[@class="content-section"]//span[@class="desc-left"]') );
-  my $year = $yearKm;
-  $year =~ s/^(\d*) .*/$1/;
-  my $age = 2018 - $year;
-  my $km  = $yearKm;
-  $km =~ s/^\d* (.*)/$1/;
-
-  my $price = u_cleanString( $item->findvalue('./section[@class="content-section"]//span[@class="pull-right"]') );
-  $price =~ s/,-/ €/;
-
-  my $text = "\n - $price\n - $year($age)\n - $km\n - $desc\n";
-  $text =~ s/bleifrei//g;
-  $text = u_clearSpaces($text);
-  say " text: [$text]";
-
-  my $link = $item->findvalue('./section[@class="content-section"]//div[contains(@class, "header")]/a/@href');
+  my $link = $item->findvalue('.//div[contains(concat(" ", @class, " "), " cldt-summary-titles ")]/a/@href');
   say " link: [$link]";
+
+  my $xpath='.//div[contains(concat(" ", @class, " "), " cldt-summary-vehicle-data ")]/ul//li';
+  my @features= $item->findnodes($xpath);
+
+
+  my @fs;
+  foreach my $feature (@features) {
+    my $val = $feature->textContent();
+    $val =~ s/\n//g;
+    $val =~ s/^ //;
+    $val =~ s/ $//;
+    $val =~ s/ # /#/g;
+    $val =~ s/  / /g;
+    push @fs, $val;
+  } ### foreach my $feature (@features)
+
+
+  print Dumper(@fs);
+  # print "fs: $featuresString\n";  
+
+
+
+
 } ### foreach my $item ( $items->...)
