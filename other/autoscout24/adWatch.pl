@@ -162,12 +162,11 @@ sub ini {
     $G_DATA->{sendMail}       = 1;
     $G_DATA->{mailRecipients} = [ '"Sanyi" <berczi.sandor@gmail.com>' ];
     my $default_price_from = 550;
-    my $default_price_to   = 550;
-    $G_DATA->{sites}->{willHaben}->{searchConfig}->{defaults}->{PRICE_FROM}  = $default_price_from;
-    $G_DATA->{sites}->{willHaben}->{searchConfig}->{defaults}->{PRICE_TO}    = $default_price_to;
-    $G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{pricefrom} = $default_price_from;
-    $G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{priceto}   = $default_price_to;
-
+    my $default_price_to   = 7000;
+    # $G_DATA->{sites}->{willHaben}->{searchConfig}->{defaults}->{PRICE_FROM}  = $default_price_from;
+    # $G_DATA->{sites}->{willHaben}->{searchConfig}->{defaults}->{PRICE_TO}    = $default_price_to;
+    # $G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{pricefrom} = $default_price_from;
+    # $G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{priceto}   = $default_price_to;
   } ### if ($DEBUG)
 
   # Checking config
@@ -345,7 +344,7 @@ sub getHtml {
 
   $url =~ s/$G_DATA->{sites}->{$SITE}->{searchConfig}->{defaults}->{page}/$page/g;
   $log->debug("getHtml($url, $page, $maker)\n");
-  $log->debug("getHtml() #1\n");
+  # $log->debug("getHtml() #1\n");
   my $html    = '';
   my $content = '';
 
@@ -355,7 +354,7 @@ sub getHtml {
   }
 
   # Generic code
-  $log->debug(" reading remote\n");
+  # $log->debug(" reading remote\n");
   stopWatch::continue($SW_DOWNLOAD);
   my $wtime = int( ( $G_LAST_GET_TIME + $G_WAIT_BETWEEN_GETS_IN_SEC ) - time );
 
@@ -415,7 +414,7 @@ sub getHtml {
   if ( $OPTION_SAVEHTMLFILES or $VERBOSE ) {
     my $fileName = $url;
     $fileName = "$SCRIPTDIR/work/html/" . u_formatTimeNow_YMD_HMS() . ".${SITE}.${maker}.${page}.html";
-    $log->debug("fileName: $fileName\n");
+    # $log->debug("fileName: $fileName\n");
     open( MYFILE, ">$fileName" ) or die "$fileName: $!";
     print MYFILE encode_utf8($html);
     close(MYFILE);
@@ -427,7 +426,7 @@ sub getHtml {
   Encode::_utf8_off($content);
   $content = decode_utf8($content);
 
-  $log->debug("getHtml() #5\n");
+  # $log->debug("getHtml() #5\n");
 
   $content = u_utf8Decode($content);
 
@@ -439,7 +438,7 @@ sub getHtml {
   $G_HTML_TREE = 'XML::LibXML::XPathContext'->new($dom);
 
   # $G_HTML_TREE = HTML::TreeBuilder::XPath->new_from_content($content) or logdie($!);
-  $log->debug(" \$G_HTML_TREE created.\n");
+  # $log->debug(" \$G_HTML_TREE created.\n");
   $log->debug("getHtml returning\n");
   return $html;
 } ### sub getHtml
@@ -492,16 +491,14 @@ sub parseItems {
   $log->fatal("Üres: G_DATA->{sites}->{$SITE}->{XPATHS}->{XPATH_TALALATI_LISTA}\n") unless $xpath;
 
   $items = $G_HTML_TREE->findnodes($xpath) or do {
-
     # $log->error("ERROR: findnodes($xpath) error\n");
     return 0;
   };
-  $log->debug( scalar( $items->get_nodelist ) . " lista elemet találtam a következő xpath-al: [$xpath]\n" );
   unless ($items) {
-
-    # $log->error("ERROR: findnodes($xpath) error\n");
+    $log->debug("findnodes($xpath): no items?\n");
     return 0;
   }
+  $log->debug( scalar( $items->get_nodelist ) . " lista elemet találtam a következő xpath-al: [$xpath]\n" );
 
   print "[";
   my $index;
