@@ -158,7 +158,7 @@ sub ini {
   } ### unless ( my $return = require...)
   $log->info("ini(): cfg read\n");
   if ($DEBUG) {
-    FIXME: debug $G_DATA->{G_WAIT_BETWEEN_FULL_PROCESS_IN_SEC} = 100;
+    $G_DATA->{G_WAIT_BETWEEN_FULL_PROCESS_IN_SEC} = 100;
     $G_DATA->{sendMail}       = 1;
     $G_DATA->{mailRecipients} = [ '"Sanyi" <berczi.sandor@gmail.com>' ];
     my $default_price_from = 550;
