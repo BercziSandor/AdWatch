@@ -613,8 +613,7 @@ sub parseItems {
       foreach my $feature (@features) {
         my $val = encode_utf8( $feature->textContent() );
         $val =~ s/\n//g;
-        u_utf8Decode($G_DATA->{sites}->{$SITE}->{textToDelete});
-        $val =~ s/$_//g;
+        $val =~ s/u_utf8Decode($G_DATA->{sites}->{$SITE}->{textToDelete})//g;
         $val =~ s/^ //;
         $val =~ s/ $//;
         $val =~ s/ # /#/g;
