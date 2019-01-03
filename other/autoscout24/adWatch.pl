@@ -29,7 +29,7 @@ use HTTP::CookieJar::LWP;
 use XML::LibXML;
 use MIME::Base64;
 
-use utf8;
+# use utf8;
 use Text::Unidecode;
 use Encode;
 
