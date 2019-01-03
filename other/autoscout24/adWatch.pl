@@ -29,10 +29,10 @@ use HTTP::CookieJar::LWP;
 use XML::LibXML;
 use MIME::Base64;
 
-#use HTML::TreeBuilder::XPath;
-#use HTML::Entities;
-# use utf8::all;
+use utf8;
+use Text::Unidecode;
 use Encode;
+
 use List::Util qw[min max];
 use Storable;
 use Time::HiRes qw( time );
@@ -402,6 +402,12 @@ sub getHtml {
     close(MYFILE);
   } ### if ( $OPTION_SAVEHTMLFILES...)
   $log->logdie("The content of the received html is empty.") if ( length($html) == 0 );
+
+  # test 1
+  $content =~ s/([^[:ascii:]]+)/unidecode($1)/ge;
+
+  # test 1
+  $content =~ s/[^[:ascii:]]+//g;    # get rid of non-ASCII characters
 
   my $dom = XML::LibXML->load_html(
     string          => $content,
