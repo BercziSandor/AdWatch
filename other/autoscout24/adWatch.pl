@@ -95,7 +95,7 @@ sub get_SearchInfo {
 
   my @ts;
   $log->info("makerString: $makerString\n");
-  print Dumper( $G_DATA->{sites}->{$SITE} );
+  print Dumper( $G_DATA->{sites} );
   foreach my $t ( sort keys %{ $G_DATA->{sites}->{$SITE}->{searchConfig}->{$makerString} } ) {
     if ( not defined( $G_DATA->{sites}->{$SITE}->{searchConfig}->{$makerString}->$t->{maxAge} ) ) {
       $log->info("G_DATA->{sites}->{$SITE}->{searchConfig}->{$makerString}->$t->{maxAge} is not defined\n");
