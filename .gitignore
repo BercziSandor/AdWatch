@@ -1,6 +1,9 @@
 *.log
+*.LCK
+*.log.*
 *.sublime-workspace
 other/autoscout24/mails/*
 mails/*
 data.dat
 other/autoscout24/tmp/
+other/autoscout24/work/html
