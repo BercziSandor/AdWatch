@@ -330,7 +330,7 @@ sub getHtml {
 
   $url =~ s/$G_DATA->{sites}->{$SITE}->{searchConfig}->{defaults}->{page}/$page/g;
   $log->debug("getHtml($url, $page, $maker)\n");
-
+  $log->debug("getHtml() #1\n");
   my $html    = '';
   my $content = '';
 
@@ -343,6 +343,7 @@ sub getHtml {
   $log->debug(" reading remote\n");
   stopWatch::continue($SW_DOWNLOAD);
   my $wtime = int( ( $G_LAST_GET_TIME + $G_WAIT_BETWEEN_GETS_IN_SEC ) - time );
+  $log->debug("getHtml() #2\n");
   if ( $wtime > 0 ) {
     $log->debug("$wtime másodperc várakozás (két lekérés közötti minimális várakozási idő: $G_WAIT_BETWEEN_GETS_IN_SEC másodperc)\n");
     sleep($wtime);
@@ -368,7 +369,6 @@ sub getHtml {
     my $response = $httpEngine->get($url);
     if ( $response->is_success ) {
       $html    = $response->content;
-      $content = decode_utf8($html);
     } else {
       $log->logdie( $response->status_line );
     }
@@ -377,8 +377,6 @@ sub getHtml {
     if ( $httpEngine->success() ) {
       $html    = $httpEngine->content();
       $content = $html;
-      Encode::_utf8_off($content);
-      $content = decode_utf8($content);
     } else {
 
       # $log->info( "ajjjjaj: httpEngine error: " . $httpEngine->status() . "\n" );    #$httpEngine->status()
@@ -392,7 +390,8 @@ sub getHtml {
 
   stopWatch::pause($SW_DOWNLOAD);
 
-  # $log->debug( $content );
+  $log->debug("getHtml() #3\n");
+
   if ( $OPTION_SAVEHTMLFILES or $VERBOSE ) {
     my $fileName = $url;
     $fileName = "$SCRIPTDIR/work/html/" . u_formatTimeNow_YMD_HMS() . ".${SITE}.${maker}.${page}.html";
@@ -401,8 +400,14 @@ sub getHtml {
     print MYFILE encode_utf8($html);
     close(MYFILE);
   } ### if ( $OPTION_SAVEHTMLFILES...)
+
   $log->logdie("The content of the received html is empty.") if ( length($html) == 0 );
 
+  $log->debug("getHtml() #4 cleanup\n");
+  Encode::_utf8_off($content);
+  $content = decode_utf8($content);
+
+  $log->debug("getHtml() #5\n");
   # test 1
   $content =~ s/([^[:ascii:]]+)/unidecode($1)/ge;
 
