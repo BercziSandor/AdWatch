@@ -79,6 +79,8 @@ my $httpEngine;
 my $collectionDate;
 my $SCRIPTDIR;
 
+our $makerString;
+
 my $G_ITEMS_TO_PROCESS_MAX     = 0;    # 0: unlimited
 my $G_WAIT_BETWEEN_GETS_IN_SEC = 1;
 
@@ -87,9 +89,7 @@ my ( $SITE, $QUIET, $VERBOSE, $HELP, ) = ( $SITE_WILLHABEN, undef, 0, undef );
 # CONSTANTS
 my ( $STATUS_EMPTY, $STATUS_CHANGED, $STATUS_NEW, $STATUS_VERKAUFT ) = ( 'undef', 'megváltozott', 'új', 'eladva' );
 
-
-sub get_SearchInfo
-{
+sub get_SearchInfo {
   $G_DATA->{searchInfo} = "A keresés feltételei:\n";
   $G_DATA->{searchInfo} .= " Oldal: $SITE\n";
 
@@ -100,11 +100,12 @@ sub get_SearchInfo
   }
   $G_DATA->{searchInfo} .= " Típusok: " . join( ', ', @ts ) . "\n";
 
-  $G_DATA->{searchInfo} .= " Évjárat: ". ($thisYear - $G_DATA->{searchDefaults}->{maxAge} ) . " - " . $thisYear ." (max. $G_DATA->{searchDefaults}->{maxAge} év)\n";
+  $G_DATA->{searchInfo}
+    .= " Évjárat: " . ( $thisYear - $G_DATA->{searchDefaults}->{maxAge} ) . " - " . $thisYear . " (max. $G_DATA->{searchDefaults}->{maxAge} év)\n";
   $G_DATA->{searchInfo} .= " Ár: $G_DATA->{searchDefaults}->{price_from} - $G_DATA->{searchDefaults}->{price_to} €\n";
   return $G_DATA->{searchInfo};
 
-}
+} ### sub get_SearchInfo
 
 sub ini {
   $SCRIPTDIR = dirname( abs_path($0) );

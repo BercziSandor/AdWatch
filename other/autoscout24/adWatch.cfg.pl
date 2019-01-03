@@ -31,7 +31,7 @@ $G_DATA->{mailRecipients} = [ '"Sanyi" <berczi.sandor@gmail.com>', '"Tillatilla1
 # $default_price_from       = 550;
 # $default_price_to         = 550;                                       # FIXME
 
-my $makerString = '';
+$makerString = '';
 if ( $SITE eq $SITE_WILLHABEN ) {
   $G_DATA->{sites}->{willHaben}->{searchUrlRoot} = 'https://www.willhaben.at/iad/gebrauchtwagen/auto/gebrauchtwagenboerse?';
 
