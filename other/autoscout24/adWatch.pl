@@ -925,7 +925,7 @@ sub mailThisText {
     } else {
       $fileNameTmp = "./mails/${fileName}_NOT_SENT.txt";
     }
-    $log->debug("Szöveg mentése $fileNameTmp file-ba...");
+    $log->debug("Txt mentése: $fileNameTmp\n");
 
     open( MYFILE, ">$fileNameTmp" ) or die "$fileNameTmp: $!";
     print MYFILE $bodyText;
@@ -939,7 +939,7 @@ sub mailThisText {
     } else {
       $fileNameTmp = "./mails/${fileName}_NOT_SENT.html";
     }
-    $log->debug("Szöveg mentése $fileNameTmp file-ba...");
+    $log->debug("Htm mentése $fileNameTmp\n");
     open( MYFILE, ">$fileNameTmp" ) or die "${$fileNameTmp}: $!";
     print MYFILE $bodyText;
     close(MYFILE);
@@ -960,14 +960,13 @@ sub mailThisText {
       ],
       body => $bodyText,
     );
-    $log->info(" $_ ...\n");
 
     # Email::Sender::Simple
     if ( $G_DATA->{mail}->{sendMail} == 1 ) {
+      $log->info("Levél küldése: -> $_ ...\n");
       sendmail($email) or die $!;
-      $log->info("Levél küldése sikeres. To: [$_]\n");
+      $log->info("Küldés sikeres.\n");
     }
-
   } ### foreach (@recipients)
 
   if ( $G_DATA->{mail}->{sendMail} == 1 ) {
