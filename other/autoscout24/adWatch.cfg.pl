@@ -70,6 +70,7 @@ if ( $SITE eq $SITE_WILLHABEN ) {
   $makerString = 'CAR_MODEL/MAKE';
 
   # ustate=N%2CU&     N,U: nem balesetes; A: balesetes;
+  $G_DATA->{sites}->{willHaben}->{searchConfig}->{defaults}->{makerString}     = $makerString;
   $G_DATA->{sites}->{willHaben}->{searchConfig}->{defaults}->{PRICE_FROM}      = $default_price_from;
   $G_DATA->{sites}->{willHaben}->{searchConfig}->{defaults}->{PRICE_TO}        = $default_price_to;
   $G_DATA->{sites}->{willHaben}->{searchConfig}->{defaults}->{MOTOR_CONDITION} = '20%3B30%3B40';
@@ -213,11 +214,12 @@ if ( $SITE eq $SITE_WILLHABEN ) {
   # mmvmk0=9&mmvco=1&fregfrom=2013&fregto=2015&pricefrom=0&priceto=8000&fuel=B&kmfrom=10000&powertype=kw&atype=C&ustate=N%2CU&sort=standard&desc=0
 
   # ustate=N%2CU&     N,U: nem balesetes; A: balesetes;
-  $G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{pricefrom} = $default_price_from;
-  $G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{priceto}   = $default_price_to;
-  $G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{sort}      = 'age';
-  $G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{desc}      = 0;
-  $G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{cy}        = 'A,D';                 # A: Austria; D: Germany
+  $G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{makerString} = $makerString;
+  $G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{pricefrom}   = $default_price_from;
+  $G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{priceto}     = $default_price_to;
+  $G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{sort}        = 'age';
+  $G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{desc}        = 0;
+  $G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{cy}          = 'A,D';                 # A: Austria; D: Germany
   $G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{offer}
     = 'D,J,O,S,U';    # D: Vorführfahrzeug, J: Jahreswagen, N: Neu, O: Oldtimer, S: Tageszulassung, U: Gebraucht
   $G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{mmvco}     = 1;
