@@ -180,6 +180,8 @@ sub ini {
   } ### if ( not defined $G_DATA...)
 
   if ( not defined $G_DATA->{sites}->{$SITE}->{searchConfig}->{defaults}->{page} ) {
+    $log->info( $SITE . "\n" );
+    $log->info( Dumper( $G_DATA->{sites}->{$SITE}->{searchConfig}->{defaults} ) . "\n" );
     $log->logdie("A G_DATA->{sites}->{$SITE}->{searchConfig}->{defaults}->{page} nincs definiálva.\n");
   }
   if ( not defined $G_DATA->{sites}->{$SITE}->{XPATHS} ) {
