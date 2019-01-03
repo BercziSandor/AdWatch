@@ -131,7 +131,7 @@ sub ini {
   if ($VERBOSE) {
     print "VERBOSE mode on.\n";
     $Log::Log4perl::Logger::APPENDER_BY_NAME{'Logfile'}->threshold('DEBUG');
-    $Log::Log4perl::Logger::APPENDER_BY_NAME{'Screen'}->threshold('DEBUG');
+    $Log::Log4perl::Logger::APPENDER_BY_NAME{'Screen'}->threshold('INFO');
   } else {
     print "VERBOSE mode off.\n";
     $Log::Log4perl::Logger::APPENDER_BY_NAME{'Logfile'}->threshold('INFO');
@@ -168,7 +168,8 @@ sub ini {
     # $G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{pricefrom} = $default_price_from;
     # $G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{priceto}   = $default_price_to;
   } ### if ($DEBUG)
-
+  $log->info(get_SearchInfo() . "\n");
+  
   # Checking config
   if ( not defined $G_DATA->{CONSTANTS}->{DOWNLOADMETHODS}
     or not defined $G_DATA->{mail}->{sendMail}

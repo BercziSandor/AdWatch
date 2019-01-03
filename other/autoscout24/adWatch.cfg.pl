@@ -1,16 +1,18 @@
 # debug options for the developer;
 
 my $default_maxAge = 11;
-
 my $default_price_from = 500;
 my $default_price_to   = 7000;
-my $default_year_from  = $thisYear - $default_maxAge;
 
+$G_DATA->{searchDefaults}->{maxAge}=$default_maxAge;
+$G_DATA->{searchDefaults}->{price_from}=$default_price_from;
+$G_DATA->{searchDefaults}->{price_to}=$default_price_to;
+
+my $default_year_from = $thisYear - $default_maxAge;
 $G_DATA->{CONSTANTS}->{DOWNLOADMETHODS}->{lwp}      = 'lwp';
 $G_DATA->{CONSTANTS}->{DOWNLOADMETHODS}->{httpTiny} = 'httpTiny';
 $G_DATA->{CONSTANTS}->{DOWNLOADMETHODS}->{wwwMech}  = 'wwwMech';
-
-$G_DATA->{downloadMethod} = $G_DATA->{CONSTANTS}->{DOWNLOADMETHODS}->{wwwMech};
+$G_DATA->{downloadMethod}                           = $G_DATA->{CONSTANTS}->{DOWNLOADMETHODS}->{wwwMech};
 
 $G_DATA->{mail}->{sendMail}                   = 1;
 $G_DATA->{mail}->{itemsInAMailMax}            = 1000;
@@ -29,8 +31,8 @@ $G_DATA->{mailRecipients} = [ '"Sanyi" <berczi.sandor@gmail.com>', '"Tillatilla1
 # $default_price_from       = 550;
 # $default_price_to         = 550;                                       # FIXME
 
-# WillHaben
-{
+my $makerString = '';
+if ( $SITE eq $SITE_WILLHABEN ) {
   $G_DATA->{sites}->{willHaben}->{searchUrlRoot} = 'https://www.willhaben.at/iad/gebrauchtwagen/auto/gebrauchtwagenboerse?';
 
   #  '//*[@id="main_nagyoldal_felcserelve"]//div[contains(concat(" ", @class, " "), " talalati_lista ")]';
@@ -65,8 +67,7 @@ $G_DATA->{mailRecipients} = [ '"Sanyi" <berczi.sandor@gmail.com>', '"Tillatilla1
   # &rows=100
   # &periode=0
 
-  my $makerString_willhaben = 'CAR_MODEL/MAKE';
-  $G_DATA->{sites}->{willHaben}->{makerString} = $makerString_willhaben;
+  $makerString = 'CAR_MODEL/MAKE';
 
   # ustate=N%2CU&     N,U: nem balesetes; A: balesetes;
   $G_DATA->{sites}->{willHaben}->{searchConfig}->{defaults}->{PRICE_FROM}      = $default_price_from;
@@ -80,27 +81,27 @@ $G_DATA->{mailRecipients} = [ '"Sanyi" <berczi.sandor@gmail.com>', '"Tillatilla1
   $G_DATA->{sites}->{willHaben}->{searchConfig}->{defaults}->{page} = "VVPAGEVV";
 
   # 18.12.15: Alfa rómeó,  chevrolett, kia, mazda,mitsubishi,nissan
-  $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString_willhaben}->{"Alfa Romeo"}->{maxAge}         = $default_maxAge;
-  $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString_willhaben}->{"Chevrolet"}->{maxAge}          = $default_maxAge;
-  $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString_willhaben}->{"Chevrolet / Daewoo"}->{maxAge} = $default_maxAge;
-  $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString_willhaben}->{"KIA"}->{maxAge}                = $default_maxAge;
-  $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString_willhaben}->{"Mazda"}->{maxAge}              = $default_maxAge;
-  $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString_willhaben}->{"Mitsubishi"}->{maxAge}         = $default_maxAge;
-  $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString_willhaben}->{"Nissan"}->{maxAge}             = $default_maxAge;
+  $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString}->{"Alfa Romeo"}->{maxAge}         = $default_maxAge;
+  $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString}->{"Chevrolet"}->{maxAge}          = $default_maxAge;
+  $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString}->{"Chevrolet / Daewoo"}->{maxAge} = $default_maxAge;
+  $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString}->{"KIA"}->{maxAge}                = $default_maxAge;
+  $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString}->{"Mazda"}->{maxAge}              = $default_maxAge;
+  $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString}->{"Mitsubishi"}->{maxAge}         = $default_maxAge;
+  $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString}->{"Nissan"}->{maxAge}             = $default_maxAge;
 
-  $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString_willhaben}->{"Audi"}->{maxAge}    = $default_maxAge;
-  $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString_willhaben}->{"Citroen"}->{maxAge} = $default_maxAge;
-  $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString_willhaben}->{"Fiat"}->{maxAge}    = $default_maxAge;
-  $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString_willhaben}->{"Ford"}->{maxAge}    = $default_maxAge;
-  $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString_willhaben}->{"Honda"}->{maxAge}   = $default_maxAge;
-  $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString_willhaben}->{"Hyundai"}->{maxAge} = $default_maxAge;
-  $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString_willhaben}->{"Mazda"}->{maxAge}   = $default_maxAge;
-  $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString_willhaben}->{"Nissan"}->{maxAge}  = $default_maxAge;
-  $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString_willhaben}->{"Opel"}->{maxAge}    = $default_maxAge;
-  $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString_willhaben}->{"Seat"}->{maxAge}    = $default_maxAge;
-  $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString_willhaben}->{"Skoda"}->{maxAge}   = $default_maxAge;
-  $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString_willhaben}->{"Toyota"}->{maxAge}  = $default_maxAge;
-  $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString_willhaben}->{"VW"}->{maxAge}      = $default_maxAge;
+  $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString}->{"Audi"}->{maxAge}    = $default_maxAge;
+  $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString}->{"Citroen"}->{maxAge} = $default_maxAge;
+  $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString}->{"Fiat"}->{maxAge}    = $default_maxAge;
+  $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString}->{"Ford"}->{maxAge}    = $default_maxAge;
+  $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString}->{"Honda"}->{maxAge}   = $default_maxAge;
+  $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString}->{"Hyundai"}->{maxAge} = $default_maxAge;
+  $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString}->{"Mazda"}->{maxAge}   = $default_maxAge;
+  $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString}->{"Nissan"}->{maxAge}  = $default_maxAge;
+  $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString}->{"Opel"}->{maxAge}    = $default_maxAge;
+  $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString}->{"Seat"}->{maxAge}    = $default_maxAge;
+  $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString}->{"Skoda"}->{maxAge}   = $default_maxAge;
+  $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString}->{"Toyota"}->{maxAge}  = $default_maxAge;
+  $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString}->{"VW"}->{maxAge}      = $default_maxAge;
 
   $G_DATA->{sites}->{willHaben}->{makers}->{"Abarth"}             = 10004;
   $G_DATA->{sites}->{willHaben}->{makers}->{"Aixam"}              = 10012;
@@ -185,15 +186,16 @@ $G_DATA->{mailRecipients} = [ '"Sanyi" <berczi.sandor@gmail.com>', '"Tillatilla1
   $G_DATA->{sites}->{willHaben}->{makers}->{"Volvo"}              = 1064;
   $G_DATA->{sites}->{willHaben}->{makers}->{"VW"}                 = 1065;
   $G_DATA->{sites}->{willHaben}->{makers}->{"Wiesmann"}           = 1066;
-}
 
-# ************************************************************
-# ************************************************************
-# Autoscout
-# ************************************************************
-{
+} elsif ( $SITE eq $SITE_AUTOSCOUT24 ) {
+
+  # ************************************************************
+  # ************************************************************
+  # Autoscout
+  # ************************************************************
 
 # https://www.autoscout24.at/ergebnisse?priceto=6000&desc=0&powertype=kw&size=20&page=2&fregfrom=2008&mmm=29%7C%7C&pricetype=public&cy=A&cy=D&mmvco=1&pricefrom=500&offer=D&offer=J&offer=O&offer=S&offer=U&sort=age&ustate=A&ustate=N&ustate=U&atype=C
+  $makerString = 'mmvmk0';
 
   $G_DATA->{sites}->{autoScout24}->{XPATHS}->{XPATH_TALALATI_LISTA}
     = '//div[contains(concat(" ", @class, " "), " cl-list-element cl-list-element-gap ")]';
@@ -215,7 +217,7 @@ $G_DATA->{mailRecipients} = [ '"Sanyi" <berczi.sandor@gmail.com>', '"Tillatilla1
   $G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{priceto}   = $default_price_to;
   $G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{sort}      = 'age';
   $G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{desc}      = 0;
-  $G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{cy}        = 'A,D';    # A: Austria; D: Germany
+  $G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{cy}        = 'A,D';                 # A: Austria; D: Germany
   $G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{offer}
     = 'D,J,O,S,U';    # D: Vorführfahrzeug, J: Jahreswagen, N: Neu, O: Oldtimer, S: Tageszulassung, U: Gebraucht
   $G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{mmvco}     = 1;
@@ -226,24 +228,24 @@ $G_DATA->{mailRecipients} = [ '"Sanyi" <berczi.sandor@gmail.com>', '"Tillatilla1
   $G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{size}      = 20;           # size per page
 
   # 18.12.15: Alfa rómeó,  chevrolett, kia, mazda,mitsubishi,nissan
-  $G_DATA->{sites}->{autoScout24}->{searchConfig}->{mmvmk0}->{"Alfa Romeo"}->{maxAge} = $default_maxAge;
-  $G_DATA->{sites}->{autoScout24}->{searchConfig}->{mmvmk0}->{"Chevrolet"}->{maxAge}  = $default_maxAge;
-  $G_DATA->{sites}->{autoScout24}->{searchConfig}->{mmvmk0}->{"Kia"}->{maxAge}        = $default_maxAge;
-  $G_DATA->{sites}->{autoScout24}->{searchConfig}->{mmvmk0}->{"Mazda"}->{maxAge}      = $default_maxAge;
-  $G_DATA->{sites}->{autoScout24}->{searchConfig}->{mmvmk0}->{"Mitsubishi"}->{maxAge} = $default_maxAge;
-  $G_DATA->{sites}->{autoScout24}->{searchConfig}->{mmvmk0}->{"Nissan"}->{maxAge}     = $default_maxAge;
+  $G_DATA->{sites}->{autoScout24}->{searchConfig}->{$makerString}->{"Alfa Romeo"}->{maxAge} = $default_maxAge;
+  $G_DATA->{sites}->{autoScout24}->{searchConfig}->{$makerString}->{"Chevrolet"}->{maxAge}  = $default_maxAge;
+  $G_DATA->{sites}->{autoScout24}->{searchConfig}->{$makerString}->{"Kia"}->{maxAge}        = $default_maxAge;
+  $G_DATA->{sites}->{autoScout24}->{searchConfig}->{$makerString}->{"Mazda"}->{maxAge}      = $default_maxAge;
+  $G_DATA->{sites}->{autoScout24}->{searchConfig}->{$makerString}->{"Mitsubishi"}->{maxAge} = $default_maxAge;
+  $G_DATA->{sites}->{autoScout24}->{searchConfig}->{$makerString}->{"Nissan"}->{maxAge}     = $default_maxAge;
 
-  $G_DATA->{sites}->{autoScout24}->{searchConfig}->{mmvmk0}->{"Audi"}->{maxAge}       = $default_maxAge;
-  $G_DATA->{sites}->{autoScout24}->{searchConfig}->{mmvmk0}->{"Citroen"}->{maxAge}    = $default_maxAge;
-  $G_DATA->{sites}->{autoScout24}->{searchConfig}->{mmvmk0}->{"Fiat"}->{maxAge}       = $default_maxAge;
-  $G_DATA->{sites}->{autoScout24}->{searchConfig}->{mmvmk0}->{"Ford"}->{maxAge}       = $default_maxAge;
-  $G_DATA->{sites}->{autoScout24}->{searchConfig}->{mmvmk0}->{"Honda"}->{maxAge}      = $default_maxAge;
-  $G_DATA->{sites}->{autoScout24}->{searchConfig}->{mmvmk0}->{"Hyundai"}->{maxAge}    = $default_maxAge;
-  $G_DATA->{sites}->{autoScout24}->{searchConfig}->{mmvmk0}->{"Opel"}->{maxAge}       = $default_maxAge;
-  $G_DATA->{sites}->{autoScout24}->{searchConfig}->{mmvmk0}->{"SEAT"}->{maxAge}       = $default_maxAge;
-  $G_DATA->{sites}->{autoScout24}->{searchConfig}->{mmvmk0}->{"Skoda"}->{maxAge}      = $default_maxAge;
-  $G_DATA->{sites}->{autoScout24}->{searchConfig}->{mmvmk0}->{"Toyota"}->{maxAge}     = $default_maxAge;
-  $G_DATA->{sites}->{autoScout24}->{searchConfig}->{mmvmk0}->{"Volkswagen"}->{maxAge} = $default_maxAge;
+  $G_DATA->{sites}->{autoScout24}->{searchConfig}->{$makerString}->{"Audi"}->{maxAge}       = $default_maxAge;
+  $G_DATA->{sites}->{autoScout24}->{searchConfig}->{$makerString}->{"Citroen"}->{maxAge}    = $default_maxAge;
+  $G_DATA->{sites}->{autoScout24}->{searchConfig}->{$makerString}->{"Fiat"}->{maxAge}       = $default_maxAge;
+  $G_DATA->{sites}->{autoScout24}->{searchConfig}->{$makerString}->{"Ford"}->{maxAge}       = $default_maxAge;
+  $G_DATA->{sites}->{autoScout24}->{searchConfig}->{$makerString}->{"Honda"}->{maxAge}      = $default_maxAge;
+  $G_DATA->{sites}->{autoScout24}->{searchConfig}->{$makerString}->{"Hyundai"}->{maxAge}    = $default_maxAge;
+  $G_DATA->{sites}->{autoScout24}->{searchConfig}->{$makerString}->{"Opel"}->{maxAge}       = $default_maxAge;
+  $G_DATA->{sites}->{autoScout24}->{searchConfig}->{$makerString}->{"SEAT"}->{maxAge}       = $default_maxAge;
+  $G_DATA->{sites}->{autoScout24}->{searchConfig}->{$makerString}->{"Skoda"}->{maxAge}      = $default_maxAge;
+  $G_DATA->{sites}->{autoScout24}->{searchConfig}->{$makerString}->{"Toyota"}->{maxAge}     = $default_maxAge;
+  $G_DATA->{sites}->{autoScout24}->{searchConfig}->{$makerString}->{"Volkswagen"}->{maxAge} = $default_maxAge;
 
   $G_DATA->{sites}->{autoScout24}->{makers}->{"Audi"}              = 9;
   $G_DATA->{sites}->{autoScout24}->{makers}->{"BMW"}               = 13;
@@ -423,4 +425,23 @@ $G_DATA->{mailRecipients} = [ '"Sanyi" <berczi.sandor@gmail.com>', '"Tillatilla1
   $G_DATA->{sites}->{autoScout24}->{makers}->{"Zastava"}           = 16408;
   $G_DATA->{sites}->{autoScout24}->{makers}->{"ZAZ"}               = 16394;
   $G_DATA->{sites}->{autoScout24}->{makers}->{"Sonstige"}          = 16328;
+
+} ### elsif ( $SITE eq $SITE_AUTOSCOUT24)
+
+get_SearchInfo;
+
+sub get_SearchInfo
+{
+  $G_DATA->{searchInfo} = "Járművek a következő feltételekkel:\n";
+  $G_DATA->{searchInfo} .= " Oldal: $SITE\n";
+
+  my @ts;
+  foreach my $t ( sort keys %{ $G_DATA->{sites}->{$SITE}->{searchConfig}->{$makerString} } ) {
+    next unless defined $G_DATA->{sites}->{$SITE}->{searchConfig}->{$makerString}->$t->{maxAge};
+    push( @ts, $t );
+  }
+  $G_DATA->{searchInfo} .= " Típusok: " . join( ', ', @ts ) . "\n";
+  $G_DATA->{searchInfo} .= " Évjárat: $default_year_from - $thisYear (max. $default_maxAge év)\n";
+  $G_DATA->{searchInfo} .= " Ár: $default_price_from - $default_price_to €\n";
+  return $G_DATA->{searchInfo};
 }
