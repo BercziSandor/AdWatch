@@ -885,6 +885,7 @@ sub getMailTextforItems {
 
   $mailTextHtml .= "\n";
   $mailTextHtml .= "$G_ITEMS_PROCESSED feldolgozott hirdetés\n";
+  $mailTextHtml .= get_SearchInfo() . "\n";
 
   if ( ( $count_new + $count_changed ) == 0 ) {
     $log->info("\nNincs újdonság.\n$mailTextHtml");
@@ -892,7 +893,7 @@ sub getMailTextforItems {
   } else {
     $mailTextHtml .= "\n_____________________\n$count_new ÚJ hirdetés\n";
     $mailTextHtml .= "$count_changed MEGVÁLTOZOTT hirdetés\n" if $count_changed;
-    $log->info("$mailTextHtml\n");
+    # $log->info("$mailTextHtml\n");
   }
   return $mailTextHtml;
 } ### sub getMailTextforItems
