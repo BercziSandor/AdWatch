@@ -95,7 +95,10 @@ sub get_SearchInfo {
 
   my @ts;
   foreach my $t ( sort keys %{ $G_DATA->{sites}->{$SITE}->{searchConfig}->{$makerString} } ) {
-    next unless defined $G_DATA->{sites}->{$SITE}->{searchConfig}->{$makerString}->$t->{maxAge};
+    if not defined ($G_DATA->{sites}->{$SITE}->{searchConfig}->{$makerString}->$t->{maxAge}){
+      $log->info("G_DATA->{sites}->{$SITE}->{searchConfig}->{$makerString}->$t->{maxAge} is not defined\n");
+      next;
+    };
     push( @ts, $t );
   }
   $G_DATA->{searchInfo} .= " Típusok: " . join( ', ', @ts ) . "\n";
