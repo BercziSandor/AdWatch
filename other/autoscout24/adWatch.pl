@@ -48,10 +48,10 @@ use Email::Simple::Creator;
 
 require stopWatch;
 
-my $SITE_WILLHABEN   = 'willHaben';
-my $SITE_AUTOSCOUT24 = 'autoScout24';
+our $SITE_WILLHABEN   = 'willHaben';
+our $SITE_AUTOSCOUT24 = 'autoScout24';
 
-my $thisYear;
+our $thisYear;
 
 # my $urls;
 
@@ -84,7 +84,7 @@ our $makerString;
 my $G_ITEMS_TO_PROCESS_MAX     = 0;    # 0: unlimited
 my $G_WAIT_BETWEEN_GETS_IN_SEC = 1;
 
-my ( $SITE, $QUIET, $VERBOSE, $HELP, ) = ( $SITE_WILLHABEN, undef, 0, undef );
+our ( $SITE, $QUIET, $VERBOSE, $HELP, ) = ( $SITE_WILLHABEN, undef, 0, undef );
 
 # CONSTANTS
 my ( $STATUS_EMPTY, $STATUS_CHANGED, $STATUS_NEW, $STATUS_VERKAUFT ) = ( 'undef', 'megváltozott', 'új', 'eladva' );
