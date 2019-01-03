@@ -169,7 +169,7 @@ sub ini {
     # $G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{priceto}   = $default_price_to;
   } ### if ($DEBUG)
   $log->info(get_SearchInfo() . "\n");
-  
+
   # Checking config
   if ( not defined $G_DATA->{CONSTANTS}->{DOWNLOADMETHODS}
     or not defined $G_DATA->{mail}->{sendMail}
@@ -828,7 +828,7 @@ sub getMailTextforItems {
 
   $log->debug( "getMailTextforItems(" . join( ',', @ids ) . ") \n" );
 
-  $mailTextHtml = "Utolsó állapot: $dataFileDate\n\n";
+  $mailTextHtml = "Utolsó állapot: $dataFileDate\n\n" if $dataFileDate;
 
   foreach my $id (@ids) {
     if ( not defined $G_DATA->{ads}->{$SITE}->{$id} ) {
