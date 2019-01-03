@@ -1,4 +1,5 @@
 *.log
+*.log.*
 *.sublime-workspace
 other/autoscout24/mails/*
 mails/*
