@@ -61,8 +61,9 @@ my $SW_PROCESSING      = 'Feldolgozás';
 # variables from config file
 our $G_DATA;
 
-my $offline       = 0;
-my $saveHtmlFiles = 0;
+my $OPTION_OFFLINE       = 0;
+my $OPTION_SAVEHTMLFILES = 0;
+my $OPTION_NO_LOOP       = 0;
 
 my $dataFileDate;
 my $G_ITEMS_IN_DB;
@@ -87,14 +88,18 @@ my ( $STATUS_EMPTY, $STATUS_CHANGED, $STATUS_NEW, $STATUS_VERKAUFT ) = ( 'undef'
 sub ini {
   $SCRIPTDIR = dirname( abs_path($0) );
 
+
   # Reading Parameters
   GetOptions(
     'site|s=s'  => \$SITE,
+    'noLoop|nl'    => \$OPTION_NO_LOOP,
     'help|?|h'  => \$HELP,
     'verbose|v' => \$VERBOSE,
   );
   die "ERROR: Invalid site: [$SITE]\n Valid sites are: [$SITE_WILLHABEN], [$SITE_AUTOSCOUT24]\n"
     if ( $SITE ne $SITE_WILLHABEN and $SITE ne $SITE_AUTOSCOUT24 );
+
+  $OPTION_SAVEHTMLFILES = 1 if $VERBOSE;
 
   # Logging
   # http://ddiguru.com/blog/126-eight-loglog4perl-recipes
@@ -389,14 +394,14 @@ sub getHtml {
   stopWatch::pause($SW_DOWNLOAD);
 
   # $log->debug( $content );
-  if ( $saveHtmlFiles or $VERBOSE ) {
+  if ( $OPTION_SAVEHTMLFILES or $VERBOSE ) {
     my $fileName = $url;
     $fileName = "$SCRIPTDIR/work/html/" . u_formatTimeNow_YMD_HMS() . ".${SITE}.${maker}.${page}.html";
     $log->debug("fileName: $fileName\n");
     open( MYFILE, ">$fileName" ) or die "$fileName: $!";
     print MYFILE encode_utf8($html);
     close(MYFILE);
-  } ### if ( $saveHtmlFiles or...)
+  } ### if ( $OPTION_SAVEHTMLFILES...)
   $log->logdie("The content of the received html is empty.") if ( length($html) == 0 );
 
   my $dom = XML::LibXML->load_html(
@@ -488,9 +493,10 @@ sub parseItems {
 
     unless ($title) {
       $log->error( "Title is empty for #${index} - is xpath [" . $G_DATA->{sites}->{$SITE}->{XPATHS}->{XPATH_TITLE} . "] wrong?\n" );
+
       # die;
       next;
-    }
+    } ### unless ($title)
     $title = encode_utf8($title);
     $G_ITEMS_PROCESSED++;
 
@@ -585,11 +591,11 @@ sub parseItems {
     # FEATURES
 
     if ( $SITE eq $SITE_AUTOSCOUT24 ) {
-      @fs=();
+      @fs    = ();
       $xpath = $G_DATA->{sites}->{$SITE}->{XPATHS}->{XPATH_FEATURES};
       my @features = $item->findnodes($xpath);
       foreach my $feature (@features) {
-        my $val = encode_utf8($feature->textContent());
+        my $val = encode_utf8( $feature->textContent() );
         $val =~ s/\n//g;
         $val =~ s/$G_DATA->{sites}->{$SITE}->{textToDelete}//g;
         $val =~ s/^ //;
@@ -1026,6 +1032,7 @@ sub main {
     }
 
     process();
+    break if $OPTION_NO_LOOP;
 
     my $timeToWait = ( $time + $G_DATA->{G_WAIT_BETWEEN_FULL_PROCESS_IN_SEC} ) - time;
     if ( $timeToWait < 0 ) {
