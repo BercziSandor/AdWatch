@@ -4,6 +4,7 @@ use 5.010;
 use strict;
 use warnings;
 use Data::Dumper;
+use Data::Dump;
 $Data::Dumper::Sortkeys = 1;
 use Log::Log4perl;
 
@@ -64,6 +65,7 @@ our $G_DATA;
 my $OPTION_OFFLINE       = 0;
 my $OPTION_SAVEHTMLFILES = 0;
 my $OPTION_NO_LOOP       = 0;
+my $DEBUG                = 0;
 
 my $dataFileDate;
 my $G_ITEMS_IN_DB;
@@ -78,7 +80,7 @@ my $collectionDate;
 my $SCRIPTDIR;
 
 my $G_ITEMS_TO_PROCESS_MAX     = 0;    # 0: unlimited
-my $G_WAIT_BETWEEN_GETS_IN_SEC = 2;
+my $G_WAIT_BETWEEN_GETS_IN_SEC = 1;
 
 my ( $SITE, $QUIET, $VERBOSE, $HELP, ) = ( $SITE_WILLHABEN, undef, 0, undef );
 
@@ -98,6 +100,7 @@ sub ini {
   die "ERROR: Invalid site: [$SITE]\n Valid sites are: [$SITE_WILLHABEN], [$SITE_AUTOSCOUT24]\n"
     if ( $SITE ne $SITE_WILLHABEN and $SITE ne $SITE_AUTOSCOUT24 );
 
+  $DEBUG                = 1 if $VERBOSE;
   $OPTION_SAVEHTMLFILES = 1 if $VERBOSE;
 
   # Logging
@@ -343,15 +346,18 @@ sub getHtml {
   $log->debug(" reading remote\n");
   stopWatch::continue($SW_DOWNLOAD);
   my $wtime = int( ( $G_LAST_GET_TIME + $G_WAIT_BETWEEN_GETS_IN_SEC ) - time );
-  $log->debug("getHtml() #2\n");
+
+  # $log->debug("getHtml() #2\n");
   if ( $wtime > 0 ) {
-    $log->debug("getHtml() #2.1\n");
+
+    # $log->debug("getHtml() #2.1\n");
     $log->debug("$wtime másodperc várakozás (két lekérés közötti minimális várakozási idö: $G_WAIT_BETWEEN_GETS_IN_SEC másodperc)\n");
-    $log->debug("getHtml() #2.2\n");
+
+    # $log->debug("getHtml() #2.2\n");
     sleep($wtime);
   } ### if ( $wtime > 0 )
 
-  $log->debug("getHtml() #2.5\n");
+  # $log->debug("getHtml() #2.5\n");
   $G_LAST_GET_TIME = time;
   if ( $G_DATA->{downloadMethod} eq 'httpTiny' ) {
     my $response = $httpEngine->get($url);
@@ -392,7 +398,7 @@ sub getHtml {
 
   stopWatch::pause($SW_DOWNLOAD);
 
-  $log->debug("getHtml() #3\n");
+  # $log->debug("getHtml() #3\n");
 
   if ( $OPTION_SAVEHTMLFILES or $VERBOSE ) {
     my $fileName = $url;
@@ -405,17 +411,13 @@ sub getHtml {
 
   $log->logdie("The content of the received html is empty.") if ( length($html) == 0 );
 
-  $log->debug("getHtml() #4 cleanup\n");
+  # $log->debug("getHtml() #4 cleanup\n");
   Encode::_utf8_off($content);
   $content = decode_utf8($content);
 
   $log->debug("getHtml() #5\n");
 
-  # test 1
-  $content =~ s/([^[:ascii:]]+)/unidecode($1)/ge;
-
-  # test 1
-  $content =~ s/[^[:ascii:]]+//g;    # get rid of non-ASCII characters
+  $content = u_utf8Decode($content);
 
   my $dom = XML::LibXML->load_html(
     string          => $content,
@@ -563,6 +565,7 @@ sub parseItems {
     }
 
     $priceStr =~ s/,-/ €/;
+    $priceStr =~ s/EUR //;
     $priceStr = "?" unless $priceStr;
     my $priceNr = $priceStr;
     $priceNr =~ s/\D//g;
@@ -610,7 +613,8 @@ sub parseItems {
       foreach my $feature (@features) {
         my $val = encode_utf8( $feature->textContent() );
         $val =~ s/\n//g;
-        $val =~ s/$G_DATA->{sites}->{$SITE}->{textToDelete}//g;
+        u_utf8Decode($G_DATA->{sites}->{$SITE}->{textToDelete});
+        $val =~ s/$_//g;
         $val =~ s/^ //;
         $val =~ s/ $//;
         $val =~ s/ # /#/g;
@@ -929,13 +933,18 @@ sub mailThisText {
     print MYFILE $bodyText;
     close(MYFILE);
   }
-
-  foreach ( @{ $G_DATA->{mailRecipients} } ) {
+  my @recipients;
+  if ($DEBUG) {
+    push( @recipients, @{ $G_DATA->{mailRecipientsDebug} } );
+  } else {
+    push( @recipients, @{ $G_DATA->{mailRecipients} } );
+  }
+  foreach (@recipients) {
     my $email = Email::Simple->create(
       header => [
         To             => $_,
         From           => '"Sanyi" <berczi.sandor@gmail.com>',
-        Subject        => "$SITE frissítés",
+        Subject        => "$SITE frissites",
         'Content-Type' => 'text/html',
       ],
       body => $bodyText,
@@ -948,7 +957,7 @@ sub mailThisText {
       $log->info("Levél küldése sikeres. To: [$_]\n");
     }
 
-  } ### foreach ( @{ $G_DATA->{mailRecipients...}})
+  } ### foreach (@recipients)
 
   if ( $G_DATA->{mail}->{sendMail} == 1 ) {
     $G_DATA->{lastMailSendTime} = time;
@@ -986,6 +995,20 @@ sub u_formatTimeNow_YMD_HMS {
 
 sub u_formatTime_YMD_HMS {
   return strftime( '%Y%m%d-%H%M%S', @_ );
+}
+
+sub u_utf8Decode {
+  my ($content) = @_;
+
+  # ü -> u, € -> EUR
+  $content =~ s/([^[:ascii:]]+)/unidecode($1)/ge;
+  return $content;
+} ### sub u_utf8Decode
+
+sub u_utf8Delete {
+  my ($content) = @_;
+  $content =~ s/[^[:ascii:]]+//g;    # get rid of non-ASCII characters
+  return $content;
 }
 
 sub u_clearNewLines {

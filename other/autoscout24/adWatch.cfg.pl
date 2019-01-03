@@ -19,6 +19,7 @@ $G_DATA->{G_WAIT_BETWEEN_FULL_PROCESS_IN_SEC} = 8 * 60;
 $G_DATA->{silentHours}->{from} = 20;
 $G_DATA->{silentHours}->{till} = 06;
 
+$G_DATA->{mailRecipientsDebug} = [ '"Sanyi" <berczi.sandor@gmail.com>' ];
 $G_DATA->{mailRecipients} = [ '"Sanyi" <berczi.sandor@gmail.com>', '"Tillatilla1966" <tillatilla.1966@gmail.com>' ];
 
 # FIXME: debug
@@ -195,6 +196,8 @@ $G_DATA->{mailRecipients} = [ '"Sanyi" <berczi.sandor@gmail.com>', '"Tillatilla1
   $G_DATA->{sites}->{autoScout24}->{XPATHS}->{XPATH_FEATURES} = './/div[contains(concat(" ", @class, " "), " cldt-summary-vehicle-data ")]/ul/li';
   $G_DATA->{sites}->{autoScout24}->{textToDelete}
     = 'Weitere Informationen zum offiziellen Kraftstoffverbrauch und den offiziellen spezifischen CO2-Emissionen neuer Personenkraftwagen können dem "Leitfaden über den Kraftstoffverbrauch, die CO2-Emissionen und den Stromverbrauch neuer Personenkraftwagen" entnommen werden, der an allen Verkaufsstellen und bei der Deutschen Automobil Treuhand GmbH unter www.dat.at unentgeltlich erhältlich ist.';
+  $G_DATA->{sites}->{autoScout24}->{textToDelete}
+    = 'Weitere Informationen zum offiziellen Kraftstoffverbrauch und den offiziellen spezifischen CO2-Emissionen neuer Personenkraftwagen konnen dem "Leitfaden uber den Kraftstoffverbrauch, die CO2-Emissionen und den Stromverbrauch neuer Personenkraftwagen" entnommen werden, der an allen Verkaufsstellen und bei der Deutschen Automobil Treuhand GmbH unter www.dat.at unentgeltlich erhaltlich ist.';
 
   # mmvmk0=9&mmvco=1&fregfrom=2013&fregto=2015&pricefrom=0&priceto=8000&fuel=B&kmfrom=10000&powertype=kw&atype=C&ustate=N%2CU&sort=standard&desc=0
 
