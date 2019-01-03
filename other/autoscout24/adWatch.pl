@@ -1067,7 +1067,7 @@ sub main {
     }
 
     process();
-    break if $OPTION_NO_LOOP;
+    return 0 if $OPTION_NO_LOOP;
 
     my $timeToWait = ( $time + $G_DATA->{G_WAIT_BETWEEN_FULL_PROCESS_IN_SEC} ) - time;
     if ( $timeToWait < 0 ) {
