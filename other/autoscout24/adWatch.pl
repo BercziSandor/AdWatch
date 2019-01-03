@@ -1043,7 +1043,7 @@ sub u_cleanString {
   my ($input) = @_;
   return undef unless $input;
   my $retval = u_clearSpaces( u_clearNewLines($input) );
-  $log->debug("u_cleanString($input)=$retval\n");
+  # $log->debug("u_cleanString($input)=$retval\n");
   return ($retval);
 } ### sub u_cleanString
 
