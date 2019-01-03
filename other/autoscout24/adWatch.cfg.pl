@@ -432,7 +432,7 @@ get_SearchInfo;
 
 sub get_SearchInfo
 {
-  $G_DATA->{searchInfo} = "Járművek a következő feltételekkel:\n";
+  $G_DATA->{searchInfo} = "A keresés feltételei:\n";
   $G_DATA->{searchInfo} .= " Oldal: $SITE\n";
 
   my @ts;
