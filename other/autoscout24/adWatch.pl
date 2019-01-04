@@ -1012,6 +1012,8 @@ sub process {
   stopWatch::reset();
   stopWatch::continue($SW_FULL_PROCESSING);
   $dataFileDate = $G_DATA->{lastChange} ? ( strftime( "%Y.%m.%d %H:%M", localtime( $G_DATA->{lastChange} ) ) ) : "";
+  $log->info( "process(): G_DATA: " . Dumper( $G_DATA->{sites}->{$SITE} ) );
+
   collectData();
   sndMails();
   dataSave();
