@@ -193,6 +193,7 @@ sub ini {
     # $G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{priceto}   = $default_price_to;
   } ### if ($DEBUG)
   $log->info( get_SearchInfo() . "\n" );
+  $log->info( "G_DATA: ".Dumper( $G_DATA->{sites}->{$SITE} ) );
 
   # Checking config
   if ( not defined $G_DATA->{CONSTANTS}->{DOWNLOADMETHODS}
@@ -278,7 +279,7 @@ sub getUrls {
 
   $log->info("getUrls -> [${SITE}] - [$SITE_AUTOSCOUT24]\n");
   if ( $SITE eq $SITE_AUTOSCOUT24 ) {
-    $log->info("getUrls(): 1: $makerString: ".Dumper($G_DATA->{sites}->{$SITE}));
+    $log->info( "getUrls(): 1: $makerString: " . Dumper( $G_DATA->{sites}->{$SITE} ) );
 
     # $G_DATA->{sites}->{autoScout24}->{searchConfig}->{$makerString}
     foreach my $maker ( sort keys %{ $G_DATA->{sites}->{$SITE}->{searchConfig}->{$makerString} } ) {
