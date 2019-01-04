@@ -172,6 +172,9 @@ sub ini {
 
   my ( $name, $path, $suffix ) = fileparse( $0, qr{\.[^.]*$} );
 
+  dataLoad();
+  $log->info("ini(): dataLoad ok\n");
+
   my $cnfFile = "${path}${name}.cfg.pl";
   unless ( my $return = require $cnfFile ) {
     die "'$cnfFile' does not exist, aborting.\n" if ( not -e $cnfFile );
@@ -212,8 +215,6 @@ sub ini {
     $log->logdie("A G_DATA->{sites}->{$SITE}->{XPATHS} nincs definiálva.\n");
   }
 
-  dataLoad();
-  $log->info("ini(): dataLoad ok\n");
 
   $dataFileDate = $G_DATA->{lastChange} ? ( strftime( "%Y.%m.%d %H:%M", localtime( $G_DATA->{lastChange} ) ) ) : "";
   my $cmd = "ps -aef | grep -v grep | grep ${name}.pl | grep ' $SITE' | wc -l";
