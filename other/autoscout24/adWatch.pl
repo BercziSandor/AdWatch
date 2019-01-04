@@ -193,7 +193,7 @@ sub ini {
     # $G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{priceto}   = $default_price_to;
   } ### if ($DEBUG)
   $log->info( get_SearchInfo() . "\n" );
-  $log->info( "G_DATA: ".Dumper( $G_DATA->{sites}->{$SITE} ) );
+  $log->info( "ini(): G_DATA: " . Dumper( $G_DATA->{sites}->{$SITE} ) );
 
   # Checking config
   if ( not defined $G_DATA->{CONSTANTS}->{DOWNLOADMETHODS}
@@ -270,6 +270,7 @@ sub ini {
     $log->logdie("TODO: Please implement this html engine");
   }
 
+  $log->info("ini(): returning\n");
 } ### sub ini
 
 sub getUrls {
@@ -749,6 +750,8 @@ sub parseItems {
 
 sub collectData {
   $log->info("collectData(): entering\n");
+  $log->info( "collectData(): G_DATA: " . Dumper( $G_DATA->{sites}->{$SITE} ) );
+
   $collectionDate = strftime "%Y.%m.%d %H:%M:%S", localtime;
 
   $G_ITEMS_PROCESSED = 0;
