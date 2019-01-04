@@ -278,7 +278,7 @@ sub getUrls {
 
   $log->info("getUrls -> [${SITE}] - [$SITE_AUTOSCOUT24]\n");
   if ( $SITE eq $SITE_AUTOSCOUT24 ) {
-    $log->info("getUrls(): 1: $makerString: ".Dumper($G_DATA->{sites}->{$SITE}->{searchConfig}));
+    $log->info("getUrls(): 1: $makerString: ".Dumper($G_DATA->{sites}->{$SITE}));
 
     # $G_DATA->{sites}->{autoScout24}->{searchConfig}->{$makerString}
     foreach my $maker ( sort keys %{ $G_DATA->{sites}->{$SITE}->{searchConfig}->{$makerString} } ) {
