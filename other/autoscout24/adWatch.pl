@@ -278,6 +278,8 @@ sub getUrls {
 
   $log->info("getUrls -> ${SITE}\n");
   if ( $SITE eq $SITE_AUTOSCOUT24 ) {
+    $log->info("getUrls(): 1:\n".Dumper($G_DATA->{sites}->{$SITE}->{searchConfig}->{$makerString}));
+
     # $G_DATA->{sites}->{autoScout24}->{searchConfig}->{$makerString}
     foreach my $maker ( sort keys %{ $G_DATA->{sites}->{$SITE}->{searchConfig}->{$makerString} } ) {
       $log->info("maker: [$maker]\n");
