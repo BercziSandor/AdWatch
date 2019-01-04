@@ -276,7 +276,7 @@ sub getUrls {
   $log->info("getUrls(): entering\n");
   die "Run ini() before getUrls, aborting.\n" if ( not defined $thisYear );
 
-  $log->info("getUrls -> ${SITE}\n");
+  $log->info("getUrls -> [${SITE}] - [$SITE_AUTOSCOUT24]\n");
   if ( $SITE eq $SITE_AUTOSCOUT24 ) {
     $log->info("getUrls(): 1:\n".Dumper($G_DATA->{sites}->{$SITE}->{searchConfig}->{$makerString}));
 
