@@ -98,13 +98,9 @@ sub get_SearchInfo {
   # $log->info("makerString: $makerString\n");
   # print Dumper( $G_DATA->{sites} );
   foreach my $t ( sort keys %{ $G_DATA->{sites}->{$SITE}->{searchConfig}->{$makerString} } ) {
-    if ( not defined( $G_DATA->{sites}->{$SITE}->{searchConfig}->{$makerString}->{$t}->{maxAge} ) ) {
-
-      # $log->info("G_DATA->{sites}->{$SITE}->{searchConfig}->{$makerString}->{$t}->{maxAge} is not defined\n");
-      next;
-    }
+    next if ( not defined( $G_DATA->{sites}->{$SITE}->{searchConfig}->{$makerString}->{$t}->{maxAge} ) );
     push( @ts, $t );
-  } ### foreach my $t ( sort keys %...)
+  }
   $G_DATA->{searchInfo} .= " Típusok: " . join( ', ', @ts ) . "\n";
 
   $G_DATA->{searchInfo}
@@ -376,7 +372,6 @@ sub getHtml {
   $url =~ s/$G_DATA->{sites}->{$SITE}->{searchConfig}->{defaults}->{page}/$page/g;
   $log->debug("getHtml($url, $page, $maker)\n");
 
-  # $log->debug("getHtml() #1\n");
   my $html    = '';
   my $content = '';
 
@@ -750,12 +745,14 @@ sub parseItems {
 } ### sub parseItems
 
 sub collectData {
-  $log->info("collectData(): entering");
+  $log->info("collectData(): entering\n");
   $collectionDate = strftime "%Y.%m.%d %H:%M:%S", localtime;
 
   $G_ITEMS_PROCESSED = 0;
 
   foreach my $maker ( sort keys %{ $G_DATA->{sites}->{$SITE}->{urls} } ) {
+
+    # $G_DATA->{sites}->{$SITE}->{searchConfig}->{$makerString}
     my $url = $G_DATA->{sites}->{$SITE}->{urls}->{$maker};
     $log->info("\n\n ** $maker **\n");
     if (  $G_ITEMS_TO_PROCESS_MAX > 0
@@ -764,28 +761,18 @@ sub collectData {
       return;
     }
 
-    # getHtml( $url, 1, $maker )
-    # next unless $G_HTML_TREE;
-
-    # pagecount is hard to parse, skipping it.
-    # my $pageCount = parsePageCount( \$html );
-    # $log->logdie("PageCount is 0") if ( $pageCount == 0 );
-    # for ( my $i = 1 ; $i <= $pageCount ; $i++ ) {
-
     for ( my $i = 1 ; ; $i++ ) {
       if (  $G_ITEMS_TO_PROCESS_MAX > 0
         and $G_ITEMS_PROCESSED >= $G_ITEMS_TO_PROCESS_MAX ) {
         $log->info("\nElértük a feldolgozási limitet.");
         return;
       }
-
-      # $log->info( sprintf( "\n%2d/%d [", $i, $pageCount ) );
-      # $log->debug( sprintf( "%2.0f%% (%d of %d pages)", ( 0.0 + 100 * ( $i - 1 ) / $pageCount ), $i, $pageCount ) );
       getHtml( $url, $i, $maker );
       last unless $G_HTML_TREE;
       parseItems() or last;
     } ### for ( my $i = 1 ; ; $i++)
   } ### foreach my $maker ( sort keys...)
+  $log->info("collectData(): returning\n");
 
 } ### sub collectData
 
