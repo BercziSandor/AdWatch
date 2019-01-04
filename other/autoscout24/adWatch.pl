@@ -278,28 +278,28 @@ sub getUrls {
 
   $log->info("getUrls -> ${SITE}\n");
   if ( $SITE eq $SITE_AUTOSCOUT24 ) {
-
-    foreach my $maker ( sort keys %{ $G_DATA->{sites}->{$SITE}->{searchConfig}->{mmvmk0} } ) {
+    # $G_DATA->{sites}->{autoScout24}->{searchConfig}->{$makerString}
+    foreach my $maker ( sort keys %{ $G_DATA->{sites}->{$SITE}->{searchConfig}->{$makerString} } ) {
       $log->info("maker: [$maker]\n");
       my $out = "https://www.autoscout24.at/ergebnisse?";
 
       # $log->info( Dumper( $G_DATA ) );
-      $out .= "mmvmk0=" . $G_DATA->{sites}->{$SITE}->{makers}->{$maker};
+      $out .= "$makerString=" . $G_DATA->{sites}->{$SITE}->{makers}->{$maker};
 
       # $log->info( "out=$out\n" );
 
-      if ( not defined $G_DATA->{sites}->{$SITE}->{searchConfig}->{mmvmk0}->{$maker}->{maxAge} ) {
-        $log->logdie( $G_DATA->{sites}->{$SITE}->{searchConfig}->{mmvmk0}->{$maker}->{maxAge} . " is not defined. Aborting." );
+      if ( not defined $G_DATA->{sites}->{$SITE}->{searchConfig}->{$makerString}->{$maker}->{maxAge} ) {
+        $log->logdie( $G_DATA->{sites}->{$SITE}->{searchConfig}->{$makerString}->{$maker}->{maxAge} . " is not defined. Aborting." );
       }
-      $out .= "&fregfrom=" . ( $thisYear - ( $G_DATA->{sites}->{$SITE}->{searchConfig}->{mmvmk0}->{$maker}->{maxAge} ) );
+      $out .= "&fregfrom=" . ( $thisYear - ( $G_DATA->{sites}->{$SITE}->{searchConfig}->{$makerString}->{$maker}->{maxAge} ) );
 
       # $log->info( "out=$out\n" );
 
       foreach my $k ( sort keys %{ $G_DATA->{sites}->{$SITE}->{searchConfig}->{defaults} } ) {
         my $val;
         $log->debug("Default: $k\n");
-        if ( defined $G_DATA->{sites}->{$SITE}->{searchConfig}->{mmvmk0}->{$maker}->{$k} ) {
-          $val = $G_DATA->{sites}->{$SITE}->{searchConfig}->{mmvmk0}->{$maker}->{$k};
+        if ( defined $G_DATA->{sites}->{$SITE}->{searchConfig}->{$makerString}->{$maker}->{$k} ) {
+          $val = $G_DATA->{sites}->{$SITE}->{searchConfig}->{$makerString}->{$maker}->{$k};
         } else {
           $val = $G_DATA->{sites}->{$SITE}->{searchConfig}->{defaults}->{$k};
         }
