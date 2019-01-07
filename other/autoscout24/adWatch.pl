@@ -988,7 +988,7 @@ sub mailThisText {
       header => [
         To             => $_,
         From           => '"Sanyi" <berczi.sandor@gmail.com>',
-        Subject        => "$SITE frissites",
+        Subject        => "$SITE frissítés (AdWatcher)",
         'Content-Type' => 'text/html',
       ],
       body => $bodyText,
