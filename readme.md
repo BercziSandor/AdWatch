@@ -1,7 +1,10 @@
 Goal of the script: alerting about new ads via email
 
 # History
+ - 2019.01.06: +: Peugeot, Renault
+ - 2018.12:    karbantartás: 5h
  - 2018.10.18: mobile.de: meg kell vizsgálni, mennyi idő elkészíteni
+ - 2018.10.30: munkadíj rendezve + 10eFt üzemeltetési díj előleg
  - 2018.10.18: www.willhaben.at KELL - kb 8 óra
  - 2018.10.05: willhaben.at: meg kell vizsgálni, mennyi idő elkészíteni
  - 2018.10.02:
@@ -9,6 +12,7 @@ Goal of the script: alerting about new ads via email
    - Skoda, Seat, Volkswagen, Audi, Hyundai, Citroen, Mazda, Honda, Toyota, Nissan, Opel, Fiat, Ford.
    - 2007-
  - 2018.09.17: szűrő: 2006-; 500-7000€
+ - 2017.08: Project startup
 
 # TODO, open issues
 see [issues https://github.com/BercziSandor/hasznaltAutoWatcher/issues]

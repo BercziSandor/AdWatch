@@ -29,7 +29,7 @@ $makerString = '';
 if ( $SITE eq $SITE_WILLHABEN ) {
 
   $makerString = 'CAR_MODEL/MAKE';
-  $G_DATA->{sites}->{willHaben}->{searchConfig}->{defaults}->{makerString}     = $makerString;
+  $G_DATA->{sites}->{willHaben}->{searchConfig}->{defaults}->{makerString} = $makerString;
 
 } elsif ( $SITE eq $SITE_AUTOSCOUT24 ) {
 
@@ -42,9 +42,7 @@ if ( $SITE eq $SITE_WILLHABEN ) {
   $makerString = 'mmvmk0';
   $G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{makerString} = $makerString;
 
-
 } ### elsif ( $SITE eq $SITE_AUTOSCOUT24)
-
 
 $G_DATA->{sites}->{autoScout24}->{XPATHS}->{XPATH_TALALATI_LISTA}
   = '//div[contains(concat(" ", @class, " "), " cl-list-element cl-list-element-gap ")]';
@@ -62,11 +60,11 @@ $G_DATA->{sites}->{autoScout24}->{textToDelete}
 # mmvmk0=9&mmvco=1&fregfrom=2013&fregto=2015&pricefrom=0&priceto=8000&fuel=B&kmfrom=10000&powertype=kw&atype=C&ustate=N%2CU&sort=standard&desc=0
 
 # ustate=N%2CU&     N,U: nem balesetes; A: balesetes;
-$G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{pricefrom}   = $default_price_from;
-$G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{priceto}     = $default_price_to;
-$G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{sort}        = 'age';
-$G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{desc}        = 0;
-$G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{cy}          = 'A,D';                 # A: Austria; D: Germany
+$G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{pricefrom} = $default_price_from;
+$G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{priceto}   = $default_price_to;
+$G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{sort}      = 'age';
+$G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{desc}      = 0;
+$G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{cy}        = 'A,D';                 # A: Austria; D: Germany
 $G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{offer}
   = 'D,J,O,S,U';    # D: Vorführfahrzeug, J: Jahreswagen, N: Neu, O: Oldtimer, S: Tageszulassung, U: Gebraucht
 $G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{mmvco}     = 1;
@@ -75,6 +73,10 @@ $G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{atype}     = 'C';
 $G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{ustate}    = 'A,N,U';      #  A: balesetes; N,U: nem balesetes;
 $G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{page}      = "VVPAGEVV";
 $G_DATA->{sites}->{autoScout24}->{searchConfig}->{defaults}->{size}      = 20;           # size per page
+
+# 19.01.06: Szia. Kolega, most vettem észre, hogy peugeot és renault nics benne,
+$G_DATA->{sites}->{autoScout24}->{searchConfig}->{$makerString}->{"Peugeot"}->{maxAge} = $default_maxAge;
+$G_DATA->{sites}->{autoScout24}->{searchConfig}->{$makerString}->{"Renault"}->{maxAge} = $default_maxAge;
 
 # 18.12.15: Alfa rómeó,  chevrolett, kia, mazda,mitsubishi,nissan
 $G_DATA->{sites}->{autoScout24}->{searchConfig}->{$makerString}->{"Alfa Romeo"}->{maxAge} = $default_maxAge;
@@ -275,7 +277,6 @@ $G_DATA->{sites}->{autoScout24}->{makers}->{"Zastava"}           = 16408;
 $G_DATA->{sites}->{autoScout24}->{makers}->{"ZAZ"}               = 16394;
 $G_DATA->{sites}->{autoScout24}->{makers}->{"Sonstige"}          = 16328;
 
-
 $G_DATA->{sites}->{willHaben}->{searchUrlRoot} = 'https://www.willhaben.at/iad/gebrauchtwagen/auto/gebrauchtwagenboerse?';
 
 # ustate=N%2CU&     N,U: nem balesetes; A: balesetes;
@@ -292,11 +293,11 @@ $G_DATA->{sites}->{willHaben}->{searchUrlRoot} = 'https://www.willhaben.at/iad/g
 $G_DATA->{sites}->{willHaben}->{XPATHS}->{XPATH_TALALATI_LISTA} = '//div[@id="resultlist"]/article[@itemtype="http://schema.org/Product"]';
 $G_DATA->{sites}->{willHaben}->{XPATHS}->{XPATH_TITLE}          = './section[contains(@class, "content-section")]//span[@itemprop="name"]';
 $G_DATA->{sites}->{willHaben}->{XPATHS}->{XPATH_TITLE2}         = undef;
-$G_DATA->{sites}->{willHaben}->{XPATHS}->{XPATH_LINK}  = './section[contains(@class, "content-section")]//div[contains(@class, "header")]/a/@href';
-$G_DATA->{sites}->{willHaben}->{XPATHS}->{XPATH_PRICE} = './section[contains(@class, "content-section")]//span[@class="pull-right"]';
-$G_DATA->{sites}->{willHaben}->{XPATHS}->{XPATH_DESC}  = './section[contains(@class, "content-section")]//div[@itemprop="description"]';
+$G_DATA->{sites}->{willHaben}->{XPATHS}->{XPATH_LINK}     = './section[contains(@class, "content-section")]//div[contains(@class, "header")]/a/@href';
+$G_DATA->{sites}->{willHaben}->{XPATHS}->{XPATH_PRICE}    = './section[contains(@class, "content-section")]//span[@class="pull-right"]';
+$G_DATA->{sites}->{willHaben}->{XPATHS}->{XPATH_DESC}     = './section[contains(@class, "content-section")]//div[@itemprop="description"]';
 $G_DATA->{sites}->{willHaben}->{XPATHS}->{XPATH_FEATURES} = '';
-$G_DATA->{sites}->{willHaben}->{textToDelete} = '';
+$G_DATA->{sites}->{willHaben}->{textToDelete}             = '';
 
 #  https://www.willhaben.at/iad/gebrauchtwagen/auto/gebrauchtwagenboerse?YEAR_MODEL_FROM=2011&CAR_MODEL/MAKE=1005&PRICE_TO=12340&page=6&view=
 # https://www.willhaben.at/iad/gebrauchtwagen/auto/gebrauchtwagenboerse?CAR_MODEL/MAKE=1005&PRICE_TO=12340&YEAR_MODEL_FROM=2011
@@ -322,6 +323,10 @@ $G_DATA->{sites}->{willHaben}->{searchConfig}->{defaults}->{rows} = 100;
 $G_DATA->{sites}->{willHaben}->{searchConfig}->{defaults}->{sort} = 1;
 $G_DATA->{sites}->{willHaben}->{searchConfig}->{defaults}->{page} = "VVPAGEVV";
 
+# 19.01.06: Szia. Kolega, most vettem észre, hogy peugeot és renault nics benne,
+$G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString}->{"Peugeot"}->{maxAge} = $default_maxAge;
+$G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString}->{"Renault"}->{maxAge} = $default_maxAge;
+
 # 18.12.15: Alfa rómeó,  chevrolett, kia, mazda,mitsubishi,nissan
 $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString}->{"Alfa Romeo"}->{maxAge}         = $default_maxAge;
 $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString}->{"Chevrolet"}->{maxAge}          = $default_maxAge;
@@ -331,6 +336,7 @@ $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString}->{"Mazda"}->{maxAg
 $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString}->{"Mitsubishi"}->{maxAge}         = $default_maxAge;
 $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString}->{"Nissan"}->{maxAge}             = $default_maxAge;
 
+# 17.08: startup
 $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString}->{"Audi"}->{maxAge}    = $default_maxAge;
 $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString}->{"Citroen"}->{maxAge} = $default_maxAge;
 $G_DATA->{sites}->{willHaben}->{searchConfig}->{$makerString}->{"Fiat"}->{maxAge}    = $default_maxAge;
