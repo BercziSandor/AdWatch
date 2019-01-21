@@ -14,6 +14,7 @@ function watchFor
 		if ps -aef | grep -v grep | grep perl | grep "$fileToStart" | grep -q "s $site" ; then
 			pid=$(ps -aef | grep -v grep | grep perl | grep "$fileToStart" | grep "s $site" | awk '{print $2}')
 			if [ ! -z $pid ]; then
+				echo "Killing process for $site..."
 				kill -9 $pid
 			fi
 		fi
