@@ -12,7 +12,7 @@ function watchFor
 	shift
 	if [ "$1" == "stop" ]; then
 		if ps -aef | grep -v grep | grep perl | grep "$fileToStart" | grep -q "s $site" ; then
-			pid=$(ps -aef | grep -v grep | grep perl | grep "$fileToStart" | grep -q "s $site" | awk '{print $2}')
+			pid=$(ps -aef | grep -v grep | grep perl | grep "$fileToStart" | grep "s $site" | awk '{print $2}')
 			if [ ! -z $pid ]; then
 				kill -9 $pid
 			fi
