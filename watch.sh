@@ -16,6 +16,8 @@ function watchFor
 			if [ ! -z $pid ]; then
 				echo "Killing process for $site..."
 				kill -9 $pid
+			else
+				echo "No process running for $site."
 			fi
 		fi
 	else
